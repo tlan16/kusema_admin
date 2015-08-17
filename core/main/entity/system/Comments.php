@@ -63,13 +63,14 @@ class Comments extends BaseEntityAbstract
 	 * @param string             $comments The comemnts
 	 * @param string             $groupId  The groupId
 	 */
-	public static function addComments(BaseEntityAbstract $entity, $comments = '', $groupId = '')
+	public static function addComments(BaseEntityAbstract $entity, $comments, UserAccount $author = null, $groupId = '')
 	{
 		$className = __CLASS__;
 		$en = new $className();
 		return $en->setEntityId($entity->getId())
 			->setEntityName(get_class($entity))
 			->setComments($comments)
+			->setAuthor($author)
 			->setGroupId(($groupId = trim($groupId)) === '' ? self::genGroupId() : $groupId)
 			->save();
 	}
