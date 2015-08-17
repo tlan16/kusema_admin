@@ -207,7 +207,7 @@ abstract class DaoMap
     public static function setManyToOne($field, $entityClass, $alias = null, $nullable = false)
     {
         if (is_null($alias))
-        $alias = $field;
+        	$alias = $field;
         self::$_tempMap[strtolower(self::$_activeClassRaw)][$field] = array(
                         'type' => 'int',
                         'size' => 10,

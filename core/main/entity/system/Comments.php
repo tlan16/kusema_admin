@@ -7,15 +7,6 @@
  */
 class Comments extends BaseEntityAbstract
 {
-	const TYPE_NORMAL = 'NORMAL';
-	const TYPE_SYSTEM = 'SYSTEM';
-	const TYPE_PURCHASING = 'PURCHASING';
-	const TYPE_WAREHOUSE = 'WAREHOUSE';
-	const TYPE_ACCOUNTING = 'ACCOUNTING';
-	const TYPE_CUSTOMER = 'CUSTOMER';
-	const TYPE_SALES = 'SALES';
-	const TYPE_WORKSHOP = 'WORKSHOP';
-	const TYPE_MEMO = 'MEMO';
 	/**
 	 * The id of the entity
 	 *
@@ -35,17 +26,17 @@ class Comments extends BaseEntityAbstract
 	 */
 	private $comments;
 	/**
-	 * The type of the comments
-	 *
-	 * @var string
-	 */
-	private $type;
-	/**
 	 * The groupId of a couple of comments
 	 *
 	 * @var string
 	 */
 	private $groupId;
+	/**
+	 * The author
+	 * 
+	 * @var UserAccount
+	 */
+	protected $author = null;
 	/**
 	 * The cached groupid
 	 *
@@ -72,14 +63,13 @@ class Comments extends BaseEntityAbstract
 	 * @param string             $comments The comemnts
 	 * @param string             $groupId  The groupId
 	 */
-	public static function addComments(BaseEntityAbstract $entity, $comments = '', $type = self::TYPE_NORMAL, $groupId = '')
+	public static function addComments(BaseEntityAbstract $entity, $comments = '', $groupId = '')
 	{
 		$className = __CLASS__;
 		$en = new $className();
 		return $en->setEntityId($entity->getId())
 			->setEntityName(get_class($entity))
 			->setComments($comments)
-			->setType($type)
 			->setGroupId(($groupId = trim($groupId)) === '' ? self::genGroupId() : $groupId)
 			->save();
 	}
@@ -168,27 +158,6 @@ class Comments extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
-	 * Getter for type
-	 *
-	 * @return
-	 */
-	public function getType()
-	{
-	    return $this->type;
-	}
-	/**
-	 * Setter for type
-	 *
-	 * @param unkown $value The type
-	 *
-	 * @return Comments
-	 */
-	public function setType($value)
-	{
-	    $this->type = $value;
-	    return $this;
-	}
-	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
@@ -212,16 +181,15 @@ class Comments extends BaseEntityAbstract
 
 		DaoMap::setIntType('entityId');
 		DaoMap::setStringType('entityName','varchar', 100);
+		DaoMap::setManyToOne('author', 'UserAccount', 'comm_author', true);
 		DaoMap::setStringType('comments','varchar', 255);
 		DaoMap::setStringType('groupId','varchar', 100);
-		DaoMap::setStringType('type','varchar', 50);
 
 		parent::__loadDaoMap();
 
 		DaoMap::createIndex('entityId');
 		DaoMap::createIndex('entityName');
 		DaoMap::createIndex('groupId');
-		DaoMap::createIndex('type');
 
 		DaoMap::commit();
 	}
