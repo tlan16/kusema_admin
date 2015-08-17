@@ -19,6 +19,18 @@ class Person extends BaseEntityAbstract
      */
     private $lastName;
     /**
+     * The email of the person
+     * 
+     * @var unknown
+     */
+    private $email;
+    /**
+     * The monash ID
+     * 
+     * @var string
+     */
+    private $monashId;
+    /**
      * The useraccounts of the person
      * @var array
      */
@@ -88,6 +100,7 @@ class Person extends BaseEntityAbstract
         $this->lastName = $LastName;
         return $this;
     }
+    
     /**
      * getting the fullname of the person
      *
@@ -134,6 +147,8 @@ class Person extends BaseEntityAbstract
         DaoMap::begin($this, 'p');
         DaoMap::setStringType('firstName');
         DaoMap::setStringType('lastName');
+        DaoMap::setStringType('email');
+        DaoMap::setStringType('monashId');
         DaoMap::setOneToMany('userAccounts', 'UserAccount', 'ua');
         parent::__loadDaoMap();
         
