@@ -1,11 +1,11 @@
 <?php
-/** Comments Entity
+/** Answer Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class Comments extends BaseEntityAbstract
+class Answer extends BaseEntityAbstract
 {
 	/**
 	 * The id of the entity
@@ -62,7 +62,7 @@ class Comments extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * add Comments
+	 * add Answer
 	 *
 	 * @param BaseEntityAbstract $entity   The entity
 	 * @param string             $title    The title
@@ -70,7 +70,7 @@ class Comments extends BaseEntityAbstract
 	 * @param UserAccount        $author   The author of the comments
 	 * @param string             $groupId  The groupId
 	 */
-	public static function addComments(BaseEntityAbstract $entity, $title, $content, UserAccount $author = null)
+	public static function addAnswer(BaseEntityAbstract $entity, $title, $content, UserAccount $author = null)
 	{
 		$className = __CLASS__;
 		$en = new $className();
@@ -83,23 +83,11 @@ class Comments extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::getJson()
-	 */
-	public function getJson($extra = array(), $reset = false)
-	{
-// 		$array = $extra;
-// 	    if(!$this->isJsonLoaded($reset))
-// 	    {
-// 	    }
-	    return parent::getJson($array, $reset);
-	}
-	/**
-	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'comm');
+		DaoMap::begin($this, 'ans');
 				
 		parent::__loadDaoMap();
 		

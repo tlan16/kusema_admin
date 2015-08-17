@@ -2,6 +2,30 @@
 class InfoEntityAbstract extends BaseEntityAbstract
 {
 	/**
+	 * The comments
+	 *
+	 * @var string
+	 */
+	private $content;
+	/**
+	 * The title
+	 *
+	 * @var string
+	 */
+	private $title;
+	/**
+	 * The author
+	 *
+	 * @var UserAccount
+	 */
+	protected $author = null;
+	/**
+	 * The author name
+	 * 
+	 * @var string
+	 */
+	private $authorName;
+	/**
 	 * The cache for info
 	 *
 	 * @var array
@@ -112,11 +136,30 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		if(!$this->isJsonLoaded($reset))
+		{
+			$array['createdBy'] = array('id'=> $this->getCreatedBy()->getId(), 'person' => $this->getCreatedBy()->getPerson()->getJson());
+			$array['updatedBy'] = array('id'=> $this->getUpdatedBy()->getId(), 'person' => $this->getUpdatedBy()->getPerson()->getJson());
+			$array['author'] = $this->getAuthor() instanceof UserAccount ? $this->getAuthor()->getJson() : null;
+		}
+		return parent::getJson($array, $reset);
+	}
+	/**
+	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
 	 */
 	public function __loadDaoMap()
 	{
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
+		DaoMap::setStringType('title');
+		DaoMap::setStringType('content');
+		DaoMap::setStringType('authorName');
+		DaoMap::setManyToOne('author', 'UserAccount', get_class($this) . '_au', true);
 		parent::__loadDaoMap();
 	}
 }
