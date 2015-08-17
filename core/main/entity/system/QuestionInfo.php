@@ -1,11 +1,11 @@
 <?php
-/** AnswerInfo Entity
+/** QuestionInfo Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class AnswerInfo extends InfoTypeAbstract
+class QuestionInfo extends InfoAbstract
 {
 	/**
 	 * (non-PHPdoc)
@@ -13,7 +13,7 @@ class AnswerInfo extends InfoTypeAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'ans_info_type');
+		DaoMap::begin($this, 'quest_info');
 	
 		parent::__loadDaoMap();
 	

@@ -5,7 +5,7 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class QuestionInfoType extends InfoEntityAbstract
+class QuestionInfoType extends InfoTypeAbstract
 {
 	/**
 	 * (non-PHPdoc)
