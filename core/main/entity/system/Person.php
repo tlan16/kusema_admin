@@ -21,7 +21,7 @@ class Person extends BaseEntityAbstract
     /**
      * The email of the person
      * 
-     * @var unknown
+     * @var string
      */
     private $email;
     /**
@@ -99,6 +99,44 @@ class Person extends BaseEntityAbstract
     {
         $this->lastName = $LastName;
         return $this;
+    }
+    /**
+     * getter for email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+    	return $this->email;
+    }
+    /**
+     * Setter for email
+     *
+     * @return Person
+     */
+    public function setemail($email)
+    {
+    	$this->email = $email;
+    	return $this;
+    }
+    /**
+     * getter for monashID
+     *
+     * @return string
+     */
+    public function getMonashID()
+    {
+    	return $this->monashID;
+    }
+    /**
+     * Setter for monashID
+     *
+     * @return Person
+     */
+    public function setMonashID($monashID)
+    {
+    	$this->monashID = $monashID;
+    	return $this;
     }
     
     /**
