@@ -61,6 +61,7 @@ class Comments extends BaseEntityAbstract
 	 *
 	 * @param BaseEntityAbstract $entity   The entity
 	 * @param string             $comments The comemnts
+	 * @param UserAccount        $author   The author of the comments
 	 * @param string             $groupId  The groupId
 	 */
 	public static function addComments(BaseEntityAbstract $entity, $comments, UserAccount $author = null, $groupId = '')
