@@ -170,8 +170,11 @@ class SystemSettings extends BaseEntityAbstract
 		DaoMap::createUniqueIndex('type');
 		DaoMap::commit();
 	}
-	public static function getByType($type)
+	public static function getByType($type, $activeOnly = true)
 	{
-		return count(self::getAllByCriteria('type = ?', array(trim($type)), true, 1, 1, array('id'=> 'desc'))) > 0 ? self::getAllByCriteria('type = ?', array(trim($type)))[0] : null;
+		$type = trim($type);
+		$activeOnly = (intval($activeOnly) === 1);
+		$objs = self::getAllByCriteria('type = ?', array($type), $activeOnly, 1, 1);
+		return count($objs) > 0 ? $objs[0] : null;
 	}
 }

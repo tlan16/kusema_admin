@@ -275,7 +275,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	{
 		$class = get_called_class();
 		$refId = trim($refId);
-		$activeOnly = ($activeOnly === true);
+		$activeOnly = (intval($activeOnly) === 1);
 		$objs = $class::getAllByCriteria('refId = ?', array($refId), $activeOnly, 1, 1);
 		return count($objs) > 0 ? $objs[0] : null;
 	}
