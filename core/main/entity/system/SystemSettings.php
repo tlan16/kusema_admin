@@ -8,20 +8,6 @@
  */
 class SystemSettings extends BaseEntityAbstract
 {
-	const TYPE_B2B_SOAP_WSDL = 'b2b_soap_wsdl';
-	const TYPE_B2B_SOAP_USER = 'b2b_soap_user';
-	const TYPE_B2B_SOAP_KEY = 'b2b_soap_key';
-	const TYPE_B2B_SOAP_TIMEZONE = 'b2b_soap_timezone';
-	const TYPE_B2B_SOAP_LAST_IMPORT_TIME = 'b2b_soap_last_import_time';
-	const TYPE_SYSTEM_TIMEZONE = 'system_timezone';
-	const TYPE_ASSET_ROOT_DIR = 'asset_root_dir';
-	const TYPE_PRODUCT_LAST_UPDATED = 'product_last_updated';
-	const TYPE_EMAIL_SENDING_SERVER = 'sending_server_conf';
-	const TYPE_EMAIL_DEFAULT_SYSTEM_EMAIL = 'sys_email_addr';
-	const TYPE_ALLOW_NEGTIVE_STOCK = 'allow_neg_stock';
-	const TYPE_LAST_NEW_PRODUCT_PULL = 'last_new_product_pull';
-	const TYPE_LAST_NEW_PRODUCT_PUSH = 'last_new_price_push';
-	const TYPE_LAST_PRODUCT_PULL_ID = 'last_product_pull_id';
 	/**
 	 * The value of the setting
 	 * 
