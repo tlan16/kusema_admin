@@ -91,6 +91,9 @@ class Comments extends InfoEntityAbstract
 		
 		DaoMap::setIntType('entityId');
 		DaoMap::setStringType('entityName','varchar', 100);
+		
+		DaoMap::createIndex('entityId');
+		DaoMap::createIndex('entityName');
 
 		DaoMap::commit();
 	}
