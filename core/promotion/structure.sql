@@ -94,6 +94,8 @@ CREATE TABLE `comments` (
 	,INDEX (`title`)
 	,INDEX (`authorName`)
 	,INDEX (`refId`)
+	,INDEX (`entityId`)
+	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `commentsinfo`;
 CREATE TABLE `commentsinfo` (
@@ -243,6 +245,54 @@ CREATE TABLE `systemsettings` (
 	,INDEX (`updatedById`)
 	,UNIQUE INDEX (`type`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `topic`;
+CREATE TABLE `topic` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(100) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `unit`;
+CREATE TABLE `unit` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(100) NOT NULL DEFAULT '',
+	`code` varchar(25) NOT NULL DEFAULT '',
+	`year` int(2) unsigned NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
+	,INDEX (`code`)
+	,INDEX (`year`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `unit_topic`;
+CREATE TABLE `unit_topic` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`unitId` int(10) unsigned NOT NULL DEFAULT 0,
+	`topicId` int(10) unsigned NOT NULL DEFAULT 0,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`unitId`)
+	,INDEX (`topicId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `useraccount`;
 CREATE TABLE `useraccount` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -270,6 +320,40 @@ CREATE TABLE `role_useraccount` (
 	UNIQUE KEY `uniq_role_useraccount` (`roleId`,`useraccountId`),
 	KEY `idx_role_useraccount_roleId` (`roleId`),
 	KEY `idx_role_useraccount_useraccountId` (`useraccountId`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `userprofile`;
+CREATE TABLE `userprofile` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`personId` int(10) unsigned NOT NULL DEFAULT 0,
+	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
+	`entityName` varchar(100) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`personId`)
+	,INDEX (`typeId`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`entityId`)
+	,INDEX (`entityName`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `userprofiletype`;
+CREATE TABLE `userprofiletype` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(100) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 
 -- Completed CRUD Setup.
