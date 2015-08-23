@@ -5,7 +5,7 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class Answer extends BaseEntityAbstract
+class Answer extends InfoEntityAbstract
 {
 	/**
 	 * The id of the entity
@@ -33,7 +33,7 @@ class Answer extends BaseEntityAbstract
 	 *
 	 * @param int $value The entity id
 	 *
-	 * @return Comments
+	 * @return Answer
 	 */
 	public function setEntityId($value)
 	{
@@ -54,7 +54,7 @@ class Answer extends BaseEntityAbstract
 	 *
 	 * @param string $value The entityName
 	 *
-	 * @return Comments
+	 * @return Answer
 	 */
 	public function setEntityName($value)
 	{
@@ -62,24 +62,17 @@ class Answer extends BaseEntityAbstract
 		return $this;
 	}
 	/**
-	 * add Answer
-	 *
-	 * @param BaseEntityAbstract $entity   The entity
-	 * @param string             $title    The title
-	 * @param string             $content  The comemnts
-	 * @param UserAccount        $author   The author of the comments
-	 * @param string             $groupId  The groupId
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
 	 */
-	public static function addAnswer(BaseEntityAbstract $entity, $title, $content, UserAccount $author = null)
+	public function getJson($extra = array(), $reset = false)
 	{
-		$className = __CLASS__;
-		$en = new $className();
-		return $en->setEntityId($entity->getId())
-			->setEntityName(get_class($entity))
-			->setTitle($title)
-			->setContent($content)
-			->setAuthor($author)
-			->save();
+		$array = $extra;
+		if(!$this->isJsonLoaded($reset))
+		{
+			$array['Question'] = ($this->getEntityName() === 'Question' && ($obj = Question::get($this->getEntityId())) instanceof Question) ? $obj->getJson() : null;
+		}
+		return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -92,8 +85,103 @@ class Answer extends BaseEntityAbstract
 		parent::__loadDaoMap();
 		
 		DaoMap::setIntType('entityId');
-		DaoMap::setStringType('entityName','varchar', 100);
+		DaoMap::setStringType('entityName','varchar', 50);
 
 		DaoMap::commit();
+	}
+	/**
+	 * create a Answer
+	 * 
+	 * @param string				$title
+	 * @param string	 			$content
+	 * @param BaseEntityAbstract	$entity
+	 * @param string 				$refId
+	 * @param UserAccount			$author
+	 * @param string 				$authorName
+	 * @param bool					$active
+	 * 
+	 * @return Answer
+	 * @throws Exception
+	 */
+	public static function create($title, $content, BaseEntityAbstract $entity, $refId = null, $author = null, $authorName = null, $active = true)
+	{
+		if(($title = trim($title)) === '')
+			throw new Exception('Title for a ' . __CLASS__ . ' must not be empty');
+		if(($content = trim($content)) === '')
+			throw new Exception('Content for a ' . __CLASS__ . ' must be null or a non-empty string');
+		if(($refId = StringUtilsAbstract::nullOrString($refId)) !== null && $refId === '')
+			throw new Exception('RefId for a ' . __CLASS__ . ' must not be empty');
+		if($author !== null && !$author instanceof UserAccount)
+			throw new Exception('Author for a ' . __CLASS__ . ' must be null or instance of UserAccount');
+		if(($authorName = StringUtilsAbstract::nullOrString($authorName)) !== null && $authorName === '')
+			throw new Exception('AuthorName for a ' . __CLASS__ . ' must not be empty');
+	
+		$active = (intval($active) === 1);
+	
+		$obj = self::getByRefId($refId, false); // deactived obj will also be found and replaced
+		$obj = $obj instanceof self ? $obj : new self();
+		$obj->setTitle($title)
+			->setContent($content)
+			->setEntityName(get_class($entity))
+			->setEntityId($entity->getId())
+			->setRefId($refId)
+			->setAuthor($author)
+			->setAuthorName($authorName)
+			->setActive($active)
+			->save();
+		return $obj;
+	}
+	/**
+	 * create a Answer by Question
+	 * 
+	 * @param string 		$title
+	 * @param string 		$content
+	 * @param Question 		$question
+	 * @param string 		$refId
+	 * @param UserAccount	$author
+	 * @param string 		$authorName
+	 * @param bool			$active
+	 * 
+	 * @return Answer
+	 */
+	public static function createByQuestion($title, $content, Question $question, $refId = null, $author = null, $authorName = null, $active = true)
+	{
+		$obj = self::create($title, $content, $question, $refId, $author, $authorName, $active);
+		return $obj;
+	}
+	/**
+	 * create a comment for this Answer
+	 * 
+	 * @param string 		$title
+	 * @param string 		$content
+	 * @param string 		$refId
+	 * @param UserAccount 	$author
+	 * @param string 		$authorName
+	 * @param bool	 		$active
+	 */
+	public function addComments($title, $content, $refId = null, $author = null, $authorName = null, $active = true) {
+		$obj = Comments::createByAnswer($title, $content, $this, $refId, $author, $authorName, $active);
+		return $obj;
+	}
+	/**
+	 * get Comments for this Answer
+	 *
+	 * @param string 	$criteria
+	 * @param array 	$params
+	 * @param bool	 	$activeOnly
+	 * @param int	 	$pageNo
+	 * @param int		$pageSize
+	 * @param array		$orderBy
+	 * @param array		$stats
+	 * 
+	 * @return array Comments
+	 */
+	public function getComments($criteria = '', $params = array(), $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+	{
+		$criteria = trim($criteria) . (trim($criteria) === '' ? '' : ' and ') . 'entityName = ? and entityId = ?';
+		$params[] = get_class();
+		$params[] = $this->getId();
+		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
+		return $objs;
 	}
 }

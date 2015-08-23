@@ -2,17 +2,17 @@
 class InfoEntityAbstract extends BaseEntityAbstract
 {
 	/**
-	 * The comments
-	 *
-	 * @var string
-	 */
-	private $content;
-	/**
 	 * The title
 	 *
 	 * @var string
 	 */
 	private $title;
+	/**
+	 * The content
+	 *
+	 * @var string
+	 */
+	private $content;
 	/**
 	 * The author
 	 *
@@ -24,7 +24,13 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * 
 	 * @var string
 	 */
-	private $authorName;
+	private $authorName = null;
+	/**
+	 * The reference ID (e.g. kusema web forum id)
+	 * 
+	 * @var string
+	 */
+	private $refId = null;
 	/**
 	 * The cache for info
 	 *
@@ -37,6 +43,103 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @var multiple:InfoAbstract
 	 */
 	protected $infos;
+	
+	/**
+	 * getter for title
+	 *
+	 * @return string
+	 */
+	public function getTitle()
+	{
+	    return $this->title;
+	}
+	/**
+	 * Setter for title
+	 *
+	 * @return InfoEntityAbstract
+	 */
+	public function setTitle($title)
+	{
+	    $this->title = $title;
+	    return $this;
+	}
+	/**
+	 * getter for content
+	 *
+	 * @return string
+	 */
+	public function getContent()
+	{
+	    return $this->content;
+	}
+	/**
+	 * Setter for content
+	 *
+	 * @return InfoEntityAbstract
+	 */
+	public function setContent($content)
+	{
+	    $this->content = $content;
+	    return $this;
+	}
+	/**
+	 * getter for author
+	 *
+	 * @return UserAccount|null
+	 */
+	public function getAuthor()
+	{
+		$this->loadManyToOne('author');
+	    return $this->author;
+	}
+	/**
+	 * getter for authorName
+	 *
+	 * @return string
+	 */
+	public function getAuthorName()
+	{
+	    return $this->authorName;
+	}
+	/**
+	 * Setter for authorName
+	 *
+	 * @return InfoEntityAbstract
+	 */
+	public function setAuthorName($authorName)
+	{
+	    $this->authorName = $authorName;
+	    return $this;
+	}
+	/**
+	 * getter for refId
+	 *
+	 * @return string
+	 */
+	public function getRefId()
+	{
+	    return $this->refId;
+	}
+	/**
+	 * Setter for refId
+	 *
+	 * @return InfoEntityAbstract
+	 */
+	public function setRefId($refId)
+	{
+	    $this->refId = $refId;
+	    return $this;
+	}
+	/**
+	 * Setter for author
+	 *
+	 * @return InfoEntityAbstract
+	 */
+	public function setAuthor($author)
+	{
+	    $this->author = $author;
+	    return $this;
+	}
 	/**
 	 * Getting all the information
 	 *
@@ -157,9 +260,23 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	{
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
 		DaoMap::setStringType('title');
-		DaoMap::setStringType('content');
-		DaoMap::setStringType('authorName');
+		DaoMap::setStringType('content','LONGTEXT');
+		DaoMap::setStringType('authorName', 'varchar', 50, true, null);
 		DaoMap::setManyToOne('author', 'UserAccount', get_class($this) . '_au', true);
+		DaoMap::setStringType('refId', 'varchar', 25, true);
+		
 		parent::__loadDaoMap();
+		
+		DaoMap::createIndex('title');
+		DaoMap::createIndex('authorName');
+		DaoMap::createIndex('refId');
+	}
+	public static function getByRefId($refId, $activeOnly = true)
+	{
+		$class = get_called_class();
+		$refId = trim($refId);
+		$activeOnly = ($activeOnly === true);
+		$objs = $class::getAllByCriteria('refId = ?', array($refId), $activeOnly, 1, 1);
+		return count($objs) > 0 ? $objs[0] : null;
 	}
 }

@@ -383,46 +383,6 @@ abstract class BaseEntityAbstract
     	return (is_array($this->_jsonArray) && count($this->_jsonArray) > 0 );
     }
     /**
-     * Adding the comments for this entity;
-     *
-     * @param string $comments The new comments
-     * @param string $type     The type of the comments
-     * @param string $groupId  The group identifier for the comments
-     *
-     * @return BaseEntityAbstract
-     */
-    public function addComment($comments, $type = Comments::TYPE_NORMAL, $groupId = '', &$newComment = null)
-    {
-    	if((trim($comments)) !== '')
-    		$newComment = Comments::addComments($this, $comments, $type, $groupId);
-    	return $this;
-    }
-    /**
-     * Getting the comments for this entity
-     *
-     * @param string $type
-     * @param string $pageNo
-     * @param int    $pageSize
-     * @param array  $orderBy
-     *
-     * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
-     */
-    public function getComment($type = null, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$pageStats = array())
-    {
-    	if(count($orderBy) === 0)
-    		$orderBy = array('comm.id' => 'desc');
-    	$where = 'entityName = ? and entityId = ?';
-    	$params = array(get_class($this), $this->getId());
-    	if(($type = trim($type)) !== '')
-    	{
-    		$where .= ' AND type = ?';
-    		$params[] = $type;
-    	}
-    	$stats = array();
-    	$results = Comments::getAllByCriteria($where, $params, true, $pageNo, $pageSize, $orderBy, $stats);
-    	return $results;
-    }
-    /**
      * Adding a log to this entity
      *
      * @param string $msg

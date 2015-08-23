@@ -202,7 +202,6 @@ abstract class StringUtilsAbstract
 		}
 		return isset($fileSuffix[0]) ? "unknown/" . trim($fileSuffix[0], ".") : "text/plain";
 	}
-	
 	public static function permute($items, &$return = array(), $perms = array()) {
 		if (empty($items)) { 
 	        $return[] = $perms;
@@ -216,5 +215,7 @@ abstract class StringUtilsAbstract
 	         }
 	    }
 	}
-	
+	public static function nullOrString($string) {
+		return ($string === null ? null : trim($string));
+	}
 }

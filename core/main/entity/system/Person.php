@@ -120,22 +120,22 @@ class Person extends BaseEntityAbstract
     	return $this;
     }
     /**
-     * getter for monashID
+     * getter for monashId
      *
      * @return string
      */
     public function getMonashID()
     {
-    	return $this->monashID;
+    	return $this->monashId;
     }
     /**
-     * Setter for monashID
+     * Setter for monashId
      *
      * @return Person
      */
-    public function setMonashID($monashID)
+    public function setMonashID($monashId)
     {
-    	$this->monashID = $monashID;
+    	$this->monashId = $monashId;
     	return $this;
     }
     
@@ -185,13 +185,15 @@ class Person extends BaseEntityAbstract
         DaoMap::begin($this, 'p');
         DaoMap::setStringType('firstName');
         DaoMap::setStringType('lastName');
-        DaoMap::setStringType('email');
-        DaoMap::setStringType('monashId');
+        DaoMap::setStringType('email', 'varchar', 100, true);
+        DaoMap::setStringType('monashId', 'varchar', 25, true);
         DaoMap::setOneToMany('userAccounts', 'UserAccount', 'ua');
         parent::__loadDaoMap();
         
         DaoMap::createIndex('firstName');
         DaoMap::createIndex('lastName');
+        DaoMap::createIndex('email');
+        DaoMap::createIndex('monashId');
         DaoMap::commit();
     }
 }
