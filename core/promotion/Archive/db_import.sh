@@ -1,13 +1,25 @@
-FN=`date +"%d_%m_%Y.7z"`
-DBN=bpcinternal
-echo FileName: $FN
-echo DatabaseName: $DBN
+BASEDIR=$(dirname $0)
+FNAME=`date +"%d_%m_%Y"`
+FPASSWORD=
+DBNAME=kusemaadmin
+DBHOST=localhost
+DBUSERNAME=root
+DBPASSWORD=root
 
-$ read -rsp $'Press any key to continue...\n' -n1 key
+echo Base Directory: $BASEDIR
+echo File Name: $FNAME
+echo Database Name: $DBNAME
 
-mysql -u root -proot -e "DROP DATABASE IF EXISTS $DBN;"
-mysql -u root -proot -e "CREATE DATABASE $DBN DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+echo DROP DATABASE IF EXISTS $DBNAME
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD -e "DROP DATABASE IF EXISTS $DBNAME;"
+echo CREATE DATABASE $DBNAME DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD -e "CREATE DATABASE $DBNAME DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
 
-7z x -so -pbudget123pc $FN | mysql -u root -proot $DBN
+echo START: import database
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../structure.sql
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../useraccount.sql
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../person.sql
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../role.sql
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../role_useraccount.sql
 
-echo "Done All"
+echo Done
