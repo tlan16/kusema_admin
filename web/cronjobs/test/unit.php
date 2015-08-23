@@ -19,7 +19,9 @@ try {
 		{
 			$data = json_decode($line);
 			echo 'data: ' . PHP_EOL . print_r($data,true);
-			$obj = Unit::create(($name = $data->name), ($code = $data->code), intval($code[3]));
+			$code = trim($data->code);
+			$name = trim(str_replace($code, '', $data->name));
+			$obj = Unit::create($name, $code, intval($code[3]));
 			echo get_class($obj) . ": " . PHP_EOL . print_r(json_decode(json_encode($obj->getJson()),true),true);
 		}
 		$rowCount++;
