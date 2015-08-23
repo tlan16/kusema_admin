@@ -35,9 +35,9 @@ class UserAccount extends BaseEntityAbstract
     /**
      * The roles that this person has
      *
-     * @var Role
+     * @var array
      */
-    protected $role;
+    protected $roles;
     /**
      * getter UserName
      *
@@ -103,6 +103,70 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
+     * getter Roles
+     *
+     * @return Roles
+     */
+    public function getRoles()
+    {
+        $this->loadManyToMany("roles");
+        return $this->roles;
+    }
+    /**
+     * setter Roles
+     *
+     * @param array $Roles The roles that this user has
+     *
+     * @return UserAccount
+     */
+    public function setRoles(array $Roles)
+    {
+        $this->roles = $Roles;
+        return $this;
+    }
+    /**
+     * Clear all the roles
+     *
+     * @return UserAccount
+     */
+    public function clearRoles()
+    {
+    	if(trim($this->getId()) === '')
+    		return $this;
+    	foreach($this->getRoles() as $role)
+    		$this->removeRole($role);
+    	return $this;
+    }
+    /**
+     * Adding a role
+     *
+     * @param Role $role
+     *
+     * @throws CoreException
+     * @return UserAccount
+     */
+    public function addRole(Role $role)
+    {
+    	if(trim($this->getId()) === '')
+    		throw new CoreException('Save this useraccount first!');
+    	self::saveManyToManyJoin($role, $this);
+    	return $this;
+    }
+    /**
+     * Deleting the role
+     *
+     * @param Role $role
+     *
+     * @return UserAccount
+     */
+    public function removeRole(Role $role)
+    {
+    	if(trim($this->getId()) === '')
+    		return $this;
+    	self::deleteManyToManyJoin($role, $this);
+    	return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */
@@ -120,7 +184,9 @@ class UserAccount extends BaseEntityAbstract
     	if(!$this->isJsonLoaded($reset))
     	{
     		$array['person'] = $this->getPerson()->getJson();
-    		$array['role'] = $this->getRole() instanceof Role ? $this->getRole()->getJson() : null;
+    		$array['roles'] = array();
+    		foreach($this->getRoles() as $role)
+    			$array['roles'][] = $role->getJson();
     	}
     	$array = parent::getJson($array, $reset);
     	unset($array['password']);
@@ -136,7 +202,7 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
         DaoMap::setManyToOne("person", "Person", "p");
-        DaoMap::setManyToOne("role", "Role", 'ua_r', false);
+        DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
         parent::__loadDaoMap();
 
         DaoMap::createUniqueIndex('username');

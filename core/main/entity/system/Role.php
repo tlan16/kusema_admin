@@ -8,11 +8,23 @@
  */
 class Role extends BaseEntityAbstract
 {
+	private static $_cache;
+    /**
+     * ID the SYSTEM ADMIN role
+     *
+     * @var int
+     */
+    const ID_SYSTEM_ADMIN = 5;
     /**
      * The name of the role
      * @var string
      */
     private $name;
+    /**
+     * The useraccounts of the person
+     * @var array
+     */
+    protected $userAccounts;
     /**
      * getter Name
      *
@@ -35,6 +47,27 @@ class Role extends BaseEntityAbstract
         return $this;
     }
     /**
+     * getter UserAccounts
+     *
+     * @return array
+     */
+    public function getUserAccounts()
+    {
+        return $this->userAccounts;
+    }
+    /**
+     * setter UserAccounts
+     *
+     * @param array $UserAccounts The useraccounts linked to that role
+     *
+     * @return Role
+     */
+    public function setUserAccounts(array $UserAccounts)
+    {
+        $this->userAccounts = $UserAccounts;
+        return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */
@@ -52,6 +85,7 @@ class Role extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'r');
         DaoMap::setStringType('name', 'varchar');
+        DaoMap::setManyToMany("userAccounts", "UserAccount", DaoMap::RIGHT_SIDE, "ua");
         parent::__loadDaoMap();
         DaoMap::createUniqueIndex('name');
         DaoMap::commit();
