@@ -449,11 +449,11 @@ abstract class BaseEntityAbstract
     /**
      * Find all entities
      *
-     * @param string  $activeOnly
-     * @param string  $pageNo
-     * @param unknown $pageSize
-     * @param unknown $orderBy
-     * @param array   $stats
+     * @param bool  	$activeOnly
+     * @param int		$pageNo
+     * @param int 		$pageSize
+     * @param array 	$orderBy
+     * @param array   	$stats
      *
      * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
      */
@@ -466,13 +466,13 @@ abstract class BaseEntityAbstract
     /**
      * Find all entities with criterias
      *
-     * @param unknown $criteria
-     * @param unknown $params
-     * @param string $activeOnly
-     * @param string $pageNo
-     * @param unknown $pageSize
-     * @param unknown $orderBy
-     * @param array   $stats
+     * @param string	$criteria
+     * @param array		$params
+     * @param bool		$activeOnly
+     * @param int		$pageNo
+     * @param int		$pageSize
+     * @param array		$orderBy
+     * @param array   	$stats
      *
      * @return Ambigous <multitype:, multitype:BaseEntityAbstract >
      */
