@@ -44,7 +44,9 @@ CREATE TABLE `answer` (
 DROP TABLE IF EXISTS `answerinfo`;
 CREATE TABLE `answerinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` varchar(255) NOT NULL DEFAULT '',
+	`value` varchar(255) NULL DEFAULT '',
+	`entityId` int(10) unsigned NULL DEFAULT 0,
+	`entityName` varchar(50) NULL DEFAULT '',
 	`answerId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
@@ -57,6 +59,9 @@ CREATE TABLE `answerinfo` (
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
+	,INDEX (`value`)
+	,INDEX (`entityId`)
+	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `answerinfotype`;
 CREATE TABLE `answerinfotype` (
@@ -100,7 +105,9 @@ CREATE TABLE `comments` (
 DROP TABLE IF EXISTS `commentsinfo`;
 CREATE TABLE `commentsinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` varchar(255) NOT NULL DEFAULT '',
+	`value` varchar(255) NULL DEFAULT '',
+	`entityId` int(10) unsigned NULL DEFAULT 0,
+	`entityName` varchar(50) NULL DEFAULT '',
 	`commentsId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
@@ -113,6 +120,9 @@ CREATE TABLE `commentsinfo` (
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
+	,INDEX (`value`)
+	,INDEX (`entityId`)
+	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `commentsinfotype`;
 CREATE TABLE `commentsinfotype` (
@@ -127,26 +137,6 @@ CREATE TABLE `commentsinfotype` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
-) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `person`;
-CREATE TABLE `person` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`firstName` varchar(50) NOT NULL DEFAULT '',
-	`lastName` varchar(50) NOT NULL DEFAULT '',
-	`email` varchar(100) NULL DEFAULT '',
-	`monashId` varchar(25) NULL DEFAULT '',
-	`active` bool NOT NULL DEFAULT 1,
-	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
-	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`)
-	,INDEX (`createdById`)
-	,INDEX (`updatedById`)
-	,INDEX (`firstName`)
-	,INDEX (`lastName`)
-	,INDEX (`email`)
-	,INDEX (`monashId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `question`;
 CREATE TABLE `question` (
@@ -172,7 +162,9 @@ CREATE TABLE `question` (
 DROP TABLE IF EXISTS `questioninfo`;
 CREATE TABLE `questioninfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` varchar(255) NOT NULL DEFAULT '',
+	`value` varchar(255) NULL DEFAULT '',
+	`entityId` int(10) unsigned NULL DEFAULT 0,
+	`entityName` varchar(50) NULL DEFAULT '',
 	`questionId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
@@ -185,6 +177,9 @@ CREATE TABLE `questioninfo` (
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
+	,INDEX (`value`)
+	,INDEX (`entityId`)
+	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `questioninfotype`;
 CREATE TABLE `questioninfotype` (
@@ -199,51 +194,6 @@ CREATE TABLE `questioninfotype` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
-) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(50) NOT NULL DEFAULT '',
-	`active` bool NOT NULL DEFAULT 1,
-	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
-	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`)
-	,INDEX (`createdById`)
-	,INDEX (`updatedById`)
-	,UNIQUE INDEX (`name`)
-) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `session`;
-CREATE TABLE `session` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`key` varchar(32) NOT NULL DEFAULT '',
-	`data` longtext NOT NULL ,
-	`active` bool NOT NULL DEFAULT 1,
-	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
-	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`)
-	,INDEX (`createdById`)
-	,INDEX (`updatedById`)
-	,UNIQUE INDEX (`key`)
-) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `systemsettings`;
-CREATE TABLE `systemsettings` (
-	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`type` varchar(50) NOT NULL DEFAULT '',
-	`value` varchar(255) NOT NULL DEFAULT '',
-	`description` varchar(100) NOT NULL DEFAULT '',
-	`active` bool NOT NULL DEFAULT 1,
-	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
-	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`)
-	,INDEX (`createdById`)
-	,INDEX (`updatedById`)
-	,UNIQUE INDEX (`type`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `topic`;
 CREATE TABLE `topic` (
@@ -292,6 +242,71 @@ CREATE TABLE `unit_topic` (
 	,INDEX (`topicId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `person`;
+CREATE TABLE `person` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`firstName` varchar(50) NOT NULL DEFAULT '',
+	`lastName` varchar(50) NOT NULL DEFAULT '',
+	`email` varchar(100) NULL DEFAULT '',
+	`monashId` varchar(25) NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`firstName`)
+	,INDEX (`lastName`)
+	,INDEX (`email`)
+	,INDEX (`monashId`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,UNIQUE INDEX (`name`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`key` varchar(32) NOT NULL DEFAULT '',
+	`data` longtext NOT NULL ,
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,UNIQUE INDEX (`key`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `systemsettings`;
+CREATE TABLE `systemsettings` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`type` varchar(50) NOT NULL DEFAULT '',
+	`value` varchar(255) NOT NULL DEFAULT '',
+	`description` varchar(100) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,UNIQUE INDEX (`type`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `useraccount`;
 CREATE TABLE `useraccount` (

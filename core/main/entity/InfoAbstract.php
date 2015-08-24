@@ -8,11 +8,17 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	private $value;
 	/**
-	 * The type of the information
-	 * 
-	 * @var InfoTypeAbstract
+	 * The id of the entity
+	 *
+	 * @var int
 	 */
-	protected $type;
+	private $entityId;
+	/**
+	 * The name of the entity
+	 *
+	 * @var string
+	 */
+	private $entityName;
 	/**
 	 * The class name of the entity
 	 * @var unknown
@@ -28,24 +34,66 @@ class InfoAbstract extends BaseEntityAbstract
 	}
 	/**
 	 * Getter for the value
-	 * 
+	 *
 	 * @return string
 	 */
-	public function getValue() 
+	public function getValue()
 	{
-	    return $this->value;
+		return $this->value;
 	}
 	/**
 	 * Setter for the value
-	 * 
+	 *
 	 * @param string $value The value for the information
-	 * 
+	 *
 	 * @return InfoAbstract
 	 */
-	public function setValue($value) 
+	public function setValue($value)
 	{
-	    $this->value = $value;
-	    return $this;
+		$this->value = $value;
+		return $this;
+	}
+	/**
+	 * Getter for EntityId
+	 *
+	 * @return int
+	 */
+	public function getEntityId()
+	{
+		return $this->entityId;
+	}
+	/**
+	 * Setter for entity
+	 *
+	 * @param int $value The entity id
+	 *
+	 * @return Comments
+	 */
+	public function setEntityId($value)
+	{
+		$this->entityId = $value;
+		return $this;
+	}
+	/**
+	 * Getter for entityName
+	 *
+	 * @return string
+	 */
+	public function getEntityName()
+	{
+		return $this->entityName;
+	}
+	/**
+	 * Setter for entityName
+	 *
+	 * @param string $value The entityName
+	 *
+	 * @return Comments
+	 */
+	public function setEntityName($value)
+	{
+		$this->entityName = $value;
+		return $this;
 	}
 	/**
 	 * Getter for the Type
@@ -100,13 +148,20 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @return InfoAbstract
 	 */
-	public static function create(InfoEntityAbstract $entity, InfoTypeAbstract $type, $value, InfoAbstract &$exitsObj = null)
+	public static function create(InfoEntityAbstract $entity, InfoTypeAbstract $type, $value = null, $entity = null, InfoAbstract &$exitsObj = null)
 	{
 		$className = get_called_class();
+		if(!$entity instanceof BaseEntityAbstract && trim($value) === '')
+			throw new Exception('must give entity or value');
+		$value = trim($value) === '' ? null : trim($value);
+		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
+		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
 		$info = ($exitsObj instanceof InfoAbstract ? $exitsObj : new $className());
 		$info->setEntity($entity)
 			->setType($type)
 			->setValue($value)
+			->setEntityName($entityName)
+			->setEntityId($entityId)
 			->save();
 		return $info;
 	}
@@ -154,9 +209,16 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::setStringType('value', 'varchar', 255);
+		DaoMap::setStringType('value', 'varchar', 255, true);
+		DaoMap::setIntType('entityId', 'int', 10, true, true);
+		DaoMap::setStringType('entityName','varchar', 50, true);
 		DaoMap::setManyToOne(StringUtilsAbstract::lcFirst($this->_entityClass), $this->_entityClass, strtolower(get_class($this)) . '_entity');
 		DaoMap::setManyToOne('type', get_class($this) . 'Type', strtolower(get_class($this)) . '_info_type');
+		
 		parent::__loadDaoMap();
+		
+		DaoMap::createIndex('value');
+		DaoMap::createIndex('entityId');
+		DaoMap::createIndex('entityName');
 	}
 }
