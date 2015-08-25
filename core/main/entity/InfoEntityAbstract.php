@@ -168,7 +168,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @param string $reset
 	 * @throws EntityException
 	 */
-	public function getInfo($typeId, $entityName = null, $entityId = null, $reset = false)
+	public function getInfo($typeId, $entityName = null, $entityId = null, $value = null, $reset = false)
 	{
 		DaoMap::loadMap($this);
 		$cacheKey = trim($typeId) . trim($entityName) . trim($entityId);
@@ -188,6 +188,11 @@ class InfoEntityAbstract extends BaseEntityAbstract
 			{
 				$sql .= ' and `info`.entityId = ?';
 				$params[] = $entityId;
+			}
+			if(($value = trim($value)) !== '')
+			{
+				$sql .= ' and `info`.value = ?';
+				$params[] = $value;
 			}
 			$result = Dao::getResultsNative($sql, $params, PDO::FETCH_NUM);
 			$this->_cache[$cacheKey] = array_map(create_function('$row', 'return ' . $class . '::get($row[0]);'), $result);
@@ -293,25 +298,25 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$objs = $class::getAllByCriteria('refId = ?', array($refId), intval($activeOnly), 1, 1);
 		return count($objs) > 0 ? $objs[0] : null;
 	}
-	public function voteUp(Person $person)
+	public function voteUp(Person $person, $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
 			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
 		$InfoTypeClass = $class . 'Type';
-		$this->vote($class::VALUE_VOTE_UP, $person);
+		$this->vote($class::VALUE_VOTE_UP, $person, $overRideValue);
 		return $this;
 	}
-	public function voteDown(Person $person)
+	public function voteDown(Person $person, $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
 			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
 		$InfoTypeClass = $class . 'Type';
-		$this->vote($class::VALUE_VOTE_DOWN, $person);
+		$this->vote($class::VALUE_VOTE_DOWN, $person, $overRideValue);
 		return $this;
 	}
-	private function vote($voteType, Person $person)
+	private function vote($voteType, Person $person, $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -321,11 +326,34 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$typeId = $InfoTypeClass::ID_VOTE;
 		if(($typeId = intval($typeId)) === 0)
 			throw new Exception('cannot find const ID_VOTE under class ' . $InfoTypeClass);
-		$this->addInfo($typeId, $person, intval($voteType));
+		$this->addInfo($typeId, $person, intval($voteType), $overRideValue);
 		return $this;
 	}
-	public function getVotes()
+	public function getVotes($entityName = 'Person', $entityId = null, $value = null, $reset = false)
 	{
+		$value = intval($value) === 0 ? null : intval($value);
 		
+		DaoMap::loadMap($this);
+		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
+			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
+		$InfoTypeClass = $class . 'Type';
+		
+		$typeId = $InfoTypeClass::ID_VOTE;
+		if(trim($typeId) === '')
+			return null;
+		
+		$infos = $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		return $infos;
 	}
+	private function addTopic(Topic $topic, $overRideValue = false)
+	{
+		DaoMap::loadMap($this);
+		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
+			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
+		$InfoTypeClass = $class . 'Type';
+		
+		$typeId = $InfoTypeClass::ID_TOPIC;
+		$this->addInfo($typeId, $topic, null, $overRideValue);
+	}
+// 	$typeId, $entity = null, $value = null, $overRideValue = false
 }
