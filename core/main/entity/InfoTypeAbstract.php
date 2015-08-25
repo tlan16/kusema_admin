@@ -59,7 +59,8 @@ class InfoTypeAbstract extends BaseEntityAbstract
 		parent::__loadDaoMap();
 		DaoMap::createIndex('name');
 	}
-	public static function create($name, $active = true) {
+	public static function create($name, $active = true) 
+	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')
 			throw new Exception('Name for a ' . $class . ' must not be empty');

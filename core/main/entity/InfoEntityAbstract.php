@@ -168,19 +168,31 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @param string $reset
 	 * @throws EntityException
 	 */
-	public function getInfo($typeId, $reset = false)
+	public function getInfo($typeId, $entityName = null, $entityId = null, $reset = false)
 	{
 		DaoMap::loadMap($this);
-		if(!isset($this->_cache[$typeId]) || $reset === true)
+		$cacheKey = trim($typeId) . trim($entityName) . trim($entityId);
+		if(!isset($this->_cache[$cacheKey]) || $reset === true)
 		{
 			if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
 				throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
 
-			$sql = 'select value from ' . strtolower($class) . ' `info` where `info`.active = 1 and `info`.' . strtolower(get_class($this)) . 'Id = ? and `info`.TypeId = ?';
-			$result = Dao::getResultsNative($sql, array($this->getId(), $typeId), PDO::FETCH_NUM);
-			$this->_cache[$typeId] = array_map(create_function('$row', 'return $row[0];'), $result);
+			$sql = 'select id from ' . strtolower($class) . ' `info` where `info`.active = 1 and `info`.' . strtolower(get_class($this)) . 'Id = ? and `info`.typeId = ?';
+			$params =  array($this->getId(), $typeId);
+			if(($entityName = trim($entityName)) !== '')
+			{
+				$sql .= ' and `info`.entityName = ?';
+				$params[] = $entityName;
+			}
+			if(($entityId = intval($entityId)) !== 0)
+			{
+				$sql .= ' and `info`.entityId = ?';
+				$params[] = $entityId;
+			}
+			$result = Dao::getResultsNative($sql, $params, PDO::FETCH_NUM);
+			$this->_cache[$cacheKey] = array_map(create_function('$row', 'return ' . $class . '::get($row[0]);'), $result);
 		}
-		return $this->_cache[$typeId];
+		return $this->_cache[$cacheKey];
 	}
 	/**
 	 * adding new value to this entity
@@ -191,7 +203,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	public function addInfo($typeId, $value, $overRideValue = false)
+	public function addInfo($typeId, $entity = null, $value = null, $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -199,25 +211,27 @@ class InfoEntityAbstract extends BaseEntityAbstract
 
 		$InfoTypeClass = $class . 'Type';
 		$infoType = $InfoTypeClass::get($typeId);
+		$typeId = $typeId === null ? null : intval($typeId);
+		$value = StringUtilsAbstract::nullOrString($value);
+		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
+		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
 		if($overRideValue === true)
 		{
 			//clear all info
 			$this->removeInfo($typeId);
 			//create a new
-			$info = $class::create($this, $infoType, $value);
+			$info = $class::create($this, $infoType, $value, $entity);
 		}
 		else
 		{
 			//check whether we have one already
-			$infos = $class::getAllByCriteria(strtolower(get_class($this)).'Id = ? and value = ? and typeId = ?', array($this->getId(), trim($typeId), trim($value)), true, 1 , 1);
-			if(count($infos) > 0)
-				return $this;
-			//create new
-			$info = $class::create($this, $infoType, $value);
+			$infos = $class::getAllByCriteria(strtolower(get_class($this)).'Id = ? and value = ? and typeId = ? and entityId = ? and entityName = ?', array($this->getId(), $value, $typeId, $entityId, $entityName), false, 1 , 1);
+			$info = count($infos) > 0 ? $infos[0] : $class::create($this, $infoType, $value, $entity);		
+			$info->setActive(true)->save();
 		}
 
 		//referesh cache
-		$this->getInfo($typeId, true);
+		$this->getInfo($typeId, $entityName, $entityId, true);
 		return $this;
 	}
 	/**
@@ -259,11 +273,11 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
-		DaoMap::setStringType('title');
+		DaoMap::setStringType('title', 'varchar', 100);
 		DaoMap::setStringType('content','LONGTEXT');
 		DaoMap::setStringType('authorName', 'varchar', 50, true, null);
 		DaoMap::setManyToOne('author', 'UserAccount', get_class($this) . '_au', true);
-		DaoMap::setStringType('refId', 'varchar', 25, true);
+		DaoMap::setStringType('refId', 'varchar', 50, true);
 		
 		parent::__loadDaoMap();
 		
@@ -276,7 +290,42 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$class = get_called_class();
 		$refId = trim($refId);
 		$activeOnly = (intval($activeOnly) === 1);
-		$objs = $class::getAllByCriteria('refId = ?', array($refId), $activeOnly, 1, 1);
+		$objs = $class::getAllByCriteria('refId = ?', array($refId), intval($activeOnly), 1, 1);
 		return count($objs) > 0 ? $objs[0] : null;
+	}
+	public function voteUp(Person $person)
+	{
+		DaoMap::loadMap($this);
+		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
+			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
+		$InfoTypeClass = $class . 'Type';
+		$this->vote($class::VALUE_VOTE_UP, $person);
+		return $this;
+	}
+	public function voteDown(Person $person)
+	{
+		DaoMap::loadMap($this);
+		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
+			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
+		$InfoTypeClass = $class . 'Type';
+		$this->vote($class::VALUE_VOTE_DOWN, $person);
+		return $this;
+	}
+	private function vote($voteType, Person $person)
+	{
+		DaoMap::loadMap($this);
+		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
+			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
+		$InfoTypeClass = $class . 'Type';
+		
+		$typeId = $InfoTypeClass::ID_VOTE;
+		if(($typeId = intval($typeId)) === 0)
+			throw new Exception('cannot find const ID_VOTE under class ' . $InfoTypeClass);
+		$this->addInfo($typeId, $person, intval($voteType));
+		return $this;
+	}
+	public function getVotes()
+	{
+		
 	}
 }

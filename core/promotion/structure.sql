@@ -21,11 +21,11 @@ CREATE TABLE `asset` (
 DROP TABLE IF EXISTS `answer`;
 CREATE TABLE `answer` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`title` varchar(50) NOT NULL DEFAULT '',
+	`title` varchar(100) NOT NULL DEFAULT '',
 	`content` LONGTEXT NOT NULL ,
 	`authorName` varchar(50) NULL ,
 	`authorId` int(10) unsigned NULL DEFAULT NULL,
-	`refId` varchar(25) NULL DEFAULT '',
+	`refId` varchar(50) NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -80,11 +80,11 @@ CREATE TABLE `answerinfotype` (
 DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`title` varchar(50) NOT NULL DEFAULT '',
+	`title` varchar(100) NOT NULL DEFAULT '',
 	`content` LONGTEXT NOT NULL ,
 	`authorName` varchar(50) NULL ,
 	`authorId` int(10) unsigned NULL DEFAULT NULL,
-	`refId` varchar(25) NULL DEFAULT '',
+	`refId` varchar(50) NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -141,11 +141,11 @@ CREATE TABLE `commentsinfotype` (
 DROP TABLE IF EXISTS `question`;
 CREATE TABLE `question` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`title` varchar(50) NOT NULL DEFAULT '',
+	`title` varchar(100) NOT NULL DEFAULT '',
 	`content` LONGTEXT NOT NULL ,
 	`authorName` varchar(50) NULL ,
 	`authorId` int(10) unsigned NULL DEFAULT NULL,
-	`refId` varchar(25) NULL DEFAULT '',
+	`refId` varchar(50) NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,

@@ -1,6 +1,8 @@
 <?php
 class InfoAbstract extends BaseEntityAbstract
 {
+	const VALUE_VOTE_UP = 1;
+	const VALUE_VOTE_DOWN = 2;
 	/**
 	 * The value of the information
 	 * 
@@ -8,17 +10,23 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	private $value;
 	/**
+	 * The type of the information
+	 *
+	 * @var InfoTypeAbstract
+	 */
+	protected $type;
+	/**
 	 * The id of the entity
 	 *
 	 * @var int
 	 */
-	private $entityId;
+	protected $entityId;
 	/**
 	 * The name of the entity
 	 *
 	 * @var string
 	 */
-	private $entityName;
+	protected $entityName;
 	/**
 	 * The class name of the entity
 	 * @var unknown
@@ -148,7 +156,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @return InfoAbstract
 	 */
-	public static function create(InfoEntityAbstract $entity, InfoTypeAbstract $type, $value = null, $entity = null, InfoAbstract &$exitsObj = null)
+	public static function create(InfoEntityAbstract $baseEntity, InfoTypeAbstract $type, $value = null, $entity = null, InfoAbstract &$exitsObj = null)
 	{
 		$className = get_called_class();
 		if(!$entity instanceof BaseEntityAbstract && trim($value) === '')
@@ -157,7 +165,7 @@ class InfoAbstract extends BaseEntityAbstract
 		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
 		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
 		$info = ($exitsObj instanceof InfoAbstract ? $exitsObj : new $className());
-		$info->setEntity($entity)
+		$info->setEntity($baseEntity)
 			->setType($type)
 			->setValue($value)
 			->setEntityName($entityName)
@@ -202,6 +210,21 @@ class InfoAbstract extends BaseEntityAbstract
 			$params[] = $type->getId();
 		}
 		self::updateByCriteria('active = 0', $where, $params);
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		if(!$this->isJsonLoaded($reset))
+		{
+			if(($entityName = trim($this->getEntityName())) !== '' && ($entityId = intval($this->getEntityId())) !== 0)
+				$array[$entityName] = ($obj = $entityName::get($entityId)) instanceof $entityName ? $obj->getJson() : null;
+			$array['type'] = $this->getType()->getJson(); 
+		}
+		return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)
