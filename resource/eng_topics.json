@@ -1,0 +1,240 @@
+{"name":"Electromagnetism"}
+{"name":"Electricity"}
+{"name":"Magnetism"}
+{"name":"Electromagnetic spectrum"}
+{"name":"Optical spectrum"}
+{"name":"Electrostatics"}
+{"name":"Electric charge"}
+{"name":"Coulomb's law"}
+{"name":"Electric field"}
+{"name":"Gauss's law"}
+{"name":"Electric potential"}
+{"name":"Magnetostatics"}
+{"name":"Electric current"}
+{"name":"Ampère's law"}
+{"name":"Magnetic field"}
+{"name":"Magnetic moment"}
+{"name":"Electrodynamics"}
+{"name":"Lorentz force law"}
+{"name":"Electromotive force"}
+{"name":"Electromagnetic induction"}
+{"name":"Faraday-Lenz law"}
+{"name":"Displacement current"}
+{"name":"Maxwell's equations"}
+{"name":"Electromagnetic field"}
+{"name":"Electromagnetic radiation"}
+{"name":"Electrical circuits"}
+{"name":"Electrical resistance"}
+{"name":"Capacitance"}
+{"name":"Inductance"}
+{"name":"Impedance"}
+{"name":"Resonant cavity"}
+{"name":"Waveguide"}
+
+{"name":"Physical laws"}
+{"name":"Ampère's law"}
+{"name":"Coulomb's law"}
+{"name":"Faraday's law of induction"}
+{"name":"Gauss's law"}
+{"name":"Kirchhoff's circuit laws"}
+{"name":"Current law"}
+{"name":"Voltage law"}
+{"name":"Maxwell's equations"}
+{"name":"Gauss's law"}
+{"name":"Faraday's law of induction"}
+{"name":"Ampère's law"}
+{"name":"Ohm's law"}
+
+{"name":"Control engineering"}
+{"name":"Control Theory"}
+{"name":"Adaptive control"}
+{"name":"Control theory"}
+{"name":"Digital control"}
+{"name":"Nonlinear control"}
+{"name":"Optimal control"}
+{"name":"Intelligent control"}
+{"name":"Neural networks"}
+{"name":"Fuzzy control"}
+{"name":"Model predictive control"}
+{"name":"Exponential stability"}
+{"name":"Marginal stability"}
+{"name":"BIBO stability"}
+{"name":"Lyapunov stability"}
+{"name":"Input-to-state (ISS) stability"}
+{"name":"Controllability"}
+{"name":"Observability"}
+{"name":"Negative feedback"}
+{"name":"Positive feedback"}
+{"name":"System identification"}
+{"name":"State observer"}
+{"name":"First principles modeling"}
+{"name":"Least squares"}
+{"name":"Kalman filter"}
+{"name":"Root locus"}
+{"name":"Extended Kalman filter"}
+{"name":"Signal-flow graph"}
+{"name":"State space representation"}
+{"name":"Artificial neural networks"}
+{"name":"Closed-loop controller"}
+{"name":"PID controller"}
+{"name":"Programmable logic controller"}
+{"name":"Embedded controller"}
+{"name":"Field oriented controller"}
+{"name":"Direct torque controller"}
+{"name":"Digital signal controller"}
+{"name":"Pulse-width modulation controller"}
+{"name":"Industrial Control Systems"}
+{"name":"Process Control"}
+{"name":"Distributed Control System"}
+{"name":"Mechatronics"}
+{"name":"Motion control"}
+{"name":"Supervisory control (SCADA)"}
+
+{"name":"Electronics"}
+{"name":"Electrical network"}
+{"name":"Kirchhoff's circuit laws"}
+{"name":"Current law"}
+{"name":"Voltage law"}
+{"name":"Y-delta transform"}
+{"name":"Ohm's law"}
+{"name":"Electrical element"}
+{"name":"Capacitor"}
+{"name":"Inductor"}
+{"name":"Resistor"}
+{"name":"Hall effect sensor"}
+{"name":"Microcontroller"}
+{"name":"Operational amplifier"}
+{"name":"Semiconductors"}
+{"name":"Diode"}
+{"name":"Zener diode"}
+{"name":"Light-emitting diode"}
+{"name":"PIN diode"}
+{"name":"Schottky diode"}
+{"name":"Avalanche diode"}
+{"name":"Laser diode"}
+{"name":"DIAC"}
+{"name":"Thyristor"}
+{"name":"Transistor"}
+{"name":"Bipolar transistor"}
+{"name":"Field effect transistor"}
+{"name":"Darlington transistor"}
+{"name":"IGBT"}
+{"name":"TRIAC"}
+{"name":"Mosfet"}
+{"name":"Electronic design automation"}
+
+{"name":"Power engineering"}
+{"name":"Generation"}
+{"name":"Electrical generator"}
+{"name":"Renewable electricity"}
+{"name":"Hydropower"}
+{"name":"Transmission"}
+{"name":"Electricity pylon"}
+{"name":"Transformer"}
+{"name":"Transmission line"}
+{"name":"Distribution"}
+{"name":"Alternating current"}
+{"name":"Direct current"}
+{"name":"Single-phase electric power"}
+{"name":"Two-phase electric power"}
+{"name":"Three-phase power"}
+{"name":"Power electronics"}
+{"name":"Electro-mechanical"}
+{"name":"Inverter"}
+{"name":"Static VAR compensator"}
+{"name":"Variable-frequency drive"}
+{"name":"Ward Leonard control"}
+
+{"name":"Electric vehicles"}
+{"name":"Electric motor"}
+{"name":"Hybrid electric vehicle"}
+{"name":"Plug-in hybrid"}
+{"name":"Rechargeable battery"}
+{"name":"Vehicle-to-grid"}
+{"name":"Smart Grid"}
+
+{"name":"Signal processing"}
+{"name":"Analog signal processing"}
+{"name":"Digital signal processing"}
+{"name":"Quantization"}
+{"name":"Sampling"}
+{"name":"Analog-to-digital converter"}
+{"name":"Digital-to-analog converter"}
+{"name":"Continuous signal"}
+{"name":"Discrete signal"}
+{"name":"Downsampling"}
+{"name":"Nyquist frequency"}
+{"name":"Nyquist-Shannon sampling theorem"}
+{"name":"Oversampling"}
+{"name":"Sample and hold"}
+{"name":"Sampling frequency"}
+{"name":"Undersampling"}
+{"name":"Upsampling"}
+{"name":"Audio signal processing"}
+{"name":"Audio noise reduction"}
+{"name":"Speech processing"}
+{"name":"Equalization (audio)"}
+{"name":"Digital image processing"}
+{"name":"Geometric transformation"}
+{"name":"Color"}
+{"name":"Computer vision"}
+{"name":"Image noise reduction"}
+{"name":"Edge detection"}
+{"name":"Image editing"}
+{"name":"Segmentation"}
+{"name":"Data compression"}
+{"name":"Lossless data compression"}
+{"name":"Lossy data compression"}
+{"name":"Filtering"}
+{"name":"Analog filter"}
+{"name":"Audio filter"}
+{"name":"Digital filter"}
+{"name":"Finite impulse response"}
+{"name":"Infinite impulse response"}
+{"name":"Electronic filter"}
+{"name":"Analogue filter"}
+{"name":"Filter (signal processing)"}
+{"name":"Band-pass filter"}
+{"name":"Band-stop filter"}
+{"name":"Butterworth filter"}
+{"name":"Chebyshev filter"}
+{"name":"High-pass filter"}
+{"name":"Kalman filter"}
+{"name":"Low-pass filter"}
+{"name":"Notch filter"}
+{"name":"Sallen Key filter"}
+{"name":"Wiener filter"}
+{"name":"Advanced Z-transform"}
+{"name":"Bilinear transform"}
+{"name":"Continuous Fourier transform"}
+{"name":"Discrete cosine transform"}
+{"name":"Discrete Fourier transform"}
+{"name":"Fast Fourier transform"}
+{"name":"Discrete sine transform"}
+{"name":"Fourier transform"}
+{"name":"Hilbert transform"}
+{"name":"Laplace transform"}
+{"name":"Two-sided Laplace transform"}
+{"name":"Z-transform"}
+
+{"name":"Actuator"}
+{"name":"Electric motor"}
+{"name":"Oscilloscope"}
+
+{"name":"Telecommunication"}
+{"name":"Telephone"}
+{"name":"Pulse-code modulation"}
+{"name":"Main distribution frame"}
+{"name":"Carrier system"}
+{"name":"Mobile phone"}
+{"name":"Wireless network"}
+{"name":"Optical fiber"}
+{"name":"Modulation"}
+{"name":"Carrier wave"}
+{"name":"Channel (communications)"}
+{"name":"Information theory"}
+{"name":"Error correction and detection"}
+{"name":"Digital television"}
+{"name":"Digital audio broadcasting"}
+{"name":"Satellite radio"}
+{"name":"Satellite"}
