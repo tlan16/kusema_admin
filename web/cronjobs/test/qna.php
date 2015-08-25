@@ -18,9 +18,9 @@ class qnaTest extends testAbstract
 			$active = true;
 			
 // 			$obj = $class::create($title, $content, $refId, $author, $authorName, $active);
-			$obj = $class::get(2);
-			$obj->voteUp($author->getPerson());
-			$objs = $obj->getInfo(QuestionInfoType::ID_VOTE);
+			$obj = $class::get(3);
+// 			$obj->voteUp($author->getPerson());
+			$objs = $obj->getVotes();
 			echo 'QuestionInfo => ' . PHP_EOL;
 			array_map(create_function('$a', 'print_r($a->getJson());'), $objs);
 			
