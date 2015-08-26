@@ -16,13 +16,14 @@ class qnaTest extends testAbstract
 			$author = UserAccount::get(24);
 			$authorName = 'alias of ' . $author->getPerson()->getFullName();
 			$active = true;
+			$topic = Topic::get(1);
+			$unit = Unit::get(1);
 			
-// 			$obj = $class::create($title, $content, $refId, $author, $authorName, $active);
-			$obj = $class::get(3);
-// 			$obj->voteUp($author->getPerson());
-			$objs = $obj->getVotes();
+			$obj = $class::get(1) instanceof $class ? $class::get(1) : $class::create($title, $content, $refId, $author, $authorName, $active);
+			$obj->addUnit($unit);
+			$objs = $obj->getUnits();
 			echo 'QuestionInfo => ' . PHP_EOL;
-			array_map(create_function('$a', 'print_r($a->getJson());'), $objs);
+			echo print_r(is_array($objs) ? (array_map(create_function('$a', 'return $a->getJson();'), $objs)) : $objs, true);
 			
 // 			echo 'TESTING ' . $class . PHP_EOL;
 // 			echo 'JSON: ' . PHP_EOL . print_r(self::getRealJson($obj->getJson()), true);
