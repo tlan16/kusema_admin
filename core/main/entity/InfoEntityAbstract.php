@@ -219,7 +219,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 
 		$InfoTypeClass = $class . 'Type';
 		$infoType = $InfoTypeClass::get($typeId);
-		$typeId = $typeId === null ? null : intval($typeId);
+		$typeId = ($typeId === null ? null : intval($typeId));
 		$value = StringUtilsAbstract::nullOrString($value);
 		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
 		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
@@ -331,7 +331,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	}
 	public function getVotes($entityName = 'Person', $entityId = null, $value = null, $reset = false)
 	{
-		$value = intval($value) === 0 ? null : intval($value);
+		$value = (intval($value) === 0 ? null : intval($value));
 		
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -364,6 +364,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$InfoTypeClass = $class . 'Type';
 	
 		$typeId = $InfoTypeClass::ID_TOPIC;
+		$entityId = ($entityId === null ? '' : intval($entityId));
 		if(trim($typeId) === '')
 			throw new Exception($InfoTypeClass . '::ID_TOPIC is empty or invalid');
 		
@@ -381,7 +382,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	}
 	public function getUnits($entityName = 'Unit', $entityId = null, $value = null, $reset = false)
 	{
-		$value = intval($value) === 0 ? null : intval($value);
+		$value = (intval($value) === 0 ? null : intval($value));
 	
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -389,6 +390,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$InfoTypeClass = $class . 'Type';
 	
 		$typeId = $InfoTypeClass::ID_UNIT;
+		$entityId = ($entityId === null ? '' : intval($entityId));
 		if(trim($typeId) === '')
 			throw new Exception($InfoTypeClass . '::ID_UNIT is empty or invalid');
 		
