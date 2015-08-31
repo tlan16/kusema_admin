@@ -1,6 +1,6 @@
 BASEDIR=$(dirname $0)
 FNAME=`date +"%d_%m_%Y"`
-FPASSWORD=budget123pc
+FPASSWORD=
 DBNAME=kusemaadmin
 DBHOST=localhost
 DBUSERNAME=root
