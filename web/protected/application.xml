@@ -24,7 +24,7 @@
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
 			<!-- FrontEnd:: Question list page -->
-			<url ServiceParameter="Question.List.ListController" pattern="questions.html" />
+			<url ServiceParameter="Question.List.QuestionController" pattern="questions.html" />
 			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
@@ -74,7 +74,7 @@
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="Budget PC Internal Management System" />
+		<parameter id="AppTitle" value="Kusema Management System" />
 		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 
