@@ -197,6 +197,9 @@ abstract class StringUtilsAbstract
 				case "swf" :
 					return "application/x-shockwave-flash";
 		
+				case "woff" :
+					return "application/octet-stream";
+				
 				default :
 			}
 		}
