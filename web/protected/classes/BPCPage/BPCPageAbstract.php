@@ -105,21 +105,18 @@ abstract class BPCPageAbstract extends TPage
 	private function _Load3rdPartyJs()
 	{
 		$clientScript = $this->getPage()->getClientScript();
-		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'jQuery' . DIRECTORY_SEPARATOR);
-		$clientScript->registerHeadScriptFile('jQuery', $folder . '/jquery-2.1.1.min.js');
+		$clientScript->registerHeadScriptFile('jQuery', "https://code.jquery.com/jquery-2.1.4.min.js");
 
-		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Bootstrap' . DIRECTORY_SEPARATOR);
-		$clientScript->registerHeadScriptFile('Bootstrap.js', $folder . '/js/bootstrap.min.js');
-		$clientScript->registerStyleSheetFile('Bootstrap.css', $folder . '/css/bootstrap.min.css');
-		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', $folder . '/bootstrap-theme.min.css');
+		$clientScript->registerHeadScriptFile('Bootstrap.js', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js");
+		$clientScript->registerStyleSheetFile('Bootstrap.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css");
+		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css");
 		//bootstrap form validator
 		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrapValidator' . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR);
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.js', $folder . '/js/formValidation.min.js');
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.framework.js', $folder . '/js/framework/bootstrap.min.js');
 		$clientScript->registerStyleSheetFile('Bootstrap.validator.css', $folder . '/css/formValidation.min.css');
-
-		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'FontAwesome' . DIRECTORY_SEPARATOR);
-		$clientScript->registerStyleSheetFile('Awesome.font.css', $folder .  '/css/font-awesome.min.css');
+		// font awesome
+		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css");
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path
