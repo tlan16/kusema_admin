@@ -1,3 +1,4 @@
+TRUNCATE TABLE `topic`;
 INSERT INTO `topic` (`id`, `name`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES
 (1, 'Electromagnetism', 1, '2015-08-25 23:47:17', 10, '2015-08-25 13:47:17', 10),
 (2, 'Electricity', 1, '2015-08-25 23:47:17', 10, '2015-08-25 13:47:17', 10),

@@ -1,3 +1,4 @@
+TRUNCATE TABLE `unit`;
 INSERT INTO `unit` (`id`, `name`, `code`, `year`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES
 (1, 'Computing for engineers', 'ENG1060', 1, 1, '2015-08-23 14:22:05', 10, '2015-08-23 04:22:05', 10),
 (2, 'Mathematics for engineering', 'ENG1091', 1, 1, '2015-08-23 14:22:05', 10, '2015-08-23 04:22:05', 10),
