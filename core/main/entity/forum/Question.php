@@ -48,8 +48,6 @@ class Question extends InfoEntityAbstract
 		$active = (intval($active) === 1);
 		
 		$obj = self::getByRefId($refId, false); // deactived obj will also be found and replaced
-		echo __CLASS__ . '=>' . __FUNCTION__ . PHP_EOL;
-		var_dump($obj);
 		$obj = $obj instanceof self ? $obj : new self();
 		$obj->setTitle($title)
 			->setContent($content)
