@@ -226,3 +226,15 @@ table.table thead td {
 	border: 1px #ccc solid;
 	background: white;
 }
+#item-list .list-group-item {
+	border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+#item-list .list-group-item span.title {
+	text-align: justify;
+    white-space: nowrap;
+}
+#item-list .list-group-item .content {
+	text-align: justify;
+	display: block;
+}
