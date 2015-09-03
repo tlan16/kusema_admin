@@ -7,7 +7,7 @@
 		<div class="panel-heading">
 			Search/Add Users:
 			<div class="pull-right">
-				<input id="addBtn" type="button" value="Add User" class="btn btn-success" onclick="pageJs._showEditPanel()" />
+				<input id="addBtn" type="button" value="Add User" class="btn btn-xs btn-success" onclick="pageJs._showEditPanel()" />
 			</div>
 		</div>
 		<div class="panel-body">
