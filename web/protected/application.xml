@@ -57,7 +57,7 @@
 
 	<!-- configuration for available services -->
 	<services>
-		<service id="page" class="TPageService" DefaultPage="Question.List.ListController">
+		<service id="page" class="TPageService" DefaultPage="Question.List.QuestionController">
 		    <pages MasterClass="Application.layout.PageLayout" Theme="default" />
 			<modules>
 				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="Login.LoginController" AuthExpire="3600" />
