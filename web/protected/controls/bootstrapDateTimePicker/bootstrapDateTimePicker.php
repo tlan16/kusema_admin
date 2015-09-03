@@ -17,10 +17,9 @@ class bootstrapDateTimePicker extends TClientScript
 		$clientScript = $this->getPage()->getClientScript();
 		if(!$this->getPage()->IsPostBack || !$this->getPage()->IsCallback)
 		{
-			$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
-			$clientScript->registerHeadScriptFile('bootstrap.moment.js', $folder . '/js/moment-with-locales.min.js');
-			$clientScript->registerHeadScriptFile('bootstrap.datetimepicker.js', $folder . '/js/bootstrap-datetimepicker.min.js');
-			$clientScript->registerStyleSheetFile('bootstrap.datetimepicker.css', $folder . '/css/bootstrap-datetimepicker.min.css', 'screen');
+			$clientScript->registerHeadScriptFile('bootstrap.moment.js', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.min.js");
+			$clientScript->registerHeadScriptFile('bootstrap.datetimepicker.js', "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.15.35/js/bootstrap-datetimepicker.min.js");
+			$clientScript->registerStyleSheetFile('bootstrap.datetimepicker.css', "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.15.35/css/bootstrap-datetimepicker.min.css", 'screen');
 		}
 	}
 }
