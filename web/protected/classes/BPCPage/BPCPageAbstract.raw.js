@@ -150,10 +150,7 @@ BPCPageJs.prototype = {
 	 * give the input box a random id
 	 */
 	,_signRandID: function(input) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.input = (input || '');
-		if(tmp.input.trim() !== '')
+		if(!input.id)
 			input.id = 'input_' + String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 		return this;
 	}
