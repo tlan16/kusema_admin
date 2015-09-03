@@ -88,7 +88,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		}
 		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-sm-2'}).update(row.title) })
-			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'small'), {'class': 'content col-sm-2'}).update(row.content) })
+			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'small'), {'class': 'content col-sm-4'}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-1 visible-lg visible-md'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-2 visible-lg visible-md'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
