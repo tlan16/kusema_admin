@@ -7,7 +7,7 @@ class UsersController extends BPCPageAbstract
 	 */
 	public function __construct()
 	{
-		if(!AccessControl::canAccessUsersPage(Core::getRole()))
+		if(!AccessControl::canAccessUserPage(Core::getRole()))
 			die(BPCPageAbstract::show404Page('Access Denied', 'You have no access to this page!'));
 		parent::__construct();
 	}
