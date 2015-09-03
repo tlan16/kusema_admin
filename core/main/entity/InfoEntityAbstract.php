@@ -16,7 +16,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	/**
 	 * The author
 	 *
-	 * @var UserAccount
+	 * @var Person
 	 */
 	protected $author = null;
 	/**
@@ -268,11 +268,26 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
 		{
-			$array['createdBy'] = array('id'=> $this->getCreatedBy()->getId(), 'person' => $this->getCreatedBy()->getPerson()->getJson());
-			$array['updatedBy'] = array('id'=> $this->getUpdatedBy()->getId(), 'person' => $this->getUpdatedBy()->getPerson()->getJson());
-			$array['author'] = $this->getAuthor() instanceof UserAccount ? $this->getAuthor()->getJson() : null;
+			$array['createdBy'] = array('id'=> $this->getCreatedBy()->getId(), 'person' => $this->_getPersonJson($this->getCreatedBy()->getPerson()) );
+			$array['updatedBy'] = array('id'=> $this->getUpdatedBy()->getId(), 'person' => $this->_getPersonJson($this->getUpdatedBy()->getPerson()) );
+			$array['author'] = $this->getAuthor() instanceof Person ? $this->_getPersonJson($this->getAuthor()) : null;
+			if(($topics = $this->getTopics()) && count($topics) > 0)
+				$array['topics'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Topic"] ? array($id=>$b["Topic"]) : null;'), $topics);
+			if(($units = $this->getUnits()) && count($units) > 0)
+				$array['units'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Unit"] ? array($id=>$b["Unit"]) : null;'), $units);
+			if(($votes = $this->getVotes()) && count($votes) > 0)
+				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
 		}
 		return parent::getJson($array, $reset);
+	}
+	private function _getPersonJson(Person $person)
+	{
+		return array('id'=> $person->getId(), 
+					'firstName'=> $person->getFirstName(),
+					'lastName'=> $person->getLastName(),
+					'fullName'=> $person->getFullName(),
+					'email'=> $person->getEmail()
+					);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -284,7 +299,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		DaoMap::setStringType('title', 'varchar', 100);
 		DaoMap::setStringType('content','LONGTEXT');
 		DaoMap::setStringType('authorName', 'varchar', 50, true, null);
-		DaoMap::setManyToOne('author', 'UserAccount', get_class($this) . '_au', true);
+		DaoMap::setManyToOne('author', 'Person', get_class($this) . '_au', true);
 		DaoMap::setStringType('refId', 'varchar', 50, true);
 		
 		parent::__loadDaoMap();
