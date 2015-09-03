@@ -5,6 +5,23 @@
 .item_row.warning {
  	background-color: #f2dede !important;
 }
+#item-list .list-group-item {
+	border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+@media only screen and (max-width: 800px) {
+	#item-list .list-group-item span.title {
+		font-weight: bold;
+	}
+}
+#item-list .list-group-item span.title {
+	text-align: justify;
+	display: block;
+}
+#item-list .list-group-item .content {
+	text-align: justify;
+	display: block;
+}
 @media only screen and (max-width: 800px) {
 	
 	/* Force table to not be like tables anymore */
