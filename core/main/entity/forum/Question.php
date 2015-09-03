@@ -9,6 +9,19 @@ class Question extends InfoEntityAbstract
 {
 	/**
 	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		if(!$this->isJsonLoaded($reset))
+		{
+			
+		}
+		return parent::getJson($array, $reset);
+	}
+	/**
+	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
 	public function __loadDaoMap()
@@ -40,8 +53,8 @@ class Question extends InfoEntityAbstract
 			throw new Exception('Content for a ' . __CLASS__ . ' must be null or a non-empty string');
 		if(($refId = StringUtilsAbstract::nullOrString($refId)) !== null && $refId === '')
 			throw new Exception('RefId for a ' . __CLASS__ . ' must not be empty');
-		if($author !== null && !$author instanceof UserAccount)
-			throw new Exception('Author for a ' . __CLASS__ . ' must be null or instance of UserAccount');
+		if($author !== null && !$author instanceof Person)
+			throw new Exception('Author for a ' . __CLASS__ . ' must be null or instance of Person');
 		if(($authorName = StringUtilsAbstract::nullOrString($authorName)) !== null && $authorName === '')
 			throw new Exception('AuthorName for a ' . __CLASS__ . ' must not be empty');
 		
