@@ -1,0 +1,7 @@
+SELECT COUNT(  `q`.`id` )  `count` ,  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` 
+FROM  `questioninfo`  `q` 
+WHERE  `q`.`entityId` IS NOT NULL 
+AND  `q`.`entityName` =  "Topic"
+AND  `q`.`active` =1
+GROUP BY  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` 
+ORDER BY  `count` DESC 
