@@ -8,7 +8,7 @@ Abstract class AccessControl
 	{
 		switch($role->getId())
 		{
-			case Role::ID_SYSTEM_ADMIN:
+			case Role::ID_SYSTEM_DEVELOPER:
 				{
 					return true;
 				}
