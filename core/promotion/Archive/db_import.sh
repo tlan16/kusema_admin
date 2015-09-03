@@ -25,5 +25,7 @@ mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../userprofilet
 mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../unit.sql
 mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../info_types.sql
 mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../topic.sql
+mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME < $BASEDIR/../person.sql
+7z x -so $BASEDIR/../question.7z | mysql -h $DBHOST -u $DBUSERNAME -p$DBPASSWORD $DBNAME
 
 echo done
