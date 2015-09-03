@@ -196,6 +196,61 @@ class Person extends BaseEntityAbstract
         DaoMap::createIndex('monashId');
         DaoMap::commit();
     }
+    public static function create($firstName, $lastName, $email = null, $monashId = null)
+    {
+    	if(($firstName = trim($firstName)) === '')
+    		throw new Exception('Invalid firstName passed in');
+    	if(($lastName = trim($lastName)) === '')
+    		throw new Exception('Invalid lastName passed in');
+    	if($email !== null && (trim($email) === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false))
+    		throw new Exception('Invalid email passed in');
+    	$email = ($email === null ? null : trim($email));
+    	if($monashId !== null && trim($monashId) === '')
+    		throw new Exception('Invalid monashId passed in');
+    	$monashId = ($monashId === null ? null : trim($monashId));
+    	
+    	if($monashId !== null && self::getByMonashId($monashId, true) instanceof self)
+    		$obj = self::getByMonashId($monashId);
+    	elseif($email !== null && self::getByEmail($email, true) instanceof self)
+    		$obj = self::getByEmail($email);
+    	elseif(self::getByName($firstName, $lastName, true) instanceof self)
+    		$obj = self::getByName($firstName, $lastName, true);
+    	else $obj = new self();
+    	
+    	$obj->setFirstName($firstName)
+    		->setLastName($lastName)
+    		->setemail($email)
+    		->setMonashID($monashId)
+    		->setActive(true)
+    		->save();
+    	return $obj;
+    }
+    public static function getByEmail($email, $activeOnly = true)
+    {
+    	if(($email = trim($email)) === '')
+    		throw new Exception('Invalid email passed in');
+    	$activeOnly = (intval($activeOnly) === 1);
+    	$objs = self::getAllByCriteria('email like ?', array($email), $activeOnly, 1, 1);
+    	return count($objs) > 0 ? $objs[0] : null;
+    }
+    public static function getByMonashId($monashId, $activeOnly = true)
+    {
+    	if(($monashId = trim($monashId)) === '')
+    		throw new Exception('Invalid monashId passed in');
+    	$activeOnly = (intval($activeOnly) === 1);
+    	$objs = self::getAllByCriteria('monashId = ?', array($monashId), $activeOnly, 1, 1);
+    	return count($objs) > 0 ? $objs[0] : null;
+    }
+    public static function getByName($firstName, $lastName, $activeOnly = true)
+    {
+    	if(($firstName = trim($firstName)) === '')
+    		throw new Exception('Invalid firstName passed in');
+    	if(($lastName = trim($lastName)) === '')
+    		throw new Exception('Invalid lastName passed in');
+    	$activeOnly = (intval($activeOnly) === 1);
+    	$objs = self::getAllByCriteria('firstName like ? and lastName like ?', array($firstName, $lastName), $activeOnly, 1, 1);
+    	return count($objs) > 0 ? $objs[0] : null;
+    }
 }
 
 ?>
