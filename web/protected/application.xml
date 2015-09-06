@@ -26,8 +26,10 @@
 			<!-- FrontEnd:: Question list page -->
 			<url ServiceParameter="Question.List.QuestionController" pattern="questions.html" />
 			
-			<!-- FrontEnd:: Statics page -->
-			<url ServiceParameter="Statics.StaticsController" pattern="statics.html" />
+			<!-- FrontEnd:: Topic Statics page -->
+			<url ServiceParameter="Statics.Topic.StaticsController" pattern="statics/topic.html" />
+			<!-- FrontEnd:: Unit Statics page -->
+			<url ServiceParameter="Statics.Unit.StaticsController" pattern="statics/unit.html" />
 			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
