@@ -182,7 +182,7 @@ class Comments extends InfoEntityAbstract
 	 * @param bool	 		$active
 	 */
 	public function addComments($title, $content, $refId = null, $author = null, $authorName = null, $active = true) {
-		$obj = Comments::createByQuestion($title, $content, $this, $refId, $author, $authorName, $active);
+		$obj = self::create($title, $content, $this, $refId, $author, $authorName, $active);
 		return $obj;
 	}
 	/**
