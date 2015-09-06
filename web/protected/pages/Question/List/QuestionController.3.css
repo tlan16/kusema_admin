@@ -22,6 +22,15 @@
 	text-align: justify;
 	display: block;
 }
+
+#item-list-body .topics .unit_row {
+	max-width: 98%;
+}
+#item-list-body .topics .topic_row {
+	max-width: 98%;
+}
+
+/** no-more tables **/
 @media only screen and (max-width: 800px) {
 	
 	/* Force table to not be like tables anymore */

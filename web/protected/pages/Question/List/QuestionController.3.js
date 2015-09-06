@@ -41,8 +41,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			tmp.topics = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Topic(s)</strong>') });
 			row.topics.each(function(item){
 				tmp.key = Object.keys(item)[0];
-				tmp.topics.insert({'bottom': new Element('dd', {'info_id': tmp.key}).update(item[tmp.key]['name'])
-					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove', 'href': 'javascript:void(0)'}) 
+				tmp.topics.insert({'bottom': new Element('dd', {'info_id': tmp.key}).addClassName('topic_row').update(item[tmp.key]['name'])
+					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
 						.observe('click', function(e){
 							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeTopic');
 						})
@@ -88,8 +88,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			tmp.units = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Unit(s)</strong>') });
 			row.units.each(function(item){
 				tmp.key = Object.keys(item)[0];
-				tmp.units.insert({'bottom': new Element('dd', {'info_id': tmp.key}).update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name'])
-					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove', 'href': 'javascript:void(0)'}) 
+				tmp.units.insert({'bottom': new Element('dd', {'info_id': tmp.key}).addClassName('unit_row').update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name'])
+					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
 						.observe('click', function(e){
 							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeUnit');
 						})
@@ -148,7 +148,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						)
 				})
 			})
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1 visible-lg visible-md'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
 				tmp.isTitle === true ?  
 					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
