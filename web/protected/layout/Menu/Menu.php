@@ -20,9 +20,14 @@ class Menu extends TTemplateControl
 		$pageItem = trim($this->getPage()->menuItem);
 		$array = array(
 			'' => array('url' => '/', 'name' => 'Home', 'icon' => '<span class="glyphicon glyphicon-home"></span>')
-			,'Questions' => array(
-				'icon' => '<span class="glyphicon glyphicon-search"></span>',
-				'list' => array('url' => 'questions.html', 'name' => 'List', 'icon' => '')
+			,'Forum' => array(
+				'icon' => '<span class="glyphicon glyphicon-th-list"></span>',
+				'questions' => array('url' => '/questions.html', 'name' => 'Questions', 'icon' => '')
+			)
+			,'Statics' => array(
+				'icon' => '<span class="glyphicon glyphicon-signal"></span>',
+				'topic' => array('url' => '/statics/topic.html', 'name' => 'Top Topics', 'icon' => ''),
+				'unit' => array('url' => '/statics/unit.html', 'name' => 'Top Units', 'icon' => '')
 			)
 		);
 
