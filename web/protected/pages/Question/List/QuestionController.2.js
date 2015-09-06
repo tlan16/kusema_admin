@@ -38,7 +38,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						'Update At ' + tmp.me.localizeDate(row.updated) +
 						(parseInt(row.updatedBy.id) === 10 ? ('<span class="text-muted"> by System</span>') : ('<span class="text-info"> by ' + row.updatedBy.person.fullName + '</span>') )
 					);
-			tmp.topics = new Element('dl');
+			tmp.topics = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Topic(s)</strong>') });
 			row.topics.each(function(item){
 				tmp.key = Object.keys(item)[0];
 				tmp.topics.insert({'bottom': new Element('dd', {'info_id': tmp.key}).update(item[tmp.key]['name'])
@@ -47,7 +47,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeTopic');
 						})
 					})
-				})
+				});
 			});
 			tmp.topics.insert({'bottom': new Element('dd', {'info_id': 'new'})
 				.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
@@ -84,17 +84,69 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				        });
 					})
 				})
-			})
+			});
+			tmp.units = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Unit(s)</strong>') });
+			row.units.each(function(item){
+				tmp.key = Object.keys(item)[0];
+				tmp.units.insert({'bottom': new Element('dd', {'info_id': tmp.key}).update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name'])
+					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove', 'href': 'javascript:void(0)'}) 
+						.observe('click', function(e){
+							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeUnit');
+						})
+					})
+				});
+			});
+			tmp.units.insert({'bottom': new Element('dd', {'info_id': 'new'})
+				.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
+					.observe('click', function(e){
+						jQuery('.select2').select2("close");
+						$(this).replace(new Element('dd')
+							.insert({'bottom': tmp.unitInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
+						);
+						tmp.me._signRandID(tmp.unitInput);
+						jQuery('#'+tmp.unitInput.id).select2({
+							minimumInputLength: 3
+							,ajax: {
+								delay: 250
+								,url: '/ajax/getAll'
+								,type: 'POST'
+								,data: function (params) {
+									return {"searchTxt": 'code like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Unit'};
+								}
+								,processResults: function(data, page, query) {
+									tmp.result = [];
+									if(data.resultData && data.resultData.items) {
+										data.resultData.items.each(function(item){
+											tmp.result.push({'id': item.id, 'text': ('<u>'+item.code+'</u>: '+item.name), 'data': item});
+										});
+									}
+									return { 'results' : tmp.result };
+								}
+							}
+							,cache: true
+							,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+						}).select2("open").on("change", function(e) {
+							if(parseInt($(this).value) !== 0)
+								tmp.me._updateItem($(this), $(this).value, null, 'addUnit');
+				        });
+					})
+				})
+			});
 		}
 		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-sm-2'}).update(row.title) })
-			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'small'), {'class': 'content col-sm-4'}).update(row.content) })
+			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-sm-4'}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-1 visible-lg visible-md'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-2 visible-lg visible-md'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'topics col-sm-2 visible-lg visible-md'})
-				.update(tmp.isTitle === true ? 'Topics' : tmp.topics )
+				.insert({'bottom': tmp.isTitle === true ? 'Topics / Units'
+						: ( new Element('div')
+								.insert({'bottom': tmp.topics })
+								.insert({'bottom': tmp.units })
+						)
+				})
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1 visible-lg visible-md'}).update(
 				tmp.isTitle === true ?  

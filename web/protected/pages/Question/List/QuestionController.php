@@ -162,7 +162,6 @@ class QuestionController extends CRUDPageAbstract
 		try
 		{
 			$class = trim($this->_focusEntity);
-			var_dump($param->CallbackParameter);
 			if(!isset($param->CallbackParameter->itemId) || ($itemId = intval($param->CallbackParameter->itemId)) === 0 || !($item = $class::get($itemId)) instanceof $class)
 				throw new Exception('Invalid itemId passed in');
 			if(!isset($param->CallbackParameter->entityId) || ( strtolower(trim($param->CallbackParameter->entityId)) !== 'new' && ($entityId = intval($param->CallbackParameter->entityId)) === 0 ))
@@ -182,6 +181,18 @@ class QuestionController extends CRUDPageAbstract
 					{
 						if(($obj = Topic::get($entityId)) instanceof Topic)
 							$item->addTopic($obj);
+						break;
+					}
+				case 'removeUnit':
+					{
+						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
+							QuestionInfo::deleteByCriteria('id=?',array($entityId));
+						break;
+					}
+				case 'addUnit':
+					{
+						if(($obj = Unit::get($entityId)) instanceof Unit)
+							$item->addUnit($obj);
 						break;
 					}
 			}
