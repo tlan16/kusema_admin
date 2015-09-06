@@ -26,6 +26,9 @@
 			<!-- FrontEnd:: Question list page -->
 			<url ServiceParameter="Question.List.QuestionController" pattern="questions.html" />
 			
+			<!-- FrontEnd:: Statics page -->
+			<url ServiceParameter="Statics.StaticsController" pattern="statics.html" />
+			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
 			<!-- FrontEnd:: user edit page -->

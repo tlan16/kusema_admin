@@ -20,7 +20,7 @@ class HiChart extends TClientScript
 			$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR);
 			// Add jQuery library
 			// Add mousewheel plugin (this is optional)
-			$clientScript->registerScriptFile('hichart.js', $folder . '/highcharts.js');
+			$clientScript->registerScriptFile('hichart.js', "http://code.highcharts.com/highcharts.js");
 		}
 	}
 }

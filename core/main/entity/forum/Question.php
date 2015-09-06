@@ -125,4 +125,64 @@ class Question extends InfoEntityAbstract
 		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 		return $objs;
 	}
+	public static function getTopTopics($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) {
+		if(intval($pageNo) === 0 && intval($pageSize) === 0)
+			throw new Exception('Invalid pageNo or pageSize passed in');
+		$sql = "";
+		$params = array();
+		$sql.= "SELECT COUNT(  `q`.`id` )  `count`, `q`.`entityId` `TopicId` , `t`.`name` `TopicName` "; 
+		$sql.= "FROM  `questioninfo`  `q` "; 
+		$sql.= "LEFT JOIN `topic` `t` "; 
+		$sql.= "ON `t`.id = `q`.`entityId` "; 
+		$sql.= "WHERE  `q`.`entityId` IS NOT NULL ";
+		$sql.= "AND  `q`.`entityName` =  'Topic' ";
+		$sql.= "AND  `q`.`active` =1 ";
+		$sql.= "AND  `t`.`active` =1 ";
+		$sql.= "GROUP BY  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` "; 
+		$sql.= "ORDER BY  `count` DESC ";
+		$sql.= "LIMIT " . intval($pageNo) . " , " . intval($pageSize) . " ";
+		$queryResult = Dao::getResultsNative($sql, $params);
+		$ids = array_map(create_function('$a', 'return $a["TopicId"];'), $queryResult);
+		return ($getObj === true ? self::idToObject($ids, 'Topic', $getJson) : ($getJson === true ? json_encode($queryResult) : $queryResult));
+	}
+	public static function getTopUnits($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) {
+		if(intval($pageNo) === 0 && intval($pageSize) === 0)
+			throw new Exception('Invalid pageNo or pageSize passed in');
+		$getObj = (intval($getObj) === 1);
+		$getJson = (intval($getJson) === 1);
+		$sql = "";
+		$params = array();
+		$sql.= "SELECT COUNT(  `q`.`id` )  `count`, `q`.`entityId` `UnitId` , `u`.`name` `UnitName` , `u`.`code` `UnitCode` "; 
+		$sql.= "FROM  `questioninfo`  `q` "; 
+		$sql.= "LEFT JOIN `unit` `u` "; 
+		$sql.= "ON `u`.id = `q`.`entityId` "; 
+		$sql.= "WHERE  `q`.`entityId` IS NOT NULL ";
+		$sql.= "AND  `q`.`entityName` =  'Topic' ";
+		$sql.= "AND  `q`.`active` =1 ";
+		$sql.= "AND  `u`.`active` =1 ";
+		$sql.= "GROUP BY  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` "; 
+		$sql.= "ORDER BY  `count` DESC ";
+		$sql.= "LIMIT " . intval($pageNo) . " , " . intval($pageSize) . " ";
+		$queryResult = Dao::getResultsNative($sql, $params);
+		$ids = array_map(create_function('$a', 'return $a["UnitId"];'), $queryResult);
+		return ($getObj === true ? self::idToObject($ids, 'Unit', $getJson) : ($getJson === true ? json_encode($queryResult) : $queryResult));
+	}
+	private static function idToObject($ids, $class, $json =false)
+	{
+		if(($class = trim($class)) === '' || !class_exists($class))
+			throw new Exception('invalid class passed in ');
+		if(!is_array($ids) && ($ids = intval($ids)) !== 0)
+			$ids = array($ids);
+		else $ids = array_unique($ids);
+		$json = (intval($json) === 1);
+		$result = array();
+		foreach ($ids as $id)
+		{
+			if(($obj = $class::get($id)) instanceof $class)
+			{
+				$result[] = ($json === true ? $obj->getJson() : $obj);
+			}
+		}
+		return $result;
+	}
 }

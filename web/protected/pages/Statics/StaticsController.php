@@ -34,37 +34,37 @@ class StaticsController extends StaticsPageAbstract
 		$results = $errors = array();
 		try
 		{
-			$timeRange = $this->_getXnames();
-			$names = array_keys($timeRange);
-			$series = array();
-			$series[] = array('name' => 'All', 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to']));
-			foreach(OrderStatus::getAll() as $status)
-			{
-				$series[] = array('name' => $status->getName(), 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to'], array($status->getId())));
-			}
+// 			$timeRange = $this->_getXnames();
+// 			$names = array_keys($timeRange);
+// 			$series = array();
+// 			$series[] = array('name' => 'All', 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to']));
+// 			foreach(OrderStatus::getAll() as $status)
+// 			{
+// 				$series[] = array('name' => $status->getName(), 'data' => $this->_getSeries($timeRange, $timeRange[$names[0]]['from'], $timeRange[$names[count($names) - 1 ]]['to'], array($status->getId())));
+// 			}
 	
-			$results = array(
-				'chart' => array(
-					'type' => 'line'
-				),
-				'title' => array(
-					'text' => 'BPC: Monthly Order Trend',
-					'x'    => -20
-				),
-				'subtitle' => array(
-					'text' => 'This is just order trend from last 12 month',
-					'x'    => -20
-				),
-				'xAxis' => array(
-					'categories' => $names
-				),
-				'yAxis' => array(
-					'title' => array(
-						'text' => 'No of Orders'
-					)
-				),
-				'series' => $series
-			);
+// 			$results = array(
+// 				'chart' => array(
+// 					'type' => 'line'
+// 				),
+// 				'title' => array(
+// 					'text' => 'BPC: Monthly Order Trend',
+// 					'x'    => -20
+// 				),
+// 				'subtitle' => array(
+// 					'text' => 'This is just order trend from last 12 month',
+// 					'x'    => -20
+// 				),
+// 				'xAxis' => array(
+// 					'categories' => $names
+// 				),
+// 				'yAxis' => array(
+// 					'title' => array(
+// 						'text' => 'No of Orders'
+// 					)
+// 				),
+// 				'series' => $series
+// 			);
 		}
 		catch(Exception $ex)
 		{
