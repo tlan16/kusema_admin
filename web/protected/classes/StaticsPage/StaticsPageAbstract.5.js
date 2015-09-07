@@ -15,15 +15,29 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.data = [];
+		tmp.index = 0;
+		tmp.indexOfMax = null;
+		tmp.max = 0;
 		result.each(function(item){
 			tmp.data.push({
 				name: item.name,
                 y: item.y
 			});
+			if(parseFloat(item.y) > parseFloat(tmp.max)) {
+				tmp.max = parseFloat(item.y);
+				tmp.indexOfMax = tmp.index; 
+			}
+			tmp.index++;
 		});
+		if(tmp.max !== null) {
+			tmp.max = tmp.data[tmp.indexOfMax];
+			tmp.max.sliced = true;
+			tmp.max.selected = true;
+		}
 		tmp.pie = {
 				credits: false,
 		        chart: {
+		        	renderTo: tmp.me.getHTMLID('resultDivId'),
 		            plotBackgroundColor: null,
 		            plotBorderWidth: null,
 		            plotShadow: false,

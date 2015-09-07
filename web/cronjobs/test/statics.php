@@ -10,10 +10,10 @@ class statics extends testAbstract
 			try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 			
 			$topics = Question::getTopTopics(1, 10, true, true);
-			echo 'Top Topics: ' . PHP_EOL . print_r($topics, true);
+			echo 'Top Topics: ' . PHP_EOL . print_r(json_decode(json_encode($topics)), true);
 			
-			$units = Question::getTopUnits();
-			echo 'Top Units: ' . PHP_EOL . print_r($units, true);
+			$units = Question::getTopUnits(1, 10, true, true);
+			echo 'Top Units: ' . PHP_EOL . print_r(json_decode(json_encode($units)), true);
 			
 			if($transStarted === false)
 				Dao::commitTransaction();

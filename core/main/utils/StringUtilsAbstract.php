@@ -219,6 +219,6 @@ abstract class StringUtilsAbstract
 	    }
 	}
 	public static function nullOrString($string) {
-		return ($string === null ? null : trim($string));
+		return (($string === null || trim($string) === '') ? null : trim($string));
 	}
 }

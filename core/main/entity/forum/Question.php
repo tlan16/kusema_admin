@@ -125,23 +125,15 @@ class Question extends InfoEntityAbstract
 		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 		return $objs;
 	}
-	public static function getTopTopics($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) {
+	public static function getTopTopics($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) 
+	{
 		if(intval($pageNo) === 0 && intval($pageSize) === 0)
 			throw new Exception('Invalid pageNo or pageSize passed in');
+		$getObj = (intval($getObj) === 1);
+		$getJson = (intval($getJson) === 1);
 		$sql = "";
 		$params = array();
-		$sql.= "SELECT `q`.`entityId` `TopicId` , `t`.`name` `TopicName` "; 
-		$sql.= ", COUNT(  `q`.`id` ) / ( ";
-		$sql.= "	SELECT COUNT( `q`.`id` ) `total` ";
-		$sql.= "	FROM  `questioninfo`  `q` ";
-		$sql.= "	LEFT JOIN `topic` `t` ";
-		$sql.= "	ON `t`.id = `q`.`entityId` ";
-		$sql.= "	WHERE  `q`.`entityId` IS NOT NULL ";
-		$sql.= "	AND `q`.`value` IS NULL ";
-		$sql.= "	AND  `q`.`entityName` =  'Topic' ";
-		$sql.= "	AND  `q`.`active` =1 ";
-		$sql.= "	AND `t`.`active` =1 ";
-		$sql.= ")*100 `percentage` ";
+		$sql.= "SELECT `q`.`entityId` `TopicId` , `t`.`name` `TopicName` , COUNT(  `q`.`id` ) `count`"; 
 		$sql.= "FROM  `questioninfo`  `q` "; 
 		$sql.= "LEFT JOIN `topic` `t` "; 
 		$sql.= "ON `t`.id = `q`.`entityId` "; 
@@ -150,31 +142,41 @@ class Question extends InfoEntityAbstract
 		$sql.= "AND  `q`.`active` =1 ";
 		$sql.= "AND  `t`.`active` =1 ";
 		$sql.= "GROUP BY  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` "; 
-		$sql.= "ORDER BY  `percentage` DESC ";
+		$sql.= "ORDER BY  `count` DESC ";
 		$sql.= "LIMIT " . intval($pageNo) . " , " . intval($pageSize) . " ";
 		$queryResult = Dao::getResultsNative($sql, $params);
+		$sql = "";
+		$sql.= "SELECT COUNT(  `q`.`id` )  `total` ";
+		$sql.= "FROM  `questioninfo`  `q` ";
+		$sql.= "LEFT JOIN `topic` `t` ";
+		$sql.= "ON `t`.id = `q`.`entityId` ";
+		$sql.= "WHERE  `q`.`entityId` IS NOT NULL ";
+		$sql.= "AND `q`.`value` IS NULL ";
+		$sql.= "AND  `q`.`entityName` =  'Topic' ";
+		$sql.= "AND  `q`.`active` =1 ";
+		$sql.= "AND `t`.`active` =1 ";
+		$total = Dao::getResultsNative($sql);
+		$total = intval($total[0]['total']);
 		$ids = array_map(create_function('$a', 'return $a["TopicId"];'), $queryResult);
-		return ($getObj === true ? self::idToObject($ids, 'Topic', $getJson) : ($getJson === true ? json_encode($queryResult) : $queryResult));
+		foreach ($queryResult as &$item)
+		{ $item['percentage'] = (100 * intval($item['count']) / $total); }
+		if($getObj === true)
+		{
+			$result = array();
+			foreach ($queryResult as $item)
+			{ $result[] = self::idToObject($item['TopicId'], 'Topic', $getJson, array('percentage' => (100 * intval($item['count']) / $total) )); }
+			return $result;
+		} else return $queryResult;
 	}
-	public static function getTopUnits($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) {
+	public static function getTopUnits($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) 
+	{
 		if(intval($pageNo) === 0 && intval($pageSize) === 0)
 			throw new Exception('Invalid pageNo or pageSize passed in');
 		$getObj = (intval($getObj) === 1);
 		$getJson = (intval($getJson) === 1);
 		$sql = "";
 		$params = array();
-		$sql.= "SELECT `q`.`entityId` `UnitId` , `u`.`name` `UnitName` , `u`.`code` `UnitCode` "; 
-		$sql.= ", COUNT(  `q`.`id` ) / ( ";
-		$sql.= "	SELECT COUNT(  `q`.`id` )  `total` ";
-		$sql.= "	FROM  `questioninfo`  `q` ";
-		$sql.= "	LEFT JOIN `unit` `u` ";
-		$sql.= "	ON `u`.id = `q`.`entityId` ";
-		$sql.= "	WHERE  `q`.`entityId` IS NOT NULL ";
-		$sql.= "	AND `q`.`value` IS NULL ";
-		$sql.= "	AND  `q`.`entityName` =  'Unit' ";
-		$sql.= "	AND  `q`.`active` =1 ";
-		$sql.= "	AND `u`.`active` =1 ";
-		$sql.= ")*100 `percentage` ";
+		$sql.= "SELECT `q`.`entityId` `UnitId` , `u`.`name` `UnitName` , `u`.`code` `UnitCode` , COUNT(  `q`.`id` ) `count`"; 
 		$sql.= "FROM  `questioninfo`  `q` "; 
 		$sql.= "LEFT JOIN `unit` `u` "; 
 		$sql.= "ON `u`.id = `q`.`entityId` "; 
@@ -183,28 +185,42 @@ class Question extends InfoEntityAbstract
 		$sql.= "AND  `q`.`active` =1 ";
 		$sql.= "AND  `u`.`active` =1 ";
 		$sql.= "GROUP BY  `q`.`entityName` ,  `q`.`typeId` ,  `q`.`entityId` "; 
-		$sql.= "ORDER BY  `percentage` DESC ";
+		$sql.= "ORDER BY  `count` DESC ";
 		$sql.= "LIMIT " . intval($pageNo) . " , " . intval($pageSize) . " ";
 		$queryResult = Dao::getResultsNative($sql, $params);
+		$sql = "";
+		$sql.= "SELECT COUNT(  `q`.`id` )  `total` ";
+		$sql.= "FROM  `questioninfo`  `q` ";
+		$sql.= "LEFT JOIN `unit` `u` ";
+		$sql.= "ON `u`.id = `q`.`entityId` ";
+		$sql.= "WHERE  `q`.`entityId` IS NOT NULL ";
+		$sql.= "AND `q`.`value` IS NULL ";
+		$sql.= "AND  `q`.`entityName` =  'Unit' ";
+		$sql.= "AND  `q`.`active` =1 ";
+		$sql.= "AND `u`.`active` =1 ";
+		$total = Dao::getResultsNative($sql);
+		$total = intval($total[0]['total']);
 		$ids = array_map(create_function('$a', 'return $a["UnitId"];'), $queryResult);
-		return ($getObj === true ? self::idToObject($ids, 'Unit', $getJson) : ($getJson === true ? json_encode($queryResult) : $queryResult));
-	}
-	private static function idToObject($ids, $class, $json =false)
-	{
-		if(($class = trim($class)) === '' || !class_exists($class))
-			throw new Exception('invalid class passed in ');
-		if(!is_array($ids) && ($ids = intval($ids)) !== 0)
-			$ids = array($ids);
-		else $ids = array_unique($ids);
-		$json = (intval($json) === 1);
-		$result = array();
-		foreach ($ids as $id)
+		foreach ($queryResult as &$item)
+		{ $item['percentage'] = (100 * intval($item['count']) / $total); }
+		if($getObj === true)
 		{
-			if(($obj = $class::get($id)) instanceof $class)
-			{
-				$result[] = ($json === true ? $obj->getJson() : $obj);
-			}
+			$result = array();
+			foreach ($queryResult as $item)
+			{ $result[] = self::idToObject($item['UnitId'], 'Unit', $getJson, array('percentage' => (100 * intval($item['count']) / $total) )); }
+			return $result;
 		}
-		return $result;
+		else return $queryResult;
+	}
+	private static function idToObject($id, $class, $json = false, $extra = array())
+	{
+		if(($class = trim($class)) === '' || !class_exists($class = ucfirst($class)))
+			throw new Exception('invalid class passed in ');
+		if(!is_array($extra))
+			throw new Exception('invalid extra for getJson() passed in');
+		if(is_array($id) || ($id = intval($id)) === 0)
+			throw new Exception('Invalid id passed in');
+		$json = (intval($json) === 1);
+		return ( ($obj = $class::get($id)) instanceof $class ? ($json === true ? $obj->getJson($extra) : $obj) : null );
 	}
 }
