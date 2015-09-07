@@ -239,6 +239,16 @@ class UDate
 	    return $this;
 	}
 	/**
+	 * Set the time randomly
+	 * 
+	 * @return UDate
+	 */
+	public function setRandTime()
+	{
+	    $this->_dateTime->setTime(rand(0,23), rand(0,59), rand(0,59));
+	    return $this;
+	}
+	/**
 	 * Returns Unix TimeStamp
 	 *
 	 * @return int unixtimestamp
