@@ -38,97 +38,113 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						'Update At ' + tmp.me.localizeDate(row.updated) +
 						(parseInt(row.updatedBy.id) === 10 ? ('<span class="text-muted"> by System</span>') : ('<span class="text-info"> by ' + row.updatedBy.person.fullName + '</span>') )
 					);
-			tmp.topics = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Topic(s)</strong>') });
+			tmp.topics = new Element('table')
+				.insert({'bottom': new Element('tr')
+					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Topic(s)</strong>') })
+				});
 			row.topics.each(function(item){
 				tmp.key = Object.keys(item)[0];
-				tmp.topics.insert({'bottom': new Element('dd', {'info_id': tmp.key}).addClassName('topic_row').update(item[tmp.key]['name'])
-					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
-						.observe('click', function(e){
-							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeTopic');
+				tmp.topics.insert({'bottom': new Element('tr', {'info_id': tmp.key}).addClassName('topic_row')
+					.insert({'bottom': new Element('td').update(item[tmp.key]['name']) })
+					.insert({'bottom': new Element('td')
+						.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
+							.observe('click', function(e){
+								tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeTopic');
+							})
 						})
 					})
 				});
 			});
-			tmp.topics.insert({'bottom': new Element('dd', {'info_id': 'new'})
-				.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
-					.observe('click', function(e){
-						jQuery('.select2').select2("close");
-						$(this).replace(new Element('dd')
-							.insert({'bottom': tmp.topicInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
-						);
-						tmp.me._signRandID(tmp.topicInput);
-						jQuery('#'+tmp.topicInput.id).select2({
-							minimumInputLength: 3
-							,ajax: {
-								delay: 250
-								,url: '/ajax/getAll'
-								,type: 'POST'
-								,data: function (params) {
-									return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
-								}
-								,processResults: function(data, page, query) {
-									tmp.result = [];
-									if(data.resultData && data.resultData.items) {
-										data.resultData.items.each(function(item){
-											tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
-										});
+			tmp.topics.insert({'bottom': new Element('tr', {'info_id': 'new'})
+				.insert({'bottom': new Element('td', {'colspan': 2})
+					.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
+						.observe('click', function(e){
+							jQuery('.select2').select2("close");
+							$(this).replace(new Element('dd')
+								.insert({'bottom': tmp.topicInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
+							);
+							tmp.me._signRandID(tmp.topicInput);
+							jQuery('#'+tmp.topicInput.id).select2({
+								minimumInputLength: 3
+								,ajax: {
+									delay: 250
+									,url: '/ajax/getAll'
+									,type: 'POST'
+									,data: function (params) {
+										return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
 									}
-									return { 'results' : tmp.result };
+									,processResults: function(data, page, query) {
+										tmp.result = [];
+										if(data.resultData && data.resultData.items) {
+											data.resultData.items.each(function(item){
+												tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+											});
+										}
+										return { 'results' : tmp.result };
+									}
 								}
-							}
-							,cache: true
-							,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
-						}).select2("open").on("change", function(e) {
-							if(parseInt($(this).value) !== 0)
-								tmp.me._updateItem($(this), $(this).value, null, 'addTopic');
-				        });
+								,cache: true
+								,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+							}).select2("open").on("change", function(e) {
+								if(parseInt($(this).value) !== 0)
+									tmp.me._updateItem($(this), $(this).value, null, 'addTopic');
+					        });
+						})
 					})
 				})
 			});
-			tmp.units = new Element('dl').insert({'bottom': new Element('dd').update('<strong>Unit(s)</strong>') });
+			tmp.units = new Element('table')
+				.insert({'bottom': new Element('tr')
+					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Unit(s)</strong>') })
+				});
 			row.units.each(function(item){
 				tmp.key = Object.keys(item)[0];
-				tmp.units.insert({'bottom': new Element('dd', {'info_id': tmp.key}).addClassName('unit_row').update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name'])
-					.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
-						.observe('click', function(e){
-							tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeUnit');
+				tmp.units.insert({'bottom': new Element('tr', {'info_id': tmp.key}).addClassName('unit_row')
+					.insert({'bottom': new Element('td').update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name']) })
+					.insert({'bottom': new Element('td')
+						.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
+							.observe('click', function(e){
+								tmp.me._updateItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeUnit');
+							})
 						})
 					})
 				});
 			});
-			tmp.units.insert({'bottom': new Element('dd', {'info_id': 'new'})
-				.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
-					.observe('click', function(e){
-						jQuery('.select2').select2("close");
-						$(this).replace(new Element('dd')
-							.insert({'bottom': tmp.unitInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
-						);
-						tmp.me._signRandID(tmp.unitInput);
-						jQuery('#'+tmp.unitInput.id).select2({
-							minimumInputLength: 3
-							,ajax: {
-								delay: 250
-								,url: '/ajax/getAll'
-								,type: 'POST'
-								,data: function (params) {
-									return {"searchTxt": 'code like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Unit'};
-								}
-								,processResults: function(data, page, query) {
-									tmp.result = [];
-									if(data.resultData && data.resultData.items) {
-										data.resultData.items.each(function(item){
-											tmp.result.push({'id': item.id, 'text': ('<u>'+item.code+'</u>: '+item.name), 'data': item});
-										});
+			tmp.units.insert({'bottom': new Element('tr', {'info_id': 'new'})
+				.insert({'bottom': new Element('td', {'colspan': 2})
+					.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
+						.observe('click', function(e){
+							jQuery('.select2').select2("close");
+							$(this).replace(new Element('dd')
+								.insert({'bottom': tmp.unitInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
+							);
+							tmp.me._signRandID(tmp.unitInput);
+							jQuery('#'+tmp.unitInput.id).select2({
+								minimumInputLength: 3
+								,ajax: {
+									delay: 250
+									,url: '/ajax/getAll'
+									,type: 'POST'
+									,data: function (params) {
+										return {"searchTxt": 'code like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Unit'};
 									}
-									return { 'results' : tmp.result };
+									,processResults: function(data, page, query) {
+										tmp.result = [];
+										if(data.resultData && data.resultData.items) {
+											data.resultData.items.each(function(item){
+												tmp.result.push({'id': item.id, 'text': ('<u>'+item.code+'</u>: '+item.name), 'data': item});
+											});
+										}
+										return { 'results' : tmp.result };
+									}
 								}
-							}
-							,cache: true
-							,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
-						}).select2("open").on("change", function(e) {
-							if(parseInt($(this).value) !== 0)
-								tmp.me._updateItem($(this), $(this).value, null, 'addUnit');
-				        });
+								,cache: true
+								,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+							}).select2("open").on("change", function(e) {
+								if(parseInt($(this).value) !== 0)
+									tmp.me._updateItem($(this), $(this).value, null, 'addUnit');
+					        });
+						})
 					})
 				})
 			});

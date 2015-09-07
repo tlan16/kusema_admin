@@ -23,11 +23,8 @@
 	display: block;
 }
 
-#item-list-body .topics .unit_row {
-	max-width: 98%;
-}
-#item-list-body .topics .topic_row {
-	max-width: 98%;
+#item-list-body table {
+	width: 100%;
 }
 
 /** no-more tables **/
