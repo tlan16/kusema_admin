@@ -6,6 +6,9 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
+	$statics = Question::getCreatedCounts(UDate::now()->modify('-1 year'), UDate::now());
+	var_dump($statics);
+	
 	if($transStarted === false)
 		Dao::commitTransaction();
 } catch (SoapFault $e) {

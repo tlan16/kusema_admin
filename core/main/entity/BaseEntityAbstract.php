@@ -620,6 +620,17 @@ abstract class BaseEntityAbstract
     	unset(BaseEntityAbstract::$_entityCache[$class][$key]);
     	return true;
     }
+    public static function getCreatedCounts(UDate $from, UDate $to, $interval = "1 day") 
+    {
+    	$result = array();
+    	$date = $from;
+    	while ($date->beforeOrEqualTo($to) === true)
+    	{
+    		$loop_from_date = new UDate($date->__toString());
+    		$loop_to_date = $date->modify('+1 day');
+	    	$count = self::countByCriteria('active = 1 and created >= ? and created < ?', array($loop_from_date, $loop_to_date));
+	    	$result[] = [$loop_to_date->getUnixTimeStamp(), $count];
+    	}
+    	return $result;
+    }
 }
-
-?>
