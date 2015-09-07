@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<application id="BPCinternal-System" mode="Debug">
+<application id="KusemaInternal-System" mode="Debug">
 	<!-- alias definitions and namespace usings <paths> <alias id="myalias"
 		path="./lib" /> <using namespace="Application.common.*" /> </paths> -->
 
