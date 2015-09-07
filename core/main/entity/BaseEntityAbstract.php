@@ -629,7 +629,7 @@ abstract class BaseEntityAbstract
     		$loop_from_date = new UDate($date->__toString());
     		$loop_to_date = $date->modify('+1 day');
 	    	$count = self::countByCriteria('active = 1 and created >= ? and created < ?', array($loop_from_date, $loop_to_date));
-	    	$result[] = [$loop_to_date->getUnixTimeStamp(), $count];
+	    	$result[] = array($loop_to_date->getUnixTimeStamp(), $count);
     	}
     	return $result;
     }
