@@ -2,7 +2,7 @@
 include_once dirname(__FILE__) . '/testAbstract.php';
 class fakeQna extends testAbstract
 {
-	const LOOPS= 60000;
+	const LOOPS= 600;
 	public static function run($clearAll = true)
 	{
 		parent::run();
@@ -34,17 +34,20 @@ class fakeQna extends testAbstract
 				$question = Question::create($title, $content, $refId, $author, $authorName, $active);
 				$question->setCreated($basetime->modify('+'.rand(1,365).' day')->setRandTime())->save();
 				echo 'Question[' . $question->getId() . '] added' . PHP_EOL;
-				for($i = 0; $i < rand(1,5); $i++) {
+				$limit = rand(1,5);
+				for($i = 0; $i < $limit; $i++) {
 					$topic = (rand(1,5) === 1 ? Topic::get(rand(1,7)) : self::getRandObj('Topic'));
 					$question->addTopic($topic);
 				}
 				echo count($question->getTopics()) . ' Topics added to Question[' . $question->getId() . ']' . PHP_EOL;
-				for($i = 0; $i < rand(1,5); $i++) {
+				$limit = rand(1,5);
+				for($i = 0; $i < $limit; $i++) {
 					$unit = (rand(1,5) === 1 ? Unit::get(rand(1,7)) : self::getRandObj('Unit'));
 					$question->addUnit($unit);
 				}
 				echo count($question->getUnits()) . ' Units added to Question[' . $question->getId() . ']' . PHP_EOL;
-				for($i = 0; $i < rand(1,5); $i++) {
+				$limit = rand(1,5);
+				for($i = 0; $i < $limit; $i++) {
 					$title = self::getRandQuestion();
 					$content = self::getRandSentense(5,50);
 					$refId = md5($title.$content);
@@ -54,7 +57,8 @@ class fakeQna extends testAbstract
 					$comment = $question->addComments($title, $content, $refId, $author, $authorName, $active);
 					$comment->setCreated($question->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
 					echo 'Comment[' . $comment->getId() . '] added to Question[' . $question->getId() . ']' . PHP_EOL;
-					for($i = 0; $i < rand(1,3); $i++) {
+					$limit2 = rand(1,3);
+					for($j = 0; $j < $limit2; $j++) {
 						$title = self::getRandQuestion();
 						$content = self::getRandSentense(5,50);
 						$refId = md5($title.$content);
@@ -63,7 +67,8 @@ class fakeQna extends testAbstract
 						$active = true;
 						$commentOfComment = $comment->addComments($title, $content, $refId, $author, $authorName, $active);
 						$commentOfComment->setCreated($comment->getCreated()->modify('+'.rand(1,7).' day')->setRandTime())->save();
-						for($i = 0; $i < rand(1,2); $i++) {
+						$limit3 = rand(1,2);
+						for($k = 0; $k < $limit3; $k++) {
 							$title = self::getRandQuestion();
 							$content = self::getRandSentense(5,50);
 							$refId = md5($title.$content);
@@ -76,7 +81,8 @@ class fakeQna extends testAbstract
 						echo count($comment->getComments()) . ' Comments added to Comment[' . $comment->getId() . '] which belongs to Question[' . $question->getId() . ']' . PHP_EOL;
 					}
 				}
-				for($i = 0; $i < rand(8,20); $i++) {
+				$limit = rand(8,20);
+				for($i = 0; $i < $limit; $i++) {
 					$title = self::getRandQuestion();
 					$content = self::getRandSentense(5,50);
 					$refId = md5($title.$content);
@@ -86,7 +92,8 @@ class fakeQna extends testAbstract
 					$anwser = $question->addAnswer($title, $content, $refId, $author, $authorName, $active);
 					$anwser->setCreated($question->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
 					echo 'Answer[' . $anwser->getId() . '] added to Question[' . $question->getId() . ']' . PHP_EOL;
-					for($i = 0; $i < rand(1,5); $i++) {
+					$limit2 = rand(1,5);
+					for($j = 0; $j < rand(1,5); $j++) {
 						$title = self::getRandQuestion();
 						$content = self::getRandSentense(5,50);
 						$refId = md5($title.$content);
@@ -96,7 +103,8 @@ class fakeQna extends testAbstract
 						$comment = $anwser->addComments($title, $content, $refId, $author, $authorName, $active);
 						$comment->setCreated($anwser->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
 						echo 'Comment[' . $comment->getId() . '] added to Anwser[' . $anwser->getId() . ']' . PHP_EOL;
-						for($i = 0; $i < rand(1,3); $i++) {
+						$limit3 = rand(1,3);
+						for($k = 0; $k < $limit3; $k++) {
 							$title = self::getRandQuestion();
 							$content = self::getRandSentense(5,50);
 							$refId = md5($title.$content);
@@ -106,7 +114,8 @@ class fakeQna extends testAbstract
 							$commentOfComment = $comment->addComments($title, $content, $refId, $author, $authorName, $active);
 							$commentOfComment->setCreated($comment->getCreated()->modify('+'.rand(1,7).' day')->setRandTime())->save();
 							$comment->setCreated($question->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
-							for($i = 0; $i < rand(1,2); $i++) {
+							$limit4 = rand(1,3);
+							for($l = 0; $l < $limit4; $l++) {
 								$title = self::getRandQuestion();
 								$content = self::getRandSentense(5,50);
 								$refId = md5($title.$content);
