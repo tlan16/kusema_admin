@@ -624,12 +624,13 @@ abstract class BaseEntityAbstract
     {
     	$result = array();
     	$date = $from;
+    	$class = get_called_class();
     	while ($date->beforeOrEqualTo($to) === true)
     	{
     		$loop_from_date = new UDate($date->__toString());
     		$loop_to_date = $date->modify('+1 day');
-	    	$count = self::countByCriteria('active = 1 and created >= ? and created < ?', array($loop_from_date, $loop_to_date));
-	    	$result[] = array($loop_to_date->getUnixTimeStamp(), $count);
+	    	$count = $class::countByCriteria('active = 1 and created >= ? and created < ?', array($loop_from_date, $loop_to_date));
+	    	$result[] = array(intval(trim($loop_to_date->getUnixTimeStamp())."000"), intval($count));
     	}
     	return $result;
     }

@@ -30,6 +30,8 @@
 			<url ServiceParameter="Statics.Topic.StaticsController" pattern="statics/topic.html" />
 			<!-- FrontEnd:: Unit Statics page -->
 			<url ServiceParameter="Statics.Unit.StaticsController" pattern="statics/unit.html" />
+			<!-- FrontEnd:: New Question page -->
+			<url ServiceParameter="Statics.NewQuestion.StaticsController" pattern="statics/newquestion.html" />
 			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
