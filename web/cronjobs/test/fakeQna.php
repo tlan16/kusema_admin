@@ -2,13 +2,10 @@
 include_once dirname(__FILE__) . '/testAbstract.php';
 class fakeQna extends testAbstract
 {
-	const LOOPS= 600;
+	const LOOPS= 6000;
 	public static function run($clearAll = true)
 	{
 		parent::run();
-		try {
-			$transStarted = false;
-			try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 			
 			if($clearAll === true)
 			{
@@ -22,6 +19,10 @@ class fakeQna extends testAbstract
 			
 			for($loop = 0; $loop < self::LOOPS; $loop++)
 			{
+			try {
+				$transStarted = false;
+				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
+				
 				echo 'loop: ' . $loop . PHP_EOL;
 				$title = self::getRandQuestion();
 				$content = self::getRandSentense(10,50);
@@ -130,17 +131,17 @@ class fakeQna extends testAbstract
 						echo count($comment->getComments()) . ' Comments added to Answer[' . $anwser->getId() . ']' . PHP_EOL;
 					}
 				}
+					if($transStarted === false)
+						Dao::commitTransaction();
+					else {echo "transStarted === true, nothing is commited! \n";}
+				}
+				catch(Exception $ex)
+				{
+					if($transStarted === false)
+						Dao::rollbackTransaction();
+					throw $ex;
+				}
 			}
-			if($transStarted === false)
-				Dao::commitTransaction();
-			else {echo "transStarted === true, nothing is commited! \n";}
-		}
-		catch(Exception $ex)
-		{
-			if($transStarted === false)
-				Dao::rollbackTransaction();
-			throw $ex;
-		}
 	}
 }
 
