@@ -29,7 +29,7 @@ class Menu extends TTemplateControl
 				'topic' => array('url' => '/statics/topic.html', 'name' => 'Top Topics', 'icon' => ''),
 				'unit' => array('url' => '/statics/unit.html', 'name' => 'Top Units', 'icon' => ''),
 				'newquestion' => array('url' => '/statics/newquestion.html', 'name' => 'Current Year Question Count', 'icon' => ''),
-				'dailynewquestion' => array('url' => '/statics/newquestion.html', 'name' => 'Question Count By Time In A Day', 'icon' => '')
+				'dailynewquestion' => array('url' => '/statics/dailynewquestion.html', 'name' => 'Question Count By Time In A Day', 'icon' => '')
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";
