@@ -620,6 +620,26 @@ abstract class BaseEntityAbstract
     	unset(BaseEntityAbstract::$_entityCache[$class][$key]);
     	return true;
     }
+    public static function getDailyCreatedCounts(UDate $from, UDate $to, $interval = "5 minutes")
+    {
+    	$result = array();
+    	$date = UDate::zeroDate();
+    	$maxDate = UDate::maxDate();
+    	$maxDate->setDate(1, 1, 1);
+    	$class = get_called_class();
+    	while ($date->beforeOrEqualTo($maxDate) === true)
+    	{
+    		$loop_from_time = $date->format('H:i:s');
+    		$date->modify('+'.$interval);
+    		$loop_to_time = $date->format('H:i:s');
+			$where = 'active = 1 and created >= ? and created < ? and TIME(created) >= ? and TIME(created) < ?';
+			$param = array(trim($from), trim($to), $loop_from_time, $loop_to_time);
+    		$count = $class::countByCriteria($where, $param);
+    		if(!(trim($loop_to_time) === '00:00:00' && intval($count) === 0))
+    			$result[] = array(intval(trim($date->getUnixTimeStamp())."000"), intval($count));
+    	}
+    	return $result;
+    }
     public static function getCreatedCounts(UDate $from, UDate $to, $interval = "1 day") 
     {
     	$result = array();

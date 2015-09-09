@@ -81,13 +81,50 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	                text : title
 	            },
 	            series : [{
-	                name : 'HQCC',
+	                name : 'Count',
 	                data : result,
 	                tooltip: {
 	                    valueDecimals: 0
 	                }
 	            }]
 	        });
+			break;
+		case 'dailystock':
+			jQuery('#' + tmp.me.getHTMLID('resultDivId')).highcharts('StockChart', {
+				rangeSelector : {
+					buttons: [{
+						type: 'minute',
+						count: 30,
+						text: '30min'
+					}, {
+						type: 'hour',
+						count: 1,
+						text: '1h'
+					}, {
+						type: 'hour',
+						count: 3,
+						text: '3h'
+					}, {
+						type: 'hour',
+						count: 6,
+						text: '6h'
+					}, {
+						type: 'all',
+						text: 'All'
+					}],
+					selected : 4
+				},
+				title : {
+					text : title
+				},
+				series : [{
+					name : 'Count',
+					data : result,
+					tooltip: {
+						valueDecimals: 0
+					}
+				}]
+			});
 			break;
 		}
 		return tmp.me;
