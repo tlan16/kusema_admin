@@ -116,16 +116,19 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
 						throw new Exception('you can only view stock chart for top topics of question');
 					$results = $class::getCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+					break;
 				}
 				case 'daily':
 				{
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
 						throw new Exception('you can only view stock chart for top topics of question');
 					$results = $class::getDailyCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+					break;
 				}
 				default:
 				{
-					throw new Exception('invalid action "' . trim($param->CallbackParameter->action) . '" passed in');
+					throw new Exception('invalid action "' . strtolower(trim($param->CallbackParameter->action)) . '" passed in');
+					break;
 				}
 			}
 		}
