@@ -1,0 +1,10 @@
+<%@MasterClass="Application.layout.BlankLayout"%>
+<com:TContent ID="MainContent">
+	<com:Application.controls.HiStock.HiStock />
+	<com:TCallbackOptions ID="options">
+		<prop:ClientSide.RequestTimeOut>60000</prop:ClientSide.RequestTimeOut>
+	</com:TCallbackOptions>
+	<div class="pagewrapper">
+		<div id="statics-div"></div>
+	</div>
+</com:TContent>

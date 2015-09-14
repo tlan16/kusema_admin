@@ -11,11 +11,11 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return this;
 	}
 
-	,_drawChart: function(result, type, title) {
+	,_drawChart: function(result) {
 		var tmp = {};
 		tmp.me = this;
-		switch(type) {
-		case 'pie':
+		switch(tmp.me._type) {
+		case 'pie': {
 			tmp.data = [];
 			tmp.index = 0;
 			tmp.indexOfMax = null;
@@ -46,7 +46,7 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 						type: 'pie'
 					},
 					title: {
-						text: title
+						text: tmp.me._title
 					},
 					tooltip: {
 						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -72,13 +72,14 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			};
 			jQuery('#' + tmp.me.getHTMLID('resultDivId')).highcharts(tmp.pie);
 			break;
-		case 'stock':
+		}
+		case 'stock': {
 			jQuery('#' + tmp.me.getHTMLID('resultDivId')).highcharts('StockChart', {
 	            rangeSelector : {
 	                selected : 1
 	            },
 	            title : {
-	                text : title
+	                text : tmp.me._title
 	            },
 	            series : [{
 	                name : 'Count',
@@ -89,7 +90,8 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	            }]
 	        });
 			break;
-		case 'dailystock':
+		}
+		case 'onedaystock':
 			jQuery('#' + tmp.me.getHTMLID('resultDivId')).highcharts('StockChart', {
 				rangeSelector : {
 					buttons: [{
@@ -115,7 +117,7 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 					selected : 4
 				},
 				title : {
-					text : title
+					text : tmp.me._title
 				},
 				series : [{
 					name : 'Count',
@@ -130,17 +132,24 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return tmp.me;
 	}
 
-	,_getData: function(type, title) {
+	,_getData: function() {
 		var tmp = {};
 		tmp.me = this;
 		$(tmp.me.getHTMLID('resultDivId')).update(tmp.me.getLoadingImg());
-		tmp.me.postAjax(tmp.me.getCallbackId('getData'), tmp.me._searchCriterias, {
+		tmp.data = {
+			'searchCriterias':tmp.me._searchCriterias,
+			'type':tmp.me._type,
+			'entity':tmp.me._entity,
+			'title':tmp.me._title,
+			'action':tmp.me._action
+		};
+		tmp.me.postAjax(tmp.me.getCallbackId('getData'), tmp.data, {
 			'onSuccess': function(sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result)
 						throw 'Syste Error: No result came back!';
-					tmp.me._drawChart(tmp.result, type, title);
+					tmp.me._drawChart(tmp.result);
 				} catch (e) {
 					$(tmp.me.getHTMLID('resultDivId')).update(tmp.me.getAlertBox('ERROR:', e).addClassName('alert-danger'));
 				}
@@ -149,8 +158,12 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return tmp.me;
 	}
 
-	,load: function (searchCriterias, type, title) {
+	,load: function (searchCriterias, type, entity, title, action) {
 		this._searchCriterias = searchCriterias;
-		return this._getData(type,title);
+		this._type = type;
+		this._entity = entity;
+		this._title = title;
+		this._action = action;
+		return this._getData();
 	}
 });
