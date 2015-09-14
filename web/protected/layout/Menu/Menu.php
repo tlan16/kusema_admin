@@ -27,10 +27,11 @@ class Menu extends TTemplateControl
 			,'Statics' => array(
 				'icon' => '<span class="glyphicon glyphicon-signal"></span>',
 				'topic' => array('url' => '/statics/topic.html', 'name' => 'Top Topics', 'icon' => ''),
-				'unit' => array('url' => '/statics/unit.html', 'name' => 'Top Units', 'icon' => '')
+				'unit' => array('url' => '/statics/unit.html', 'name' => 'Top Units', 'icon' => ''),
+				'newquestion' => array('url' => '/statics/newquestion.html', 'name' => 'Current Year Question Count', 'icon' => ''),
+				'dailynewquestion' => array('url' => '/statics/dailynewquestion.html', 'name' => 'Question Count By Time In A Day', 'icon' => '')
 			)
 		);
-
 		$html = "<ul class='nav navbar-nav'>";
 			foreach($array as $key => $item)
 			{

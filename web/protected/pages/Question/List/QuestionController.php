@@ -32,6 +32,7 @@ class QuestionController extends CRUDPageAbstract
 		$js = parent::_getEndJs();
 		$js .= "pageJs.getResults(true, " . $this->pageSize . ");";
 		$js .= "pageJs.loadSelect2();";
+		$js .= "pageJs._bindSearchKey();";
 		$js .= 'pageJs.setCallbackId("updateItem", "' . $this->updateItemBtn->getUniqueID(). '");';
 		return $js;
 	}
@@ -96,8 +97,8 @@ class QuestionController extends CRUDPageAbstract
 							$value = intval($value);
 							if($value === 0 || $value === 1)
 							{
-								$where[] =  $field . " = ? ";
-								$params[] = $value;
+								$where[] =  $field . " = :active ";
+								$params['active'] = $value;
 							}
 							break;
 						}
