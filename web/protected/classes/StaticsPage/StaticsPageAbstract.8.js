@@ -20,6 +20,7 @@ StaticsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.index = 0;
 			tmp.indexOfMax = null;
 			tmp.max = 0;
+			console.debug(result);
 			result.each(function(item){
 				tmp.data.push({
 					name: item.name,

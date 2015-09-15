@@ -87,42 +87,74 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 		try
 		{
 			$results = array();
-			switch (strtolower(trim($param->CallbackParameter->action)))
+			switch ($action = strtolower(trim($param->CallbackParameter->action)))
 			{
 				case 'topunit':
 				case 'topunits':
 				{
-					if(strtolower(trim($param->CallbackParameter->entity)) !== 'question')
+					if(($entity = strtolower(trim($param->CallbackParameter->entity))) !== 'question')
 						throw new Exception('entity must be "question" in order to view top units');
-					if(strtolower(trim($param->CallbackParameter->type)) !== 'pie')
+					if(($type = strtolower(trim($param->CallbackParameter->type))) !== 'pie')
 						throw new Exception('type must be "pie" in order to view top units');
-					foreach(Question::getTopUnits() as $unit)
-						$results[] = array('id' => $unit['UnitId'], 'name' => $unit['UnitCode'].': '.$unit['UnitName'], 'y' => doubleval($unit['percentage']));
+					$statics = Statics::getStatics($entity, $type, $action, true, 0);
+					if($statics instanceof Statics)
+						$results = json_decode($statics->getData());
+					else {
+						$obj = Statics::create($entity, $type, $action);
+						foreach(Question::getTopUnits() as $unit)
+							$results[] = array('id' => $unit['UnitId'], 'name' => $unit['UnitCode'].': '.$unit['UnitName'], 'y' => doubleval($unit['percentage']));
+						$obj->setData(json_encode($results))->setStatus(0)->save();
+					}
 					break;
 				}
 				case 'toptopic':
 				case 'toptopics':
 				{
-					if(strtolower(trim($param->CallbackParameter->entity)) !== 'question')
+					if(($entity = strtolower(trim($param->CallbackParameter->entity))) !== 'question')
 						throw new Exception('entity must be "question" in order to view top topics');
-					if(strtolower(trim($param->CallbackParameter->type)) !== 'pie')
+					if(($type = strtolower(trim($param->CallbackParameter->type))) !== 'pie')
 						throw new Exception('type must be "pie" in order to view top topics');
-					foreach(Question::getTopTopics() as $topic)
-						$results[] = array('id' => $topic['TopicId'], 'name' => $topic['TopicName'], 'y' => doubleval($topic['percentage']));
+					$statics = Statics::getStatics($entity, $type, $action, true, 0);
+					if($statics instanceof Statics)
+						$results = json_decode($statics->getData());
+					else {
+						$obj = Statics::create($entity, $type, $action);
+						foreach(Question::getTopTopics() as $topic)
+							$results[] = array('id' => $topic['TopicId'], 'name' => $topic['TopicName'], 'y' => doubleval($topic['percentage']));
+						$obj->setData(json_encode($results))->setStatus(0)->save();
+					}
 					break;
 				}
 				case 'yearly':
 				{
-					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
+					if(($entity = strtolower(trim($param->CallbackParameter->entity))) === '')
+						throw new Exception('entity must not be empty in order to view 1 year trend');
+					if(($type = strtolower(trim($param->CallbackParameter->type))) !== 'stock')
 						throw new Exception('type must be "stock" in order to view 1 year trend');
-					$results = $class::getCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+					$statics = Statics::getStatics($entity, $type, $action, true, 0);
+					if($statics instanceof Statics)
+						$results = json_decode($statics->getData());
+					else {
+						$obj = Statics::create($entity, $type, $action);
+						$results = $class::getCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+						$obj->setData(json_encode($results))->setStatus(0)->save();
+					}
 					break;
 				}
 				case 'daily':
 				{
-					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
+					if(($entity = strtolower(trim($param->CallbackParameter->entity))) === '')
+						throw new Exception('entity must not be empty in order to view 1 day trend');
+					if(($type = strtolower(trim($param->CallbackParameter->type))) !== 'stock')
 						throw new Exception('type must be "stock" in order to view 1 day trend');
-					$results = $class::getDailyCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+					$statics = Statics::getStatics($entity, $type, $action, true, 0);
+					if($statics instanceof Statics)
+						$results = json_decode($statics->getData());
+					else {
+						$obj = Statics::create($entity, $type, $action);
+						$results = $class::getDailyCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
+						$obj->setData(json_encode($results))->setStatus(0)->save();
+					}
 					break;
 				}
 				default:
@@ -137,6 +169,16 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	private static function createDummyStatics($entity, $type, $action)
+	{
+		try {
+			Dao::beginTransaction();
+			Dao::commitTransaction();
+		} catch (Exception $e) {
+			Dao::rollbackTransaction();
+			throw $e;
+		}
 	}
 }
 ?>
