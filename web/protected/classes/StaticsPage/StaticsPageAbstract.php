@@ -93,9 +93,9 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 				case 'topunits':
 				{
 					if(strtolower(trim($param->CallbackParameter->entity)) !== 'question')
-						throw new Exception('you can only view top units of question');
+						throw new Exception('entity must be "question" in order to view top units');
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'pie')
-						throw new Exception('you can only view pie chart for top units of question');
+						throw new Exception('type must be "pie" in order to view top units');
 					foreach(Question::getTopUnits() as $unit)
 						$results[] = array('id' => $unit['UnitId'], 'name' => $unit['UnitCode'].': '.$unit['UnitName'], 'y' => doubleval($unit['percentage']));
 					break;
@@ -104,9 +104,9 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 				case 'toptopics':
 				{
 					if(strtolower(trim($param->CallbackParameter->entity)) !== 'question')
-						throw new Exception('you can only view top topics of question');
+						throw new Exception('entity must be "question" in order to view top topics');
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'pie')
-						throw new Exception('you can only view pie chart for top topics of question');
+						throw new Exception('type must be "pie" in order to view top topics');
 					foreach(Question::getTopTopics() as $topic)
 						$results[] = array('id' => $topic['TopicId'], 'name' => $topic['TopicName'], 'y' => doubleval($topic['percentage']));
 					break;
@@ -114,14 +114,14 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 				case 'yearly':
 				{
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
-						throw new Exception('you can only view stock chart for top topics of question');
+						throw new Exception('type must be "stock" in order to view 1 year trend');
 					$results = $class::getCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
 					break;
 				}
 				case 'daily':
 				{
 					if(strtolower(trim($param->CallbackParameter->type)) !== 'stock')
-						throw new Exception('you can only view stock chart for top topics of question');
+						throw new Exception('type must be "stock" in order to view 1 day trend');
 					$results = $class::getDailyCreatedCounts(UDate::now()->modify("-1 year"), UDate::now());
 					break;
 				}
