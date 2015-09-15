@@ -1,6 +1,6 @@
 <?php
 include_once dirname(__FILE__) . '/testAbstract.php';
-class statics extends testAbstract
+class StaticsTest extends testAbstract
 {
 	public static function run()
 	{
@@ -29,5 +29,5 @@ class statics extends testAbstract
 }
 
 $time_start = microtime(true);
-statics::run();
+StaticsTest::run();
 echo PHP_EOL . 'Execution time: ' . date("H:i:s",microtime(true)-$time_start) . PHP_EOL;
