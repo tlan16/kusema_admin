@@ -1,0 +1,30 @@
+<com:TContent ID="MainContent">
+<com:Application.controls.iframeResizer.iframeResizer />
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<strong>Presets</strong>
+		</div>
+		<div class="panel-body" id="presetDiv">
+			<div class="row">
+				<div class="col-md-2 btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="topunit">
+					Top Units
+				</div>
+				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="toptopic">
+					Top Topic
+				</div>
+				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="yearly">
+					New Question (1 year)
+				</div>
+				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="daily">
+					New Question (1 day)
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row" id="configDiv" style="width:100%;">
+			</div>
+			<div class="row" id="resultDiv" style="width:100%;">
+			</div>
+		</div>
+	</div>
+</com:TContent>

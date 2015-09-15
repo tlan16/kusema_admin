@@ -26,6 +26,8 @@
 			<!-- FrontEnd:: Question list page -->
 			<url ServiceParameter="Question.List.QuestionController" pattern="questions.html" />
 			
+			<!-- FrontEnd:: Configurable Statics page -->
+			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />
 			<!-- FrontEnd:: Generic Statics page -->
 			<url ServiceParameter="Statics.Generic.StaticsController" pattern="statics.html" />
 			

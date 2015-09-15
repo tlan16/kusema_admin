@@ -1,0 +1,15 @@
+iframe:focus { 
+    outline: none;
+}
+
+iframe[seamless] { 
+    display: block;
+}
+
+iframe {
+	width: 100%;
+	frameBorder: "0";
+	border:none;
+	padding: 0;
+    margin: 0;
+}

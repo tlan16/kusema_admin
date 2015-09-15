@@ -25,11 +25,9 @@ class Menu extends TTemplateControl
 				'questions' => array('url' => '/questions.html', 'name' => 'Questions', 'icon' => '')
 			)
 			,'Statics' => array(
-				'icon' => '<span class="glyphicon glyphicon-signal"></span>',
-				'topic' => array('url' => '/statics/topic.html', 'name' => 'Top Topics', 'icon' => ''),
-				'unit' => array('url' => '/statics/unit.html', 'name' => 'Top Units', 'icon' => ''),
-				'newquestion' => array('url' => '/statics/newquestion.html', 'name' => 'Current Year Question Count', 'icon' => ''),
-				'dailynewquestion' => array('url' => '/statics/dailynewquestion.html', 'name' => 'Question Count By Time In A Day', 'icon' => '')
+				'name' => 'Statics',
+				'url' => '/statics/config.html',
+				'icon' => '<span class="glyphicon glyphicon-signal"></span>'
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";

@@ -52,7 +52,7 @@ abstract class StaticsPageAbstract extends BPCPageAbstract
 			die('Invalid or No Type passed in');
 		if(!isset($this->Request['entity']) || ($entity = trim($this->Request['entity'])) === '' || !class_exists($class = ucfirst(strtolower($entity))) )
 			die('Invalid or No Entity passed in');
-		$title = (isset($this->Request['title']) ? trim($this->Request['title']) : ucwords(strtolower($type . ' chart for ' . $entity)) );
+		$title = (isset($this->Request['title']) && trim($this->Request['title']) !== '' ? trim($this->Request['title']) : ucwords(strtolower($type . ' chart for ' . $entity)) );
 		$action = (isset($this->Request['action']) ? trim($this->Request['action']) : null );
 		$title .= (trim($action) === '' ? '' : (' - ' . ucfirst(trim($action))) );
 		$js = parent::_getEndJs();
