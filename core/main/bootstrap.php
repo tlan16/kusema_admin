@@ -27,6 +27,8 @@ abstract class SystemCoreAbstract
 			$base . '/entity/system/',
 			$base . '/exception/',
 			$base . '/utils/',
+			$base . '/utils/connector/',
+			$base . '/utils/connector/forum/',
 			$base . '/utils/html_parser/',
 			$base . '/utils/PDF/',
 			$base . '/utils/PhpBarcode/',

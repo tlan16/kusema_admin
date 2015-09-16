@@ -8,6 +8,9 @@
  */
 class SystemSettings extends BaseEntityAbstract
 {
+	CONST TYPE_FORUM_API_REST = "forum_api_rest";
+	CONST TYPE_FORUM_API_REST_USERNAME = "forum_api_rest_username";
+	CONST TYPE_FORUM_API_REST_PASSWORD = "forum_api_rest_password";
 	/**
 	 * The value of the setting
 	 * 
@@ -48,19 +51,23 @@ class SystemSettings extends BaseEntityAbstract
 		}
 		return self::$_cache[$type];
 	}
-	
+	public function __toString()
+	{
+		return $this->value;
+	}
 	/**
 	 * adding a new Settings Object
 	 * 
 	 * @param string $type The type string
 	 */
-	public static function addSettings($type, $value)
+	public static function addSettings($type, $value, $description = '')
 	{
 		$class = __CLASS__;
 		$settings = self::getAllByCriteria('type=?', array($type), false, 1, 1);
 		$setting = ((count($settings) === 0 ? new $class() : $settings[0]));
 		$setting->setType($type)
 			->setValue($value)
+			->setDescription($description)
 			->setActive(true)
 			->save();
 		self::$_cache[$type] = $value;

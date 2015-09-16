@@ -166,6 +166,7 @@ DROP TABLE IF EXISTS `topic`;
 CREATE TABLE `topic` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) NOT NULL DEFAULT '',
+	`refId` varchar(50) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -175,6 +176,7 @@ CREATE TABLE `topic` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
+	,INDEX (`refId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `questioninfotype`;
 CREATE TABLE `questioninfotype` (
@@ -358,6 +360,7 @@ DROP TABLE IF EXISTS `unit`;
 CREATE TABLE `unit` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) NOT NULL DEFAULT '',
+	`refId` varchar(50) NOT NULL DEFAULT '',
 	`code` varchar(25) NOT NULL DEFAULT '',
 	`year` int(2) unsigned NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
@@ -369,6 +372,7 @@ CREATE TABLE `unit` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
+	,INDEX (`refId`)
 	,INDEX (`code`)
 	,INDEX (`year`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;

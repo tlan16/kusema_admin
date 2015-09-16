@@ -14,6 +14,12 @@ class Unit extends BaseEntityAbstract
      */
     private $name;
     /**
+     * The reference id of a imported Unit
+     *
+     * @var string
+     */
+    private $refId;
+    /**
      * The code of the Unit
      * 
      * @var string
@@ -43,6 +49,25 @@ class Unit extends BaseEntityAbstract
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+    /**
+     * getter for refId
+     *
+     * @return string
+     */
+    public function getRefId()
+    {
+        return $this->refId;
+    }
+    /**
+     * Setter for refId
+     *
+     * @return Unit
+     */
+    public function setRefId($refId)
+    {
+        $this->refId = $refId;
         return $this;
     }
     /**
@@ -92,12 +117,14 @@ class Unit extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'unit');
         DaoMap::setStringType('name', 'varchar', 100);
+        DaoMap::setStringType('refId', 'varchar', 50);
         DaoMap::setStringType('code', 'varchar', 25);
         DaoMap::setIntType('year', 'int', 2, true, true);
         
         parent::__loadDaoMap();
         
         DaoMap::createIndex('name');
+        DaoMap::createIndex('refId');
         DaoMap::createIndex('code');
         DaoMap::createIndex('year');
         DaoMap::commit();
@@ -113,22 +140,36 @@ class Unit extends BaseEntityAbstract
      * @throws Exception
      * @return Unit
      */
-    public static function create($name, $code, $year = null, $active = true)
+    public static function create($name, $code, $refId = '', $year = null, $active = true)
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
     	if(($code = strtoupper(trim($code))) === '')
     		throw new Exception('Code cannot be empty to create a new ' . __CLASS__);
+    	$refId = trim($refId);
     	$year = $year === null ? null : intval($year);
     	$active = (intval($active) === 1);
-    	$obj = self::getByCode($code);
-    	$obj = $obj instanceof self ? $obj : new self();
+    	
+    	if($refId !== '' && ($obj = self::getByRefId($refId)) instanceof self)
+    		$obj = $obj;
+    	elseif(($obj = self::getByCode($code)) instanceof self)
+    	$obj = $obj;
+    	else $obj = new self();
+    	
     	$obj->setName($name)
+    		->setRefId($refId)
     		->setCode($code)
     		->setYear($year)
 	    	->setActive($active)
 	    	->save();
     	return $obj;
+    }
+    public static function getByRefId($refId, $activeOnly = true)
+    {
+    	$refId = trim($refId);
+    	$activeOnly = (intval($activeOnly) === 1);
+    	$objs = self::getAllByCriteria('refId = ?', array($refId), $activeOnly, 1, 1);
+    	return count($objs) > 0 ? $objs[0] : null;
     }
     /**
      * get Unit by code
@@ -166,7 +207,7 @@ class Unit extends BaseEntityAbstract
      *
      * @return Unit
      */
-    public function addUnit(Topic $topic, $active = true)
+    public function addTopic(Topic $topic, $active = true)
     {
     	$active = (intval($active) === 1);
     	$obj = Unit_Topic::create($this, $topic, $active);

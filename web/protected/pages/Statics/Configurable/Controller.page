@@ -6,22 +6,53 @@
 		</div>
 		<div class="panel-body" id="presetDiv">
 			<div class="row">
-				<div class="col-md-2 btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="topunit">
-					Top Units
-				</div>
-				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="toptopic">
-					Top Topic
-				</div>
-				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="yearly">
-					New Question (1 year)
-				</div>
-				<div class="col-md-2 col-md-offset-1 btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="daily">
-					New Question (1 day)
+				<div class="col-md-12">
+					<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="topunit">
+						Top Units
+					</div>
+					<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="toptopic">
+						Top Topic
+					</div>
+					<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="yearly">
+						New Question (1 year)
+					</div>
+					<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="daily">
+						New Question (1 day)
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel-body">
-			<div class="row" id="configDiv" style="width:100%;">
+			<div class="row" id="configDiv">
+				<div class="col-sm-2">
+					<div class="form-group form-group-sm input-group">
+	                   <label for="type" class="input-group-addon">Type:</label>
+	                   <input type="text" class="form-control input-sm" chart_field="type" placeholder="Type of Chart">
+	               	</div>
+               	</div>
+				<div class="col-sm-2">
+					<div class="form-group form-group-sm input-group">
+	                   <label for="entity" class="input-group-addon">Entity:</label>
+	                   <input type="text" class="form-control input-sm" chart_field="entity" placeholder="Entity of Chart">
+	               	</div>
+               	</div>
+				<div class="col-sm-2">
+					<div class="form-group form-group-sm input-group">
+	                   <label for="action" class="input-group-addon">Action:</label>
+	                   <input type="text" class="form-control input-sm" chart_field="action" placeholder="Action of Chart">
+	               	</div>
+               	</div>
+				<div class="col-sm-2">
+					<div class="form-group form-group-sm input-group">
+	                   <label for="title" class="input-group-addon">Title:</label>
+	                   <input type="text" class="form-control input-sm" chart_field="title" placeholder="Title of Chart">
+	               	</div>
+               	</div>
+               	<div class="col-sm-2 pull-right text-right">
+					<div class="btn btn-md btn-success">
+						Apply
+					</div>
+               	</div>
 			</div>
 			<div class="row" id="resultDiv" style="width:100%;">
 			</div>

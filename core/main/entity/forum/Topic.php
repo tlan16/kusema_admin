@@ -9,10 +9,16 @@
 class Topic extends BaseEntityAbstract
 {
     /**
-     * The name of the Unit
+     * The name of the Topic
      * @var string
      */
     private $name;
+    /**
+     * The reference id of a imported Topic
+     * 
+     * @var string
+     */
+    private $refId;
     
     /**
      * getter for name
@@ -26,11 +32,30 @@ class Topic extends BaseEntityAbstract
     /**
      * Setter for name
      *
-     * @return Unit
+     * @return Topic
      */
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+    /**
+     * getter for refId
+     *
+     * @return string
+     */
+    public function getRefId()
+    {
+        return $this->refId;
+    }
+    /**
+     * Setter for refId
+     *
+     * @return Topic
+     */
+    public function setRefId($refId)
+    {
+        $this->refId = $refId;
         return $this;
     }
     
@@ -42,10 +67,12 @@ class Topic extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'tpc');
         DaoMap::setStringType('name', 'varchar', 100);
+        DaoMap::setStringType('refId', 'varchar', 50);
         
         parent::__loadDaoMap();
         
         DaoMap::createIndex('name');
+        DaoMap::createIndex('refId');
         DaoMap::commit();
     }
     /**
@@ -57,17 +84,31 @@ class Topic extends BaseEntityAbstract
      * @throws Exception
      * @return Topic
      */
-    public static function create($name, $active = true)
+    public static function create($name, $refId = '', $active = true)
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
+    	$refId = trim($refId);
     	$active = (intval($active) === 1);
-    	$obj = self::getByName($name, false);
-    	$obj = $obj instanceof self ? $obj : new self();
+    	
+    	if($refId !== '' && ($obj = self::getByRefId($refId)) instanceof self)
+    		$obj = $obj;
+    	elseif(($obj = self::getByName($name)) instanceof self)
+    		$obj = $obj;
+    	else $obj = new self();
+    	
     	$obj->setName($name)
+    		->setRefId($refId)
     		->setActive($active)
     		->save();
     	return $obj;
+    }
+    public static function getByRefId($refId, $activeOnly = true)
+    {
+    	$refId = trim($refId);
+    	$activeOnly = (intval($activeOnly) === 1);
+    	$objs = self::getAllByCriteria('refId = ?', array($refId), $activeOnly, 1, 1);
+    	return ( count($objs) > 0 ? $objs[0] : null );
     }
     /**
      * get Topic by name
