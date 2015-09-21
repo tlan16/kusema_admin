@@ -6,7 +6,6 @@ class pullTopic extends syncAbstract
 	{
 		parent::run();
 		TopicConnector::importTopic(array(), true);
-// 		var_dump(TopicConnector::getTopic("Chemical Engineering",true));
 	}
 }
 
