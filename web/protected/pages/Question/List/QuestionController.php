@@ -20,7 +20,7 @@ class QuestionController extends CRUDPageAbstract
 	public function __construct()
 	{
 		parent::__construct();
-		if(!AccessControl::canAccessDevelopingPage(Core::getRole()))
+		if(!AccessControl::canAccessQuestionListingPage(Core::getRole()))
 			die('You do NOT have access to this page');
 	}
 	/**

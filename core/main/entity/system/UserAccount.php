@@ -14,6 +14,7 @@ class UserAccount extends BaseEntityAbstract
      * @var int
      */
     const ID_SYSTEM_ACCOUNT = 10;
+    const SOURCE_FORUM_KUSEMA = 'kusema';
     /**
      * The username
      *
@@ -33,11 +34,17 @@ class UserAccount extends BaseEntityAbstract
      */
     protected $person;
     /**
-     * The roles that this person has
-     *
-     * @var array
+     * The source
+     * 
+     * @var string
      */
-    protected $roles;
+    private $source = null;
+    /**
+     * Thre ref id
+     * 
+     * @var string
+     */
+    private $refId = null;
     /**
      * getter UserName
      *
@@ -103,68 +110,42 @@ class UserAccount extends BaseEntityAbstract
         return $this;
     }
     /**
-     * getter Roles
+     * getter for source
      *
-     * @return Roles
+     * @return string
      */
-    public function getRoles()
+    public function getSource()
     {
-        $this->loadManyToMany("roles");
-        return $this->roles;
+        return $this->source;
     }
     /**
-     * setter Roles
-     *
-     * @param array $Roles The roles that this user has
+     * Setter for source
      *
      * @return UserAccount
      */
-    public function setRoles(array $Roles)
+    public function setSource($source)
     {
-        $this->roles = $Roles;
+        $this->source = $source;
         return $this;
     }
     /**
-     * Clear all the roles
+     * getter for refId
      *
-     * @return UserAccount
+     * @return sting | null
      */
-    public function clearRoles()
+    public function getRefId()
     {
-    	if(trim($this->getId()) === '')
-    		return $this;
-    	foreach($this->getRoles() as $role)
-    		$this->removeRole($role);
-    	return $this;
+        return $this->refId;
     }
     /**
-     * Adding a role
-     *
-     * @param Role $role
-     *
-     * @throws CoreException
-     * @return UserAccount
-     */
-    public function addRole(Role $role)
-    {
-    	if(trim($this->getId()) === '')
-    		throw new CoreException('Save this useraccount first!');
-    	self::saveManyToManyJoin($role, $this);
-    	return $this;
-    }
-    /**
-     * Deleting the role
-     *
-     * @param Role $role
+     * Setter for refId
      *
      * @return UserAccount
      */
-    public function removeRole(Role $role)
+    public function setRefId($refId)
     {
-    	if(trim($this->getId()) === '')
-    		return $this;
-    	self::deleteManyToManyJoin($role, $this);
-    	return $this;
+        $this->refId = $refId;
+        return $this;
     }
     /**
      * (non-PHPdoc)
@@ -173,6 +154,16 @@ class UserAccount extends BaseEntityAbstract
     public function __toString()
     {
         return $this->getUserName();
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::get()
+     * 
+     * @return UserAccount
+     */
+    public static function get($id)
+    {
+    	return parent::get($id);
     }
     /**
      * (non-PHPdoc)
@@ -202,12 +193,60 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
         DaoMap::setManyToOne("person", "Person", "p");
-        DaoMap::setManyToMany("roles", "Role", DaoMap::LEFT_SIDE, "r", false);
+        DaoMap::setStringType('source', 'varchar', 10, true, null);
+        DaoMap::setStringType('refId', 'varchar', 50, true, null);
         parent::__loadDaoMap();
 
         DaoMap::createUniqueIndex('username');
         DaoMap::createIndex('password');
+        DaoMap::createIndex('source');
+        DaoMap::createIndex('refId');
         DaoMap::commit();
+    }
+    /**
+     * create a new user account
+     * 
+     * @param string 		$username
+     * @param string 		$password
+     * @param Person 		$person
+     * @param string|null 	$source
+     * @param string|null 	$refId
+     * 
+     * @return UserAccount
+     * @throws Exception
+     */
+    public static function create($username, $password, Person $person, Role $role, $source = null, $refId = null)
+    {
+    	if(($username = trim($username)) === '')
+    		throw new Exception('invalid username passed in');
+    	if(($password = trim($password)) === '')
+    		throw new Exception('invalid password passed in');
+    	if($refId !== null && ($refId = trim($refId)) === '')
+    		throw new Exception('invalid ref passed in');
+    	$password = sha1($password);
+    	$where = '';
+    	$param = array();
+    	if($source === null)
+    		$where .= " source IS NULL AND ";
+    	elseif(($source = trim($source)) !== '')
+    	{
+    		$where .= " source = :source AND ";
+    		$param['source'] = $source;
+    	}
+    	else $source = null;
+    	$where .= " username = :uname";
+    	$param['uname'] = $username;
+    	$objs = self::getAllByCriteria($where, $param, false, 1, 1);
+    	$obj = (count($objs) > 0 ? $objs[0] : new self() );
+    	$obj->setUserName($username)
+    		->setPassword($password)
+    		->setPerson($person)
+    		->setSource($source)
+    		->setRefId($refId)
+    		->setActive(true)
+    		->save();
+    	$obj->addRole($role);
+    	return $obj;
     }
     /**
      * Getting UserAccount
@@ -219,9 +258,9 @@ class UserAccount extends BaseEntityAbstract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
+    public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false, $localOnly = true)
     {
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
+    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)
@@ -238,15 +277,75 @@ class UserAccount extends BaseEntityAbstract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public static function getUserByUsername($username)
+    public static function getUserByUsername($username, $localOnly = true)
     {
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username", array('username' => $username), true, 1, 2);
+    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username", array('username' => $username), true, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)
     		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
     	else
     		throw new AuthenticationException("No User Found!");
+    }
+    /**
+     * getter Roles
+     *
+     * @return array Role
+     */
+    public function getRoles()
+    {
+    	return UserProfile::getRolesByUserAccount($this);
+    }
+    /**
+     * setter Roles
+     *
+     * @param array $Roles The roles that this user has
+     *
+     * @return UserAccount
+     */
+    public function setRoles(array $Roles)
+    {
+    	foreach ($Roles as $role)
+    	{
+    		if(!$role instanceof Role)
+    			continue;
+    		UserProfile::create($this, UserProfileType::get(UserProfileType::ID_ROLE), $role);
+    	}
+    	return $this;
+    }
+    /**
+     * Clear all the roles
+     *
+     * @return UserAccount
+     */
+    public function clearRoles()
+    {
+    	UserProfile::clearRolesByUserAccount($this);
+    	return $this;
+    }
+    /**
+     * Adding a role
+     *
+     * @param Role $role
+     *
+     * @return UserAccount
+     */
+    public function addRole(Role $role)
+    {
+    	UserProfile::addRoleByUserAccount($this, $role);
+    	return $this;
+    }
+    /**
+     * Deleting the role
+     *
+     * @param Role $role
+     *
+     * @return UserAccount
+     */
+    public function removeRole(Role $role)
+    {
+    	UserProfile::removeRoleByUserAccount($this, $role);
+    	return $this;
     }
 }
 

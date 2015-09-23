@@ -25,12 +25,6 @@ class Person extends BaseEntityAbstract
      */
     private $email;
     /**
-     * The monash ID
-     * 
-     * @var string
-     */
-    private $monashId;
-    /**
      * The useraccounts of the person
      * @var array
      */
@@ -119,25 +113,6 @@ class Person extends BaseEntityAbstract
     	$this->email = $email;
     	return $this;
     }
-    /**
-     * getter for monashId
-     *
-     * @return string
-     */
-    public function getMonashID()
-    {
-    	return $this->monashId;
-    }
-    /**
-     * Setter for monashId
-     *
-     * @return Person
-     */
-    public function setMonashID($monashId)
-    {
-    	$this->monashId = $monashId;
-    	return $this;
-    }
     
     /**
      * getting the fullname of the person
@@ -186,17 +161,25 @@ class Person extends BaseEntityAbstract
         DaoMap::setStringType('firstName');
         DaoMap::setStringType('lastName');
         DaoMap::setStringType('email', 'varchar', 100, true);
-        DaoMap::setStringType('monashId', 'varchar', 25, true);
         DaoMap::setOneToMany('userAccounts', 'UserAccount', 'ua');
         parent::__loadDaoMap();
         
         DaoMap::createIndex('firstName');
         DaoMap::createIndex('lastName');
         DaoMap::createIndex('email');
-        DaoMap::createIndex('monashId');
         DaoMap::commit();
     }
-    public static function create($firstName, $lastName, $email = null, $monashId = null)
+    /**
+     * create a new Person
+     * 
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * 
+     * @return Person
+     * @throws Exception
+     */
+    public static function create($firstName, $lastName, $email = null)
     {
     	if(($firstName = trim($firstName)) === '')
     		throw new Exception('Invalid firstName passed in');
@@ -204,14 +187,9 @@ class Person extends BaseEntityAbstract
     		throw new Exception('Invalid lastName passed in');
     	if($email !== null && (trim($email) === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false))
     		throw new Exception('Invalid email passed in');
-    	$email = ($email === null ? null : trim($email));
-    	if($monashId !== null && trim($monashId) === '')
-    		throw new Exception('Invalid monashId passed in');
-    	$monashId = ($monashId === null ? null : trim($monashId));
+    	$email = ( ($email === null || trim($email) === '') ? null : trim($email));
     	
-    	if($monashId !== null && self::getByMonashId($monashId, true) instanceof self)
-    		$obj = self::getByMonashId($monashId);
-    	elseif($email !== null && self::getByEmail($email, true) instanceof self)
+    	if($email !== null && self::getByEmail($email, true) instanceof self)
     		$obj = self::getByEmail($email);
     	elseif(self::getByName($firstName, $lastName, true) instanceof self)
     		$obj = self::getByName($firstName, $lastName, true);
@@ -220,7 +198,6 @@ class Person extends BaseEntityAbstract
     	$obj->setFirstName($firstName)
     		->setLastName($lastName)
     		->setemail($email)
-    		->setMonashID($monashId)
     		->setActive(true)
     		->save();
     	return $obj;
@@ -233,15 +210,7 @@ class Person extends BaseEntityAbstract
     	$objs = self::getAllByCriteria('email like ?', array($email), $activeOnly, 1, 1);
     	return count($objs) > 0 ? $objs[0] : null;
     }
-    public static function getByMonashId($monashId, $activeOnly = true)
-    {
-    	if(($monashId = trim($monashId)) === '')
-    		throw new Exception('Invalid monashId passed in');
-    	$activeOnly = (intval($activeOnly) === 1);
-    	$objs = self::getAllByCriteria('monashId = ?', array($monashId), $activeOnly, 1, 1);
-    	return count($objs) > 0 ? $objs[0] : null;
-    }
-    public static function getByName($firstName, $lastName, $activeOnly = true)
+	public static function getByName($firstName, $lastName, $activeOnly = true)
     {
     	if(($firstName = trim($firstName)) === '')
     		throw new Exception('Invalid firstName passed in');

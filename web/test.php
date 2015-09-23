@@ -6,14 +6,12 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$connector = QuestionConnector::getConnector(
-			ForumConnector::CONNECTOR_TYPE_QUESTION
-			,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
-			, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
-			, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
-	);
-	$objs = $connector->getList();
-	echo print_r($objs);
+	$userAccount = UserAccount::get(10);
+	$userAccount->clearRoles()->addRole(Role::get(Role::ID_SYSTEM_ADMIN));
+	$userAccount = UserAccount::get(24);
+	$userAccount->clearRoles()->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER));
+	$userAccount = UserAccount::get(25);
+	$userAccount->clearRoles()->addRole(Role::get(Role::ID_ADMIN_USER));
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

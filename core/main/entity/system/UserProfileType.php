@@ -10,6 +10,7 @@ class UserProfileType extends BaseEntityAbstract
 {
 	const ID_SUBSCRIPTION = 1;
 	const ID_ENROLLMENT = 2;
+	const ID_ROLE = 3;
     /**
      * The name of the UserProfile
      * @var string

@@ -35,6 +35,8 @@ CREATE TABLE `useraccount` (
 	`username` varchar(100) NOT NULL DEFAULT '',
 	`password` varchar(40) NOT NULL DEFAULT '',
 	`personId` int(10) unsigned NOT NULL DEFAULT 0,
+	`source` varchar(10) NULL ,
+	`refId` varchar(50) NULL ,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -45,22 +47,14 @@ CREATE TABLE `useraccount` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`password`)
+	,INDEX (`source`)
+	,INDEX (`refId`)
 	,UNIQUE INDEX (`username`)
-) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `role_useraccount`;
-CREATE TABLE `role_useraccount` (
-	`roleId` int(10) unsigned NOT NULL,
-	`useraccountId` int(10) unsigned NOT NULL,
-	`created` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-	`createdById` int(10) unsigned NOT NULL,
-	UNIQUE KEY `uniq_role_useraccount` (`roleId`,`useraccountId`),
-	KEY `idx_role_useraccount_roleId` (`roleId`),
-	KEY `idx_role_useraccount_useraccountId` (`useraccountId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `userprofile`;
 CREATE TABLE `userprofile` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`personId` int(10) unsigned NOT NULL DEFAULT 0,
+	`userAccountId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
 	`entityName` varchar(100) NOT NULL DEFAULT '',
@@ -70,7 +64,7 @@ CREATE TABLE `userprofile` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
-	,INDEX (`personId`)
+	,INDEX (`userAccountId`)
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
@@ -112,7 +106,6 @@ CREATE TABLE `person` (
 	`firstName` varchar(50) NOT NULL DEFAULT '',
 	`lastName` varchar(50) NOT NULL DEFAULT '',
 	`email` varchar(100) NULL DEFAULT '',
-	`monashId` varchar(25) NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -124,7 +117,6 @@ CREATE TABLE `person` (
 	,INDEX (`firstName`)
 	,INDEX (`lastName`)
 	,INDEX (`email`)
-	,INDEX (`monashId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `commentsinfotype`;
 CREATE TABLE `commentsinfotype` (
