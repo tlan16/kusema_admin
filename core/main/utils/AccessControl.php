@@ -18,9 +18,20 @@ Abstract class AccessControl
 	{
 		switch($role->getId())
 		{
+			default:
+				{
+					return true;
+				}
+		}
+		return false;
+	}
+	public static function canAccessQuestionDetailsPage(Role $role)
+	{
+		switch($role->getId())
+		{
 			case Role::ID_SYSTEM_DEVELOPER:
-			case Role::ID_FORUM_USER:
 			case Role::ID_ADMIN_USER:
+			case Role::ID_SYSTEM_ADMIN:
 				{
 					return true;
 				}
@@ -32,6 +43,8 @@ Abstract class AccessControl
 		switch($role->getId())
 		{
 			case Role::ID_SYSTEM_DEVELOPER:
+			case Role::ID_ADMIN_USER:
+			case Role::ID_SYSTEM_ADMIN:
 				{
 					return true;
 				}
