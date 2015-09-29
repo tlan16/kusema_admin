@@ -43,7 +43,7 @@ BPCPageJs.prototype = {
 		var tmp = {};
 		tmp.me = this;
 		tmp.withFormControlClass = (_wantInpuClass || false);
-		tmp.newDiv = new Element('div', {'class': 'form-group'});
+		tmp.newDiv = new Element('div').addClassName('form-group');
 		if(label)
 			tmp.newDiv.insert({'bottom': label.addClassName('control-label')});
 		if(input) {
@@ -139,7 +139,7 @@ BPCPageJs.prototype = {
 	//getting the error message box
 	,getAlertBox: function(title, msg) {
 		return new Element('div', {'class': 'alert alert-dismissible', 'role': 'alert'})
-		.insert({'bottom': new Element('button', {'class': 'close', 'data-dismiss': 'alert'})
+		.insert({'bottom': new Element('button', {'class': '', 'data-dismiss': 'alert'})
 			.insert({'bottom': new Element('span', {'aria-hidden': 'true'}).update('&times;') })
 			.insert({'bottom': new Element('span', {'class': 'sr-only'}).update('Close') })
 		})
