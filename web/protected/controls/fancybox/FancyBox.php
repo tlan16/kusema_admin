@@ -17,7 +17,7 @@ class FancyBox extends TClientScript
 		$clientScript = $this->getPage()->getClientScript();
 		if(!$this->getPage()->IsPostBack || !$this->getPage()->IsCallback)
 		{
-			$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR);
+// 			$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR);
 			// Add jQuery library
 			// Add mousewheel plugin (this is optional)
 			$clientScript->registerHeadScriptFile('jquery.mousewheel', "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js");
