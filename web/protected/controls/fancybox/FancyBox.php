@@ -20,19 +20,19 @@ class FancyBox extends TClientScript
 			$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR);
 			// Add jQuery library
 			// Add mousewheel plugin (this is optional)
-			$clientScript->registerHeadScriptFile('jquery.mousewheel', $folder . '/lib/jquery.mousewheel-3.0.6.pack.js');
+			$clientScript->registerHeadScriptFile('jquery.mousewheel', "https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js");
 			// Add fancyBox main JS and CSS files
-			$clientScript->registerHeadScriptFile('jquery.fancybox',  $folder . '/source/jquery.fancybox.js');
-			$clientScript->registerStyleSheetFile('jquery.fancybox.css', $folder . '/source/jquery.fancybox.css', 'screen');
+			$clientScript->registerStyleSheetFile('jquery.fancybox2.css', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css", 'screen');
+			$clientScript->registerHeadScriptFile('jquery.fancybox2',  "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js");
 			
 			// Add fancyBox Button helper
-			$clientScript->registerStyleSheetFile('jquery.fancybox.btn.css', $folder . '/source/helpers/jquery.fancybox-buttons.css');
-			$clientScript->registerHeadScriptFile('jquery.fancybox.btn', $folder . '/source/helpers/jquery.fancybox-buttons.js');
+			$clientScript->registerStyleSheetFile('jquery.fancybox2.btn.css', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.css", 'screen');
+			$clientScript->registerHeadScriptFile('jquery.fancybox2.btn', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.js");
 			// Add fancyBox Thumbnail helper (this is optional)
-			$clientScript->registerStyleSheetFile('jquery.fancybox.thumb.css', $folder . '/source/helpers/jquery.fancybox-thumbs.css');
-			$clientScript->registerHeadScriptFile('jquery.fancybox.thumb', $folder . '/source/helpers/jquery.fancybox-thumbs.js');
+			$clientScript->registerStyleSheetFile('jquery.fancybox2.thumb.css', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-thumbs.css", 'screen');
+			$clientScript->registerHeadScriptFile('jquery.fancybox2.thumb', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-thumbs.js");
 			// Add fancyBox Media helper (this is optional) -->
-			$clientScript->registerHeadScriptFile('jquery.fancybox.media', $folder . '/source/helpers/jquery.fancybox-media.js');
+			$clientScript->registerHeadScriptFile('jquery.fancybox2.media', "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-media.js");
 			
 			$clientScript->registerBeginScript('jquery.noConflict', 'jQuery.noConflict();');
 		}
