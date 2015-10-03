@@ -1,6 +1,6 @@
 <?php
 /**
- * The HiStock Library Loader
+ * The bootstrapMarkdown Library Loader
  *
  * @package    web
  * @subpackage controls
