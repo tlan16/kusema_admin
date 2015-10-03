@@ -108,15 +108,15 @@ abstract class BPCPageAbstract extends TPage
 		$clientScript->registerHeadScriptFile('jQuery', "https://code.jquery.com/jquery-2.1.4.min.js");
 
 		$clientScript->registerHeadScriptFile('Bootstrap.js', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js");
-		$clientScript->registerStyleSheetFile('Bootstrap.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css");
-		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css");
+		$clientScript->registerStyleSheetFile('Bootstrap.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",'screen');
+		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css",'screen');
 		//bootstrap form validator
 		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrapValidator' . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR);
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.js', $folder . '/js/formValidation.min.js');
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.framework.js', $folder . '/js/framework/bootstrap.min.js');
-		$clientScript->registerStyleSheetFile('Bootstrap.validator.css', $folder . '/css/formValidation.min.css');
+		$clientScript->registerStyleSheetFile('Bootstrap.validator.css', $folder . '/css/formValidation.min.css','screen');
 		// font awesome
-		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css");
+		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",'screen');
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path
