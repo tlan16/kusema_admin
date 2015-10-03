@@ -43,7 +43,7 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 			$this->getPage()->getClientScript()->registerScriptFile($thisClass . 'Js', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestJs));
 		if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
-			$this->getPage()->getClientScript()->registerStyleSheetFile($thisClass . 'Css', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestCss));
+			$this->getPage()->getClientScript()->registerStyleSheetFile($thisClass . 'Css', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestCss),'screen');
 	    return $this;
 	}
 	/**

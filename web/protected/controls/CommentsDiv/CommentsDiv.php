@@ -20,7 +20,7 @@ class CommentsDiv extends TTemplateControl
 				if($key === 'js')
 					$this->getPage()->getClientScript()->registerScriptFile('CommentsDiv.Js', $this->publishAsset($value));
 				else if($key === 'css')
-					$this->getPage()->getClientScript()->registerStyleSheetFile('CommentsDiv.css', $this->publishAsset($value));
+					$this->getPage()->getClientScript()->registerStyleSheetFile('CommentsDiv.css', $this->publishAsset($value),'screen');
 			}
 		}
 	}

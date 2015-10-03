@@ -88,7 +88,7 @@ abstract class BPCPageAbstract extends TPage
 	    if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 	        $this->getPage()->getClientScript()->registerScriptFile('pageJs', $this->publishAsset($lastestJs));
 	    if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
-	        $this->getPage()->getClientScript()->registerStyleSheetFile('pageCss', $this->publishAsset($lastestCss));
+	        $this->getPage()->getClientScript()->registerStyleSheetFile('pageCss', $this->publishAsset($lastestCss),'screen');
 	}
 	/**
 	 * loading the page js class files
@@ -99,7 +99,7 @@ abstract class BPCPageAbstract extends TPage
 		if (isset($cScripts['js']) && ($lastestJs = trim($cScripts['js'])) !== '')
 			$this->getPage()->getClientScript()->registerScriptFile('BPCPageJs', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestJs));
 		if (isset($cScripts['css']) && ($lastestCss = trim($cScripts['css'])) !== '')
-			$this->getPage()->getClientScript()->registerStyleSheetFile('BPCPageCss', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestCss));
+			$this->getPage()->getClientScript()->registerStyleSheetFile('BPCPageCss', $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $lastestCss),'screen');
 	    return $this;
 	}
 	private function _Load3rdPartyJs()
