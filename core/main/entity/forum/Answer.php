@@ -70,7 +70,7 @@ class Answer extends InfoEntityAbstract
 		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
 		{
-			$array['Question'] = ($this->getEntityName() === 'Question' && ($obj = Question::get($this->getEntityId())) instanceof Question) ? $obj->getJson() : null;
+			
 		}
 		return parent::getJson($array, $reset);
 	}
@@ -183,5 +183,8 @@ class Answer extends InfoEntityAbstract
 		$params[] = $this->getId();
 		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 		return $objs;
+	}
+	public static function getByQuestion(Question $question) {
+		return self::getAllByCriteria('entityName = :eName and entityId = :eId', array('eName' => 'Question', 'eId' => $question->getId()));
 	}
 }
