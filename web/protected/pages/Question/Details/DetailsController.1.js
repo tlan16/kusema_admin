@@ -9,7 +9,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	 * Getting a form group for forms
 	 */
 	,_getFormGroup: function (label, input, noFormControl) {
-		return new Element('div', {'class': 'form-group form-group-sm form-group-sm-label'})
+		return new Element('div', {'class': 'form-group form-group-sm'})
 			.insert({'bottom': new Element('label').update(label) })
 			.insert({'bottom': input.addClassName(noFormControl === true ? '' : 'form-control') });
 	}
@@ -152,6 +152,22 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.me;
 	}
+	,_getCommentsDiv() {
+		var tmp = {};
+		tmp.me = this;
+
+		tmp.container = $(tmp.me._containerIds.comments);
+		
+		tmp.comments = new Element('div');
+		
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+		
+		tmp.me._signRandID(tmp.comments);
+		
+		new CommentsDivJs(tmp.me, 'Question', tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render()
+		
+		return tmp.me;
+	}
 	,load: function () {
 		var tmp = {};
 		tmp.me = this;
@@ -161,6 +177,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me._getTitleDiv()
 		._getAuthorDiv()
 		._getContentDiv()
+		._getCommentsDiv()
 		;
 		
 		return tmp.me;
