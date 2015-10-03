@@ -16,9 +16,28 @@ class Question extends InfoEntityAbstract
 		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
 		{
-			
+			$array['answers'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getAnswers());
+// 			$array['comments'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getComments());
 		}
 		return parent::getJson($array, $reset);
+	}
+	/**
+	 * get all answers for this question
+	 * 
+	 * @return array Answer
+	 */
+	public function getAnswers()
+	{
+		return Answer::getByQuestion($this);
+	}
+	/**
+	 * get all comments for this question
+	 * 
+	 * @return array Comments
+	 */
+	public function getComments()
+	{
+		return Comments::getByQuestion($this);
 	}
 	/**
 	 * (non-PHPdoc)
@@ -103,27 +122,6 @@ class Question extends InfoEntityAbstract
 	public function addComments($title, $content, $refId = null, $author = null, $authorName = null, $active = true) {
 		$obj = Comments::createByQuestion($title, $content, $this, $refId, $author, $authorName, $active);
 		return $obj;
-	}
-	/**
-	 * get Comments for this Question
-	 * 
-	 * @param string 	$criteria
-	 * @param array 	$params
-	 * @param bool	 	$activeOnly
-	 * @param int	 	$pageNo
-	 * @param int		$pageSize
-	 * @param array		$orderBy
-	 * @param array		$stats
-	 * 
-	 * @return array Comments
-	 */
-	public function getComments($criteria = '', $params = array(), $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
-	{
-		$criteria = trim($criteria) . (trim($criteria) === '' ? '' : ' and ') . 'entityName = ? and entityId = ?';
-		$params[] = get_class();
-		$params[] = $this->getId();
-		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
-		return $objs;
 	}
 	public static function getTopTopics($pageNo = 0, $pageSize = 10, $getObj = false, $getJson = false) 
 	{
