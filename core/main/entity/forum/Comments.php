@@ -70,12 +70,12 @@ class Comments extends InfoEntityAbstract
 		$array = $extra;
 	    if(!$this->isJsonLoaded($reset))
 	    {
-	    	if($this->getEntityName() === 'Question')
-	    		$array['question'] = ($obj = Question::get($this->getEntityId())) instanceof Question ? $obj->getJson() : null;
-	    	if($this->getEntityName() === 'Answer')
-	    		$array['question'] = ($obj = Answer::get($this->getEntityId())) instanceof Answer ? $obj->getJson() : null;
-	    	if($this->getEntityName() === 'Comments')
-	    		$array['question'] = ($obj = Comments::get($this->getEntityId())) instanceof Comments ? $obj->getJson() : null;
+// 	    	if($this->getEntityName() === 'Question')
+// 	    		$array['question'] = ($obj = Question::get($this->getEntityId())) instanceof Question ? $obj->getJson() : null;
+// 	    	if($this->getEntityName() === 'Answer')
+// 	    		$array['question'] = ($obj = Answer::get($this->getEntityId())) instanceof Answer ? $obj->getJson() : null;
+// 	    	if($this->getEntityName() === 'Comments')
+// 	    		$array['question'] = ($obj = Comments::get($this->getEntityId())) instanceof Comments ? $obj->getJson() : null;
 	    }
 	    return parent::getJson($array, $reset);
 	}
@@ -205,5 +205,25 @@ class Comments extends InfoEntityAbstract
 		$params[] = $this->getId();
 		$objs = Comments::getAllByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy, $stats);
 		return $objs;
+	}
+	/**
+	 * get comments by question
+	 * 
+	 * @param Question $question
+	 * @return array Comments
+	 */
+	public static function getByQuestion(Question $question)
+	{
+		return self::getAllByCriteria('entityName = :eName and entityId = :eId', array('eName' => 'Question', 'eId' => $question->getId()));
+	}
+	/**
+	 * get comments by answer
+	 *
+	 * @param Answer $answer
+	 * @return array Comments
+	 */
+	public static function getByAnswer(Answer $answer)
+	{
+		return self::getAllByCriteria('entityName = :eName and entityId = :eId', array('eName' => 'Answer', 'eId' => $answer->getId()));
 	}
 }
