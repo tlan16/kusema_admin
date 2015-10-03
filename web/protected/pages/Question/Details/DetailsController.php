@@ -36,6 +36,14 @@ class DetailsController extends DetailsPageAbstract
 	{
 		$js = parent::_getEndJs();
 		$js .= "pageJs.setPreData(" . json_encode(array()) . ");";
+		$js .= "pageJs._containerIds=" . json_encode(array(
+				'title' => 'title_div'
+				,'author' => 'author_div'
+				,'content' => 'content_div'
+				,'topicsUnits' => 'topics_units_div'
+				,'comments' => 'comments_div'
+				,'answers' => 'answers_div'
+		)) . ";";
 		$js .= "pageJs.load();";
 		$js .= "pageJs.bindAllEventNObjects();";
 		if(!AccessControl::canEditQuestionDetailsPage(Core::getRole()))
