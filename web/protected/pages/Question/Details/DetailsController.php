@@ -28,6 +28,40 @@ class DetailsController extends DetailsPageAbstract
 			die('You do NOT have access to this page');
 	}
 	/**
+	 * Getting the items
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * @throws Exception
+	 *
+	 */
+	public function getItems($sender, $param)
+	{
+		$results = $errors = array();
+		try
+		{
+			$class = trim($this->_focusEntity);
+			$pageNo = 1;
+			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
+			if(isset($param->CallbackParameter->pagination))
+			{
+				$pageNo = $param->CallbackParameter->pagination->pageNo;
+				$pageSize = $param->CallbackParameter->pagination->pageSize;
+			}
+			$stats = array();
+			$objects = $class::getAll(true, $pageNo, $pageSize, array(), $stats);
+			$results['pageStats'] = $stats;
+			$results['items'] = array();
+			foreach($objects as $obj)
+				$results['items'][] = $obj->getJsonFull();
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	/**
 	 * Getting The end javascript
 	 *
 	 * @return string

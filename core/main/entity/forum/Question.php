@@ -11,7 +11,7 @@ class Question extends InfoEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function getJson($extra = array(), $reset = false)
+	public function getJsonFull($extra = array(), $reset = false)
 	{
 		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
