@@ -164,7 +164,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		tmp.me._signRandID(tmp.comments);
 		
-		new CommentsDivJs(tmp.me, 'Question', tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render()
+		new CommentsDivJs(tmp.me, 'Question', tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render();
 		
 		return tmp.me;
 	}
@@ -185,6 +185,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					tmp.result.items.each(function(item){
 						tmp.container.insert({'bottom': tmp.me._getAnswerRow(item) });
 					});
+					tmp.me._initAnswerCommentsDivs();
 				} catch (e) {
 					tmp.me.showModalBox('<strong class="text-danger">Error</strong>', e);
 				}
@@ -201,9 +202,28 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.answer = new Element('div', {'class': 'panel panel-default'})
 			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update(tmp.me.loadUTCTime(answer.created).toLocaleString() + ', <b>' + answer.author.fullName + '</b>') })
 			.insert({'bottom': new Element('div', {'class': 'panel-body'}).update(answer.content) });
-		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true).writeAttribute({'class': 'col-md-12', 'answer_id': answer.id});
+		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true)
+			.store(answer)
+			.writeAttribute({'class': 'col-md-12', 'answer_id': answer.id});
 		
 		return tmp.newDiv;
+	}
+	,_initAnswerCommentsDivs: function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.answersContainer = $(tmp.me._containerIds.answers);
+		tmp.answersContainer.getElementsBySelector('[answer_id]').each(function(answerDiv){
+			tmp.answerId = answerDiv.readAttribute('answer_id');
+			tmp.comments = new Element('div');
+			tmp.container = answerDiv;
+			tmp.comments = new Element('div');
+			tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+			tmp.me._signRandID(tmp.comments);
+			new CommentsDivJs(tmp.me, 'Answer', tmp.answerId)._setDisplayDivId(tmp.comments.id).render();
+		});
+		
+		return tmp.me;
 	}
 	,load: function () {
 		var tmp = {};
