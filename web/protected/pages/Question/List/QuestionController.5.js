@@ -24,9 +24,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		
 		jQuery('.select2').select2();
 	}
-	,localizeDate: function(datestring) {
-		return moment.utc(datestring).local().format("D MMM YY, h:mm:ss a");
-	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
@@ -45,10 +42,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								: 
 							'<span><span class="text-info">'+row.createdBy.person.fullName+'</span><br/>(system user)</span>'
 						);
-			tmp.time = ('Create At ' + tmp.me.localizeDate(row.created) + 
-						(parseInt(row.createdBy.id) === 10 ? ('<span class="text-muted"> by System</span>') : ('<span class="text-info"> by ' + row.createdBy.person.fullName + '</span>') ) + '<br/>' + 
-						'Update At ' + tmp.me.localizeDate(row.updated) +
-						(parseInt(row.updatedBy.id) === 10 ? ('<span class="text-muted"> by System</span>') : ('<span class="text-info"> by ' + row.updatedBy.person.fullName + '</span>') )
+			tmp.time = ('Create At ' + tmp.me.loadUTCTime(row.created).toLocaleString() 
+						+ '<br/>' + 
+						'Update At ' + tmp.me.loadUTCTime(row.updated).toLocaleString()
 					);
 			tmp.topics = new Element('table')
 				.insert({'bottom': new Element('tr')
@@ -164,8 +160,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-sm-2'}).update(row.title) })
 			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-sm-4'}).update(row.content) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-1 visible-lg visible-md'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-2 visible-lg visible-md'})
+			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-1 visible-lg visible-md'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'topics col-sm-2 visible-lg visible-md'})
