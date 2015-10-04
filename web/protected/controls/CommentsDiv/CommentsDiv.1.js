@@ -34,11 +34,39 @@ CommentsDivJs.prototype = {
 		tmp.tag = comments.id ? 'td' : 'th';
 		tmp.newRow =  new Element('tr', {'class': 'comments_row'})
 			.store('data', comments)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-1'}).update(!comments.id ? comments.created : new Element('small').update(tmp.me._pageJs.loadUTCTime(comments.created).toLocaleString() ) ) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-1'}).update(!comments.id ? comments.author.fullName : new Element('small').update(comments.author.fullName) ) })
-			.insert({'bottom': new Element(tmp.tag, {'class': ''}).update(!comments.id ? comments.content : new Element('small').update( comments.content) ) })
-			;
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-2'}).update(!comments.id ? comments.created : new Element('small').update(tmp.me._pageJs.loadUTCTime(comments.created).toLocaleString() ) ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-2'}).update(!comments.id ? comments.author.fullName : new Element('small').update(comments.author.fullName) ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-7'}).update(!comments.id ? comments.content : new Element('small').update( comments.content) ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-1 text-right'})
+				.insert({'bottom': new Element(tmp.tag, {'class': 'btn-group'})
+					.insert({'bottom': !comments.id ? '' : new Element('i', {'class': 'btn btn-xs btn-primary glyphicon glyphicon-pencil'})
+						.observe('click', function(e){
+							tmp.comments = $(this).up('.comments_row').retrieve('data');
+							tmp.me._showEditPanel(tmp.comments);
+						})
+					})
+					.insert({'bottom': !comments.id ? '' : new Element('i', {'class': 'btn btn-xs btn-danger glyphicon glyphicon-trash'}) })
+				})
+			});
 		return tmp.newRow;
+	}
+	,_showEditPanel: function(comments) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.comments = (comments || null);
+		
+		tmp.textarea = new Element('textarea', {'save-item': 'comments'}).setValue(tmp.comments ? tmp.comments.content : '');
+		tmp.title = (tmp.comments ? ('Editing Comments: posted at ' + tmp.me._pageJs.loadUTCTime(tmp.comments.created).toLocaleString() + ', by ' + tmp.comments.author.firstName + ' ' + tmp.comments.author.lastName) : 'Creating New Comments for ' + tmp.me._entityName );
+		tmp.me._pageJs.showModalBox(tmp.title, tmp.textarea);
+		
+		tmp.me._pageJs._signRandID(tmp.textarea);
+		jQuery('#'+tmp.textarea.id).markdown({
+			iconlibrary: 'fa'
+			,savable: true
+			,autofocus: true
+		});
+		
+		return tmp.me;
 	}
 	/**
 	 * Ajax: getting the comments into the comments div
@@ -168,10 +196,15 @@ CommentsDivJs.prototype = {
 						})
 					})
 					.insert({'bottom': new Element('span', {'class': 'input-group-btn'})
-						.insert({'bottom': new Element('span', {'id': 'add_new_comments_btn', 'new_comments': 'btn', 'class': 'btn btn-primary', 'data-loading-text': 'saving...'})
+						.insert({'bottom': new Element('button', {'type': 'button', 'new_comments': 'editor_btn', 'class': 'btn btn-sm btn-default', 'data-loading-text': 'saving...'})
+							.update('<i class="glyphicon glyphicon-resize-full"></i>')
+							.observe('click', function() {
+								tmp.me._showEditPanel();
+							})
+						})
+						.insert({'bottom': new Element('button', {'type': 'button', 'new_comments': 'btn', 'class': 'btn btn-sm btn-primary', 'data-loading-text': 'saving...'})
 							.update('add')
 							.observe('click', function() {
-								tmp.me._addComments(this, resultDiv);
 							})
 						})
 					})
