@@ -80,7 +80,7 @@ CommentsDivJs.prototype = {
 		tmp.ajax = new Ajax.Request('/ajax/getComments', {
 			method: 'get'
 			,parameters: {'entity': tmp.me._entityName, 'entityId': tmp.me._entityId, 'orderBy': {'created':'desc'}, 'pageNo': pageNo, 'pageSize': tmp.me._pageSize}
-			,onLoading: function() {
+			,onCreate: function() {
 				if(tmp.pageNo === 1) {
 					$(resultDivId).update(tmp.loadingDiv);
 				}
