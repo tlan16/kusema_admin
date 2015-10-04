@@ -168,6 +168,43 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.me;
 	}
+	,_getAnswersDiv: function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.ajax = new Ajax.Request('/ajax/getAnswers', {
+			method: 'post'
+			,parameters: {'entityId': tmp.me._item.id, 'entity': 'Question'}
+			,onSuccess: function(transport) {
+				try {
+					tmp.result = tmp.me.getResp(transport.responseText, false, true);
+					if(!tmp.result || !tmp.result.items)
+						return;
+					tmp.container = $(tmp.me._containerIds.answers);
+					tmp.container.update('');
+					tmp.result.items.each(function(item){
+						tmp.container.insert({'bottom': tmp.me._getAnswerRow(item) });
+					});
+				} catch (e) {
+					tmp.me.showModalBox('<strong class="text-danger">Error</strong>', e);
+				}
+			}
+			,onComplete: function() {
+			}
+		});
+		return tmp.me;
+	}
+	,_getAnswerRow: function(answer) {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.answer = new Element('div', {'class': 'panel panel-default'})
+			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update(tmp.me.loadUTCTime(answer.created).toLocaleString() + ', <b>' + answer.author.fullName + '</b>') })
+			.insert({'bottom': new Element('div', {'class': 'panel-body'}).update(answer.content) });
+		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true).writeAttribute({'class': 'col-md-12', 'answer_id': answer.id});
+		
+		return tmp.newDiv;
+	}
 	,load: function () {
 		var tmp = {};
 		tmp.me = this;
@@ -175,10 +212,11 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.me._getTitleDiv()
-		._getAuthorDiv()
-		._getContentDiv()
-		._getCommentsDiv()
-		;
+			._getAuthorDiv()
+			._getContentDiv()
+			._getCommentsDiv()
+			._getAnswersDiv()
+			;
 		
 		return tmp.me;
 	}
