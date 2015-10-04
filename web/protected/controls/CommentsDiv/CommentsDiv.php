@@ -30,7 +30,7 @@ class CommentsDiv extends TTemplateControl
 		parent::onLoad($param);
 		if(!$this->getPage()->IsCallBack && !$this->getPage()->IsPostBack)
 		{
-			$js = 'CommentsDivJs.SAVE_BTN_ID = "' . $this->addCommentsBtn->getUniqueID() . '";';
+			$js = 'CommentsDivJs.UPDATE_BTN_ID = "' . $this->updateCommentsBtn->getUniqueID() . '";';
 			$this->getPage()->getClientScript()->registerEndScript('CommentsDivJS', $js);
 		}
 	}
@@ -39,7 +39,7 @@ class CommentsDiv extends TTemplateControl
 	 * @param unknown $sender
 	 * @param unknown $params
 	 */
-	public function addComments($sender, $params)
+	public function updateComments($sender, $params)
 	{
 		$results = $errors = array();
 		try
@@ -51,11 +51,26 @@ class CommentsDiv extends TTemplateControl
 				throw new Exception('System Error: entityId is not provided!');
 			if(!($entity = $entityName::get($entityId)) instanceof $entityName)
 				throw new Exception('System Error: no such a entity exisits!');
-			if(!isset($params->CallbackParameter->comments) || ($comments = trim($params->CallbackParameter->comments)) === '')
+			if(!isset($params->CallbackParameter->commentsId) || ($commentsId = trim($params->CallbackParameter->commentsId)) === '')
 				throw new Exception('System Error: invalid comments passed in!');
+			if(!isset($params->CallbackParameter->value))
+				throw new Exception('System Error: invalid value passed in!');
+			$value = $params->CallbackParameter->value;
+			if($commentsId === 'new' && $value === '')
+				throw new Exception('System Error: cannot create empty comments passed in!');
+			if($commentsId !== 'new' && !($comments = Comments::get($commentsId)) instanceof Comments)
+				throw new Exception('System Error: invalid commentsId passed in!');
+			if($commentsId === 'new')
+				$comments = Comments::create("", $value, $entity, null, Core::getUser()->getPerson());
+			elseif($comments instanceof Comments)
+			{
+				if(trim($value) === '')
+					$comments->setActive(false);
+				else $comments->setContent($value);
+				$comments->save();
+			}
 
-			$comment = Comments::addComments($entity, $comments, Comments::TYPE_NORMAL);
-			$results['item'] = $comment->getJson();
+			$results['item'] = $comments->getJson();
 			Dao::commitTransaction();
 		}
 		catch(Exception $ex)

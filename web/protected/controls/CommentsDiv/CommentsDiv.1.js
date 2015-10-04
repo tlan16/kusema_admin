@@ -10,6 +10,7 @@ CommentsDivJs.prototype = {
 	//constructor
 	,initialize : function(_pageJs, _entityName, _entityId, _pageSize, _displayDivId, _noHeading) {
 		this._pageJs = _pageJs;
+		this._pageNo = 1;
 		this._entityName = _entityName;
 		this._entityId = _entityId;
 		this._displayDivId = _displayDivId;
@@ -64,6 +65,11 @@ CommentsDivJs.prototype = {
 			iconlibrary: 'fa'
 			,savable: true
 			,autofocus: true
+			,onSave: function(e) {
+				tmp.me._pageJs.hideModalBox();
+				if(!tmp.comments || e.getContent() !== comments.content)
+					tmp.me._updateComments(tmp.comments ? comments.id : 'new', e.getContent());
+			},
 		});
 		
 		return tmp.me;
@@ -122,6 +128,7 @@ CommentsDivJs.prototype = {
 									.update('Get More Comments')
 									.observe('click', function(){
 										tmp.me._getComments(pageNo * 1 + 1, resultDivId, this);
+										tmp.me._pageNo = pageNo * 1 + 1;
 									})
 								})
 							})
@@ -145,35 +152,24 @@ CommentsDivJs.prototype = {
 		return this;
 	}
 	/**
-	 * Ajax: adding a comments to this order
+	 * Ajax: update a comments to this order
 	 */
-	,_addComments: function(btn, resultDiv) {
+	,_updateComments: function(commentsId, newValue) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.commentsBox = $(btn).up('.new_comments_wrapper').down('[new_comments=comments]');
-		tmp.comments = $F(tmp.commentsBox);
-		if(tmp.comments.blank())
-			return this;
-		tmp.me._pageJs.postAjax(CommentsDivJs.SAVE_BTN_ID, {'comments': tmp.comments, 'entityId': tmp.me._entityId, 'entityName': tmp.me._entityName}, {
-			'onLoading': function(sender, param) {
-				jQuery('#' + btn.id).button('loading');
-			}
-			,'onSuccess': function (sender, param) {
+		tmp.me._pageJs.postAjax(CommentsDivJs.UPDATE_BTN_ID, {'commentsId': commentsId, 'value': newValue, 'entityId': tmp.me._entityId, 'entityName': tmp.me._entityName}, {
+			'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me._pageJs.getResp(param, false, true);
 					if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
 						return;
-					tmp.tbody = $(resultDiv).down('tbody');
-					if(!tmp.tbody)
-						$(resultDiv).insert({'bottom': tmp.tbody = new Element('tbody') });
-					tmp.tbody.insert({'top': tmp.me._getCommentsRow(tmp.result.item)})
-					tmp.commentsBox.setValue('');
+					tmp.me._pageSize = parseInt(tmp.me._pageNo) * parseInt(tmp.me._pageSize);
 				} catch (e) {
 					tmp.me._pageJs.showModalBox('<strong class="text-danger">Error</strong>', e);
 				}
 			}
 			,'onComplete': function () {
-				jQuery('#' + btn.id).button('reset');
+				tmp.me.render();
 			}
 		})
 		return this;
@@ -205,6 +201,14 @@ CommentsDivJs.prototype = {
 						.insert({'bottom': new Element('button', {'type': 'button', 'new_comments': 'btn', 'class': 'btn btn-sm btn-primary', 'data-loading-text': 'saving...'})
 							.update('add')
 							.observe('click', function() {
+								tmp.btn = $(this);
+								tmp.value = $F(tmp.btn.up('.new_comments_wrapper').down('input[new_comments="comments"]'));
+								if(tmp.value.trim() !== '') {
+									tmp.btn.up('.new_comments_wrapper').getElementsBySelector('.btn').each(function(btn){
+										btn.writeAttribute('disabled',true);
+									})
+									tmp.me._updateComments('new', tmp.value);
+								}
 							})
 						})
 					})
@@ -225,6 +229,6 @@ CommentsDivJs.prototype = {
 		if(tmp.me._noHeading === true)
 			tmp.newDiv.down('.panel-heading').hide();
 		$(tmp.me._displayDivId).update(tmp.newDiv);
-		tmp.me._getComments(1,  tmp.resultDiv);
+		tmp.me._getComments(tmp.me._pageNo,  tmp.resultDiv);
 	}
 }
