@@ -114,8 +114,6 @@ class Comments extends InfoEntityAbstract
 	public static function create($title, $content, BaseEntityAbstract $entity, $refId = null, $author = null, $authorName = null, $active = true)
 	{
 		if(($title = trim($title)) === '')
-			throw new Exception('Title for a ' . __CLASS__ . ' must not be empty');
-		if(($content = trim($content)) === '')
 			throw new Exception('Content for a ' . __CLASS__ . ' must be null or a non-empty string');
 		if(($refId = StringUtilsAbstract::nullOrString($refId)) !== null && $refId === '')
 			throw new Exception('RefId for a ' . __CLASS__ . ' must not be empty');
