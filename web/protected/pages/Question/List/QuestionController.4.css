@@ -9,7 +9,7 @@
 	border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 992px) {
 	#item-list .list-group-item span.title {
 		font-weight: bold;
 	}

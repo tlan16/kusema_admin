@@ -157,14 +157,14 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				})
 			});
 		}
-		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning')
-			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-sm-2'}).update(row.title) })
-			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-sm-4'}).update(row.content) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-1 visible-lg visible-md'})
+		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning').addClassName(tmp.isTitle === true ? 'hidden-xs': '')
+			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-xs-12 col-sm-2 col-md-2 col-lg-2'}).update(row.title) })
+			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-xs-12 col-sm-4 col-md-4 col-lg-4'}).update(row.content) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md visible-sm'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-1 visible-lg visible-md visible-sm'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
 			})
-			.insert({'bottom': new Element(tmp.tag, {'class': 'topics col-sm-2 visible-lg visible-md'})
+			.insert({'bottom': new Element(tmp.tag, {'class': 'topics col-sm-2 visible-lg visible-md visible-sm'})
 				.insert({'bottom': tmp.isTitle === true ? 'Topics / Units'
 						: ( new Element('div')
 								.insert({'bottom': tmp.topics })
@@ -172,7 +172,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						)
 				})
 			})
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-12 col-sm-1 col-md-1 col-lg-1'}).update(
 				tmp.isTitle === true ?  
 					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
@@ -183,9 +183,10 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								tmp.me.loadSelect2();
 							}
 						})
+						.hide() //TODO
 					)
 				: 
-					(new Element('span', {'class': 'btn-group btn-group-xs hidden-xm hidden-sm'})
+					(new Element('span', {'class': 'btn-group btn-group-xs'})
 						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Delete'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
 							.observe('click', function(){
