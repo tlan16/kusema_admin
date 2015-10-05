@@ -70,13 +70,15 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.writeAttribute('save-item', 'active')
 			.update(tmp.me._item.active === true ? 'active <i class="fa fa-arrow-right"></i> inactive' : 'inactive <i class="fa fa-arrow-right"></i> active')
 			.observe('click',function(e){
-				tmp.value = !tmp.me._item.active;
-				console.debug(tmp.value);
+				if(confirm('Are you sure you want to ' + (tmp.me._item.active === true ? 'deactivate' : 're-activate') + ' this item?')) {
+					tmp.value = !tmp.me._item.active;
+					console.debug(tmp.value);
+				}
 			});
 		
 		tmp.container
 			.insert({'bottom': tmp.me._getFormGroup('Alias', tmp.alias).addClassName('col-md-4') })
-			.insert({'bottom': tmp.me._getFormGroup('Author', tmp.author).addClassName('col-md-4') })
+			.insert({'bottom': tmp.me._getFormGroup('Author', tmp.author.wrap(new Element('div')), true ).addClassName('col-md-4') })
 			.insert({'bottom': tmp.me._getFormGroup('Active', tmp.active).addClassName('col-md-4') });
 		
 		tmp.author = tmp.me._elTojQuery(tmp.author);
@@ -200,7 +202,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me = this;
 		
 		tmp.answer = new Element('div', {'class': 'panel panel-default'})
-			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update(tmp.me.loadUTCTime(answer.created).toLocaleString() + ', <b>' + answer.author.fullName + '</b>') })
+			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update(tmp.me.loadUTCTime(answer.created).toLocaleString() + ', <b>' + tmp.me.getAuthorDisplay(answer.firstName,answer.lastName) + '</b>') })
 			.insert({'bottom': new Element('div', {'class': 'panel-body'}).update(answer.content) });
 		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true)
 			.store(answer)

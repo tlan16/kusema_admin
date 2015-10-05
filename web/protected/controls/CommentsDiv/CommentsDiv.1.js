@@ -36,7 +36,7 @@ CommentsDivJs.prototype = {
 		tmp.newRow =  new Element('tr', {'class': 'comments_row'})
 			.store('data', comments)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-2'}).update(!comments.id ? comments.created : new Element('small').update(tmp.me._pageJs.loadUTCTime(comments.created).toLocaleString() ) ) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-2'}).update(!comments.id ? comments.author.fullName : new Element('small').update(comments.author.fullName) ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-2'}).update(!comments.id ? comments.author.fullName : new Element('small').update(comments.author.firstName+' '+comments.author.lastName) ) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-7'}).update(!comments.id ? comments.content : new Element('small').update( comments.content) ) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-xs-1 text-right'})
 				.insert({'bottom': new Element(tmp.tag, {'class': 'btn-group'})
