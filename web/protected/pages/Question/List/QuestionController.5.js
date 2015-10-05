@@ -186,6 +186,12 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					)
 				: 
 					(new Element('span', {'class': 'btn-group btn-group-xs hidden-xm hidden-sm'})
+						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Delete'})
+							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
+							.observe('click', function(){
+								tmp.me._openDetailsPage(row);
+							})
+						})
 						.insert({'bottom': new Element('span', {'class': 'btn btn-danger', 'title': 'Delete'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
 							.observe('click', function(){
@@ -198,6 +204,26 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			) })
 		;
 		return tmp.row;
+	}
+	,_openDetailsPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'width'			: '95%',
+			'height'		: '95%',
+			'autoScale'     : false,
+			'autoDimensions': false,
+			'fitToView'     : false,
+			'autoSize'      : false,
+			'type'			: 'iframe',
+			'href'			: '/question/' + row.id + '.html',
+			'helpers'		: {
+				'overlay': {
+			    	'locked': false
+				}
+			}
+ 		});
+		return tmp.me;
 	}
 	,_updateItem: function(btn, entityId, newValue, method) {
 		var tmp = {};
