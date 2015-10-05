@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 3*3600);
 class StaticsRunner extends StaticsPageAbstract
 {
 	private function getParam($type, $entity, $action)
