@@ -13,17 +13,16 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	,saveItem: function(btn, data, onSuccFunc) {
 		var tmp = {};
 		tmp.me = this;
-		if(btn)
+		if(btn) {
 			tmp.me._signRandID(btn);
+			jQuery('#' + btn.id).prop('disabled',true);
+		}
 		tmp.me.postAjax(tmp.me.getCallbackId('saveItem'), data, {
-			'onLoading': function (sender, param) {
-				if(btn) {
-					jQuery('#' + btn.id).button('loading');
-				}
-			}
-			, 'onSuccess': function (sender, param) {
+			'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+						return;
 					if(typeof(onSuccFunc) === 'function')
 						onSuccFunc(tmp.result);
 				} catch (e) {
@@ -32,7 +31,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			}
 			, 'onComplete': function() {
 				if(btn) {
-					jQuery('#' + btn.id).button('reset');
+					jQuery('#' + btn.id).prop('disabled',false);
 				}
 			}
 		});

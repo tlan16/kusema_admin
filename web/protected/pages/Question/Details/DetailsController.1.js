@@ -31,11 +31,23 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				tmp.input = $(this);
 				tmp.value = $F(tmp.input);
 				if(tmp.me._item.title !== tmp.value.trim()) {
-					console.debug(tmp.value.trim());
+					tmp.callback = function(result) {
+						tmp.result = result;
+						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+							return;
+						tmp.me._item = tmp.result.item;
+						tmp.me._getTitleDiv();
+					};
+					tmp.me.saveItem(tmp.input, {
+						'value': tmp.value
+						,'field': tmp.input.readAttribute('save-item')
+						,'entityName': 'Question'
+						,'entityId': tmp.me._item.id
+					}, tmp.callback);
 				}
 			});
 		
-		tmp.container.insert({'bottom': tmp.me._getFormGroup('Title', tmp.input).addClassName('col-md-12') });
+		tmp.container.update(tmp.me._getFormGroup('Title', tmp.input).addClassName('col-md-12') );
 		
 		return tmp.me;
 	}
@@ -52,7 +64,19 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				tmp.input = $(this);
 				tmp.value = $F(tmp.input);
 				if(tmp.me._item.authorName !== tmp.value.trim()) {
-					console.debug(tmp.value.trim());
+					tmp.callback = function(result) {
+						tmp.result = result;
+						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+							return;
+						tmp.me._item = tmp.result.item;
+						tmp.me._getAuthorDiv();
+					};
+					tmp.me.saveItem(tmp.input, {
+						'value': tmp.value
+						,'field': tmp.input.readAttribute('save-item')
+						,'entityName': 'Question'
+						,'entityId': tmp.me._item.id
+					}, tmp.callback);
 				}
 			});
 		
@@ -70,13 +94,26 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.writeAttribute('save-item', 'active')
 			.update(tmp.me._item.active === true ? 'active <i class="fa fa-arrow-right"></i> inactive' : 'inactive <i class="fa fa-arrow-right"></i> active')
 			.observe('click',function(e){
+				tmp.btn = $(this);
 				if(confirm('Are you sure you want to ' + (tmp.me._item.active === true ? 'deactivate' : 're-activate') + ' this item?')) {
 					tmp.value = !tmp.me._item.active;
-					console.debug(tmp.value);
+					tmp.callback = function(result) {
+						tmp.result = result;
+						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+							return;
+						tmp.me._item = tmp.result.item;
+						tmp.me._getAuthorDiv();
+					};
+					tmp.me.saveItem(tmp.btn, {
+						'value': tmp.value
+						,'field': tmp.btn.readAttribute('save-item')
+						,'entityName': 'Question'
+						,'entityId': tmp.me._item.id
+					}, tmp.callback);
 				}
 			});
 		
-		tmp.container
+		tmp.container.update('')
 			.insert({'bottom': tmp.me._getFormGroup('Alias', tmp.alias).addClassName('col-md-4') })
 			.insert({'bottom': tmp.me._getFormGroup('Author', tmp.author.wrap(new Element('div')), true ).addClassName('col-md-4') })
 			.insert({'bottom': tmp.me._getFormGroup('Active', tmp.active).addClassName('col-md-4') });
@@ -84,6 +121,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.author = tmp.me._elTojQuery(tmp.author);
 		tmp.author.select2({
 			minimumInputLength: 3
+			,width: '100%'
 			,ajax: {
 				delay: 250
 				,url: '/ajax/getAll'
@@ -106,8 +144,22 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		}).on("change", function(e) {
 			if(parseInt($(this).value) !== 0) {
 				tmp.select2 = $(this);
-				tmp.value = tmp.select2.value;
-				console.debug(tmp.value);
+				tmp.value = parseInt(tmp.select2.value);
+				if(parseInt(tmp.me._item.author.id) !== tmp.value) {
+					tmp.callback = function(result) {
+						tmp.result = result;
+						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+							return;
+						tmp.me._item = tmp.result.item;
+						tmp.me._getAuthorDiv();
+					};
+					tmp.me.saveItem(tmp.select2, {
+						'value': tmp.value
+						,'field': tmp.select2.readAttribute('save-item')
+						,'entityName': 'Question'
+						,'entityId': tmp.me._item.id
+					}, tmp.callback);
+				}
 			}
         });
 		
@@ -145,11 +197,28 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.writeAttribute('save-item', 'content')
 			.setValue(tmp.me._item.content);
 		
-		tmp.container.insert({'bottom': tmp.me._getFormGroup('Content', tmp.content, true).addClassName('col-md-12') });
+		tmp.container.update( tmp.me._getFormGroup('Content', tmp.content, true).addClassName('col-md-12') );
 		
 		tmp.content = tmp.me._elTojQuery(tmp.content);
 		tmp.content.markdown({
 			iconlibrary: 'fa'
+			,onBlur: function(e) {
+				tmp.textarea = e.$textarea[0];
+				tmp.value = e.getContent();
+				tmp.callback = function(result) {
+					tmp.result = result;
+					if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+						return;
+					tmp.me._item = tmp.result.item;
+					tmp.me._getContentDiv();
+				};
+				tmp.me.saveItem(tmp.textarea, {
+					'value': tmp.value
+					,'field': tmp.textarea.readAttribute('save-item')
+					,'entityName': 'Question'
+					,'entityId': tmp.me._item.id
+				}, tmp.callback);
+			}
 		});
 		
 		return tmp.me;

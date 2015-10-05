@@ -4,7 +4,6 @@
 	<com:Application.controls.bootstrapMarkdown.bootstrapMarkdown />
 	<com:Application.controls.CommentsDiv.CommentsDiv />
 	<com:TCallback ID="getCategoriesBtn" OnCallback="getCategories" />
-	<com:TCallback ID="validateSKUBtn" OnCallback="validateSKU" />
 	<div class="pagewrapper productdetailswraper" id='item-div'>
 		<div id='title_div'></div>
 		<div id='author_div'></div>
