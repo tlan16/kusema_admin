@@ -118,7 +118,7 @@ class Comments extends InfoEntityAbstract
 		if(($refId = StringUtilsAbstract::nullOrString($refId)) !== null && $refId === '')
 			throw new Exception('RefId for a ' . __CLASS__ . ' must not be empty');
 		if($author !== null && !$author instanceof Person)
-			throw new Exception('Author for a ' . __CLASS__ . ' must be null or instance of Person');
+			$author = Core::getUser()->getPerson();
 		if(($authorName = StringUtilsAbstract::nullOrString($authorName)) !== null && $authorName === '')
 			throw new Exception('AuthorName for a ' . __CLASS__ . ' must not be empty');
 	
