@@ -69,7 +69,7 @@ class DetailsController extends DetailsPageAbstract
 				throw new Exception ( 'System Error: EntityName is not provided!' );
 			if (! isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
 				throw new Exception ( 'System Error: entityId is not provided!' );
-			if (! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
+			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
 				throw new Exception ( 'System Error: no such a entity exisits!' );
 			if (! isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field )) === '')
 				throw new Exception ( 'System Error: invalid field passed in!' );
@@ -103,6 +103,10 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'content': {
 							$entity->setContent(trim($value));
+							break;
+						}
+						case 'answer': { // this only happens when creating new Answer for the Question
+							$entity->addAnswer("", trim($value));
 							break;
 						}
 					}

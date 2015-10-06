@@ -1,4 +1,4 @@
-textarea[save-item=content], textarea[save-item=comments] {
+textarea[save-item=content], textarea[save-item=comments], textarea[save-item=answer] {
 	min-height: 300px;
 }
 input[placeholder] {

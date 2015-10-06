@@ -243,6 +243,14 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		
+		tmp.newAnswer = new Element('div', {'class': ' col-md-12 text-right'}) 
+			.insert({'bottom': new Element('label', {'class': 'btn btn-success btn-sm'})
+				.update('<b>New Answer</b>')
+				.observe('click', function(e){
+					tmp.me._showAnswerEditPanel();
+				})
+			});
+		
 		tmp.ajax = new Ajax.Request('/ajax/getAnswers', {
 			method: 'post'
 			,parameters: {'entityId': tmp.me._item.id, 'entity': 'Question'}
@@ -252,7 +260,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					if(!tmp.result || !tmp.result.items)
 						return;
 					tmp.container = $(tmp.me._containerIds.answers);
-					tmp.container.update('');
+					tmp.container.update(tmp.newAnswer);
 					tmp.result.items.each(function(item){
 						tmp.container.insert({'bottom': tmp.me._getAnswerRow(item) });
 					});
@@ -270,10 +278,16 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.answer = (answer || null);
-		console.debug(tmp.answer);
 		
-		tmp.textarea = new Element('textarea', {'save-item': 'content'}).setValue(tmp.answer ? tmp.answer.content : '');
-		tmp.title = (tmp.answer ? ('Editing Answer: posted at ' + tmp.me.loadUTCTime(tmp.answer.created).toLocaleString() + ', by ' + tmp.answer.author.firstName + ' ' + tmp.answer.author.lastName) : 'Creating New Answer for Question' );
+		tmp.textarea = new Element('textarea', {'save-item': (tmp.answer ? 'content' : 'answer')}).setValue(tmp.answer ? tmp.answer.content : '');
+		console.debug(tmp.answer);
+		tmp.title = (tmp.answer ? ('Editing Answer: posted at ' 
+						+ tmp.me.loadUTCTime(tmp.answer.created).toLocaleString() 
+						+ (tmp.answer.author ? ', by ' : '') 
+						+ (tmp.answer.author ? tmp.answer.author.firstName : '') 
+						+ ' '
+						+ (tmp.answer.autho ? tmp.answer.author.lastName : '') 
+					) : 'Creating New Answer for Question' );
 		tmp.me.showModalBox(tmp.title, tmp.textarea);
 		
 		tmp.me._signRandID(tmp.textarea);
@@ -283,9 +297,9 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			,autofocus: true
 			,onSave: function(e) {
 				tmp.textarea = e.$textarea[0];
-				tmp.value = e.getContent();
+				tmp.value = e.getContent().trim();
 				tmp.me.hideModalBox();
-				if(!tmp.answer || tmp.value !== tmp.answer.content) {
+				if( (!tmp.answer && tmp.value !== '') || (tmp.answer && tmp.value !== tmp.answer.content) ) {
 					tmp.callback = function(result) {
 						tmp.result = result;
 						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
@@ -299,8 +313,8 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					tmp.me.saveItem(tmp.textarea, {
 						'value': tmp.value
 						,'field': tmp.textarea.readAttribute('save-item')
-						,'entityName': 'Answer'
-						,'entityId': tmp.answer ? tmp.answer.id : 'new'
+						,'entityName': tmp.answer ? 'Answer' : 'Question'
+						,'entityId': tmp.answer ? tmp.answer.id : tmp.me._item.id
 					}, tmp.callback);
 				}
 			},
