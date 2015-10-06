@@ -49,7 +49,7 @@ class AjaxController extends TService
 
   		$pageSize = (isset($params['pageSize']) && ($pageSize = trim($params['pageSize'])) !== '' ? $pageSize : DaoQuery::DEFAUTL_PAGE_SIZE);
   		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : 1);
-  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('created' => 'desc'));
+  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('updated' => 'desc'));
 
   		$where ='entityName = ? and entityId = ?';
   		$sqlParams = array($entity, $entityId);
@@ -75,7 +75,7 @@ class AjaxController extends TService
 
   		$pageSize = (isset($params['pageSize']) && ($pageSize = trim($params['pageSize'])) !== '' ? $pageSize : DaoQuery::DEFAUTL_PAGE_SIZE);
   		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : 1);
-  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('created' => 'desc'));
+  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('updated' => 'desc'));
 
   		$where ='entityName = ? and entityId = ?';
   		$sqlParams = array($entity, $entityId);
@@ -125,7 +125,7 @@ class AjaxController extends TService
   		$pageNo = isset($params['pageNo']) ? trim($params['pageNo']) : null;
   		$pageSize = isset($params['pageSize']) ? trim($params['pageSize']) : DaoQuery::DEFAUTL_PAGE_SIZE;
   		$active = isset($params['active']) ? intval($params['active']) : 1;
-  		$orderBy = isset($params['orderBy']) ? trim($params['orderBy']) : array();
+  		$orderBy = (isset($params['orderBy']) ? trim($params['orderBy']) : array('updated' => 'desc'));
 
   		$stats = array();
   		$items = $entityName::getAllByCriteria($searchTxt, $searchParams, $active, $pageNo, $pageSize, $orderBy, $stats);
