@@ -70,27 +70,20 @@ class ListController extends CRUDPageAbstract
 				$query = $class::getQuery();
 				switch ($field)
 				{
-					case 'tpc.title':
-					case 'tpc.content':
+					case 'tpc.name':
+					case 'tpc.refId':
 						{
-							if($field === 'tpc.content' && (!isset($serachCriteria['tpc.content.token']) || ($token = (strtolower(trim($serachCriteria['tpc.content.token'])) !== 'on'))))
-							{
-								$where[] =  $field . " like ? ";
-								$params[] = '%' . $value . '%';
-								break;
-							} else {
-								$searchTokens = array();
-								StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-								$likeArray = array();
-								foreach($searchTokens as $index => $tokenArray) {
-									$key = 'token' . $index;
-									$params[$key] = '%' . implode('%', $tokenArray) . '%';
-									$likeArray[] = $field . " like :" . $key;
-								}
-								
-								$where[] = '(' . implode(' OR ', $likeArray) . ')';
-								break;
+							$searchTokens = array();
+							StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+							$likeArray = array();
+							foreach($searchTokens as $index => $tokenArray) {
+								$key = md5($field . $index);
+								$params[$key] = '%' . implode('%', $tokenArray) . '%';
+								$likeArray[] = $field . " like :" . $key;
 							}
+							
+							$where[] = '(' . implode(' OR ', $likeArray) . ')';
+							break;
 						}
 					case 'tpc.active':
 						{

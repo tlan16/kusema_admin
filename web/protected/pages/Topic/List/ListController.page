@@ -13,18 +13,14 @@
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
-                           <label for="tpc.title" class="input-group-addon">Title:</label>
-                           <input type="text" class="form-control input-sm" search_field="tpc.title" placeholder="The title of the <%= $this->getFocusEntity() %>">
+                           <label for="tpc.name" class="input-group-addon">Name:</label>
+                           <input type="text" class="form-control input-sm" search_field="tpc.name" placeholder="The name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
-                           <label for="tpc.content" class="input-group-addon">Content:</label>
-                           <input type="text" class="form-control input-sm" search_field="tpc.content" placeholder="The content of the <%= $this->getFocusEntity() %>">
-                           <label for="tpc.content.token" class="input-group-addon">
-                               <input type="checkbox" search_field="tpc.content.token" placeholder="The content of the <%= $this->getFocusEntity() %>">
-                               Token?
-						   </label>
+                           <label for="tpc.refId" class="input-group-addon">Reference Id:</label>
+                           <input type="text" class="form-control input-sm" search_field="tpc.refId" placeholder="The ref ID of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 					<div class="col-sm-4">
