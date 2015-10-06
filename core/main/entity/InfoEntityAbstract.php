@@ -179,19 +179,19 @@ class InfoEntityAbstract extends BaseEntityAbstract
 
 			$sql = 'select id from ' . strtolower($class) . ' `info` where `info`.active = 1 and `info`.' . strtolower(get_class($this)) . 'Id = ? and `info`.typeId = ?';
 			$params =  array($this->getId(), $typeId);
-			if($entityName === null || trim($entityName) !== '')
+			if(/**$entityName === null || **/trim($entityName) !== '')
 			{
 				$sql .= $entityName === null ? ' and `info`.entityName is NULL' : ' and `info`.entityName = ?';
 				if($entityName !== null)
 					$params[] =  trim($entityName);
 			}
-			if($entityId === null || intval($entityId) !== 0)
+			if(/**$entityId === null || **/intval($entityId) !== 0)
 			{
 				$sql .= $entityId === null ? ' and `info`.entityId is NULL' : ' and `info`.entityId = ?';
 				if($entityId !== null)
 					$params[] = intval($entityId);
 			}
-			if($value === null || trim($value) !== '')
+			if(/**$value === null || **/trim($value) !== '')
 			{
 				$sql .= $value === null ? ' and `info`.value is NULL' : ' and `info`.value = ?';
 				if($value !== null)
@@ -275,8 +275,8 @@ class InfoEntityAbstract extends BaseEntityAbstract
 				$array['topics'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Topic"] ? array($id=>$b["Topic"]) : null;'), $topics);
 			if(($units = $this->getUnits()) && count($units) > 0)
 				$array['units'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Unit"] ? array($id=>$b["Unit"]) : null;'), $units);
-			if(($votes = $this->getVotes()) && count($votes) > 0)
-				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
+// 			if(($votes = $this->getVotes()) && count($votes) > 0)
+// 				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
 		}
 		return parent::getJson($array, $reset);
 	}
@@ -358,6 +358,19 @@ class InfoEntityAbstract extends BaseEntityAbstract
 			return null;
 		
 		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+	}
+	public function getVoteNumber($entityName = 'Person', $entityId = null, $value = null, $reset = false)
+	{
+		$votes = $this->getVotes($entityName, $entityId, $value, $reset);
+		$result = 0;
+		foreach ($votes as $vote)
+		{
+			if(intval($vote->getValue()) === intval(InfoAbstract::VALUE_VOTE_UP))
+				$result += 1;
+			elseif(intval($vote->getValue()) === intval(InfoAbstract::VALUE_VOTE_DOWN))
+				$result -= 1;
+		}
+		return $result;
 	}
 	public function addTopic(Topic $topic, $overRideValue = false)
 	{

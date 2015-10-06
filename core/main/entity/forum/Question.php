@@ -11,13 +11,12 @@ class Question extends InfoEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
-	public function getJsonFull($extra = array(), $reset = false)
+	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
 		if(!$this->isJsonLoaded($reset))
 		{
-			$array['answers'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getAnswers());
-// 			$array['comments'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getComments());
+			$array['vote'] = $this->getVoteNumber();
 		}
 		return parent::getJson($array, $reset);
 	}

@@ -24,7 +24,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me = this;
 		
 		tmp.container = $(tmp.me._containerIds.title);
-		tmp.input = new Element('input')
+		tmp.title = new Element('input')
 			.writeAttribute('save-item', 'title')
 			.setValue(tmp.me._item.title)
 			.observe('change',function(e){
@@ -46,9 +46,15 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					}, tmp.callback);
 				}
 			});
+		tmp.vote = new Element('input')
+			.writeAttribute('disabled', true)
+			.writeAttribute('save-item', 'title')
+			.setValue(tmp.me._item.vote);
 		
-		tmp.container.update(tmp.me._getFormGroup('Title', tmp.input).addClassName('col-md-12') );
-		
+		tmp.container.update("")
+			.insert({'bottom': tmp.me._getFormGroup('Title', tmp.title).addClassName('col-md-10')  })
+			.insert({'bottom': tmp.me._getFormGroup('Vote', tmp.vote).addClassName('col-md-2')  })
+		;
 		return tmp.me;
 	}
 	,_getAuthorDiv: function() {
@@ -306,13 +312,10 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
 							return;
 						tmp.container = $(tmp.me._containerIds.answers);
-						console.debug(tmp.result.item);
 						tmp.newRow = tmp.me._getAnswerRow(tmp.result.item);
 						if(tmp.container.down('[answer_id="'+tmp.result.item.id+'"]') && tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer') ) {
-							console.debug(123);
 							tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer').replace( tmp.newRow.down('.answer') );
 						} else {
-							console.debug(tmp.container);
 							tmp.container.insert({'top': tmp.newRow });
 							tmp.me._initAnswerCommentsDivs(tmp.result.item.id);
 						}
