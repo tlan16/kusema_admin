@@ -288,6 +288,9 @@ BPCPageJs.prototype = {
 	,getLoadingImg: function() {
 		return Element('span', {'class': 'loading-img fa fa-refresh fa-5x fa-spin'});
 	}
+	,removeLoadingImg: function() {
+		jQuery('.loading-img').remove();
+	}
 	/**
 	 * Load the mysql utc time into Date object
 	 */

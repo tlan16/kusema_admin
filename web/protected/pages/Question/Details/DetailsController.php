@@ -42,6 +42,7 @@ class DetailsController extends DetailsPageAbstract
 				,'content' => 'content_div'
 				,'topicsUnits' => 'topics_units_div'
 				,'comments' => 'comments_div'
+				,'newAnswer' => 'new_answers_btn_div'
 				,'answers' => 'answers_div'
 		)) . ";";
 		$js .= "pageJs.load();";
@@ -106,7 +107,8 @@ class DetailsController extends DetailsPageAbstract
 							break;
 						}
 						case 'answer': { // this only happens when creating new Answer for the Question
-							$entity->addAnswer("", trim($value));
+							$entity = $entity->addAnswer("", trim($value));
+							//$entity will now become an instant of Answer
 							break;
 						}
 					}

@@ -259,8 +259,10 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					tmp.result = tmp.me.getResp(transport.responseText, false, true);
 					if(!tmp.result || !tmp.result.items)
 						return;
-					tmp.container = $(tmp.me._containerIds.answers);
+					tmp.container = $(tmp.me._containerIds.newAnswer);
 					tmp.container.update(tmp.newAnswer);
+					
+					tmp.container = $(tmp.me._containerIds.answers);
 					tmp.result.items.each(function(item){
 						tmp.container.insert({'bottom': tmp.me._getAnswerRow(item) });
 					});
@@ -280,7 +282,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.answer = (answer || null);
 		
 		tmp.textarea = new Element('textarea', {'save-item': (tmp.answer ? 'content' : 'answer')}).setValue(tmp.answer ? tmp.answer.content : '');
-		console.debug(tmp.answer);
 		tmp.title = (tmp.answer ? ('Editing Answer: posted at ' 
 						+ tmp.me.loadUTCTime(tmp.answer.created).toLocaleString() 
 						+ (tmp.answer.author ? ', by ' : '') 
@@ -305,9 +306,15 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
 							return;
 						tmp.container = $(tmp.me._containerIds.answers);
+						console.debug(tmp.result.item);
+						tmp.newRow = tmp.me._getAnswerRow(tmp.result.item);
 						if(tmp.container.down('[answer_id="'+tmp.result.item.id+'"]') && tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer') ) {
-							tmp.newRow = tmp.me._getAnswerRow(tmp.result.item);
+							console.debug(123);
 							tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer').replace( tmp.newRow.down('.answer') );
+						} else {
+							console.debug(tmp.container);
+							tmp.container.insert({'top': tmp.newRow });
+							tmp.me._initAnswerCommentsDivs(tmp.result.item.id);
 						}
 					};
 					tmp.me.saveItem(tmp.textarea, {
@@ -372,12 +379,13 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.newDiv;
 	}
-	,_initAnswerCommentsDivs: function() {
+	,_initAnswerCommentsDivs: function(answer_id) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.answerId = (answer_id || null);
 		
 		tmp.answersContainer = $(tmp.me._containerIds.answers);
-		tmp.answersContainer.getElementsBySelector('[answer_id]').each(function(answerDiv){
+		tmp.answersContainer.getElementsBySelector('[answer_id' + (tmp.answerId ? ('="' + tmp.answerId + '"') : '') + ']').each(function(answerDiv){
 			tmp.answerId = answerDiv.readAttribute('answer_id');
 			tmp.comments = new Element('div');
 			tmp.container = answerDiv;
@@ -386,7 +394,8 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			tmp.me._signRandID(tmp.comments);
 			new CommentsDivJs(tmp.me, 'Answer', tmp.answerId)._setDisplayDivId(tmp.comments.id).render();
 		});
-		
+		$(tmp.me.getHTMLID('itemDiv')).show();
+		tmp.me.removeLoadingImg();
 		return tmp.me;
 	}
 	,load: function () {
@@ -394,6 +403,8 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me = this;
 		tmp.me._init();
 		
+		$(tmp.me.getHTMLID('itemDiv')).insert({'before': tmp.me.getLoadingImg() });
+		$(tmp.me.getHTMLID('itemDiv')).hide();
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.me._getTitleDiv()
 			._getAuthorDiv()
@@ -401,7 +412,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getCommentsDiv()
 			._getAnswersDiv()
 			;
-		
 		return tmp.me;
 	}
 	/**
