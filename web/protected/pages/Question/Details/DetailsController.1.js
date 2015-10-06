@@ -266,13 +266,92 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		});
 		return tmp.me;
 	}
+	,_showAnswerEditPanel: function(answer) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.answer = (answer || null);
+		console.debug(tmp.answer);
+		
+		tmp.textarea = new Element('textarea', {'save-item': 'content'}).setValue(tmp.answer ? tmp.answer.content : '');
+		tmp.title = (tmp.answer ? ('Editing Answer: posted at ' + tmp.me.loadUTCTime(tmp.answer.created).toLocaleString() + ', by ' + tmp.answer.author.firstName + ' ' + tmp.answer.author.lastName) : 'Creating New Answer for Question' );
+		tmp.me.showModalBox(tmp.title, tmp.textarea);
+		
+		tmp.me._signRandID(tmp.textarea);
+		jQuery('#'+tmp.textarea.id).markdown({
+			iconlibrary: 'fa'
+			,savable: true
+			,autofocus: true
+			,onSave: function(e) {
+				tmp.textarea = e.$textarea[0];
+				tmp.value = e.getContent();
+				tmp.me.hideModalBox();
+				if(!tmp.answer || tmp.value !== tmp.answer.content) {
+					tmp.callback = function(result) {
+						tmp.result = result;
+						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+							return;
+						tmp.container = $(tmp.me._containerIds.answers);
+						if(tmp.container.down('[answer_id="'+tmp.result.item.id+'"]') && tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer') ) {
+							tmp.newRow = tmp.me._getAnswerRow(tmp.result.item);
+							tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').down('.answer').replace( tmp.newRow.down('.answer') );
+						}
+					};
+					tmp.me.saveItem(tmp.textarea, {
+						'value': tmp.value
+						,'field': tmp.textarea.readAttribute('save-item')
+						,'entityName': 'Answer'
+						,'entityId': tmp.answer ? tmp.answer.id : 'new'
+					}, tmp.callback);
+				}
+			},
+		});
+		
+		return tmp.me;
+	}
 	,_getAnswerRow: function(answer) {
 		var tmp = {};
 		tmp.me = this;
 		
-		tmp.answer = new Element('div', {'class': 'panel panel-default'})
+		tmp.answer = new Element('div', {'class': 'answer panel panel-default'})
 			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update(tmp.me.loadUTCTime(answer.created).toLocaleString() + ', <b>' + tmp.me.getAuthorDisplay(answer.firstName,answer.lastName) + '</b>') })
-			.insert({'bottom': new Element('div', {'class': 'panel-body'}).update(answer.content) });
+			.insert({'bottom': new Element('div', {'class': 'panel-body'})
+				.insert({'bottom': new Element('span', {'class': 'col-sm-11'}).update(answer.content) })
+				.insert({'bottom': new Element('span', {'class': 'col-sm-1 text-right'})
+					.insert({'bottom': new Element('span', {'class': 'btn-group'})
+						.insert({'bottom': new Element('i', {'class': 'btn btn-xs btn-primary glyphicon glyphicon-pencil'})
+							.observe('click',function(e){
+								tmp.btn = $(this);
+								tmp.me._showAnswerEditPanel(answer);
+							})
+						}) 
+						.insert({'bottom': new Element('i', {'class': 'btn btn-xs btn-danger glyphicon glyphicon-trash', 'save-item': 'active'}) 
+							.observe('click',function(e){
+								tmp.btn = $(this);
+								if(confirm('This answer and all comments related to this answer will be ' + (answer.active === true ? 'deactivate' : 're-activate') + ', continue?')) {
+									tmp.value = (answer.active === true ? false : true);
+									tmp.container = $(tmp.me._containerIds.answers);
+									tmp.container.down('[answer_id="'+answer.id+'"]').getElementsBySelector('.btn,input').each(function(btn){
+										btn.writeAttribute('disabled',true);
+									});
+									tmp.callback = function(result) {
+										tmp.result = result;
+										if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+											return;
+										if(tmp.container.down('[answer_id="'+tmp.result.item.id+'"]') )
+											tmp.container.down('[answer_id="'+tmp.result.item.id+'"]').remove();
+									};
+									tmp.me.saveItem(tmp.btn, {
+										'value': tmp.value
+										,'field': tmp.btn.readAttribute('save-item')
+										,'entityName': 'Answer'
+										,'entityId': answer.id
+									}, tmp.callback);
+								}
+							})
+						}) 
+					})
+				})
+			});
 		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true)
 			.store(answer)
 			.writeAttribute({'class': 'col-md-12', 'answer_id': answer.id});
@@ -289,7 +368,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			tmp.comments = new Element('div');
 			tmp.container = answerDiv;
 			tmp.comments = new Element('div');
-			tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+			tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12 comments') });
 			tmp.me._signRandID(tmp.comments);
 			new CommentsDivJs(tmp.me, 'Answer', tmp.answerId)._setDisplayDivId(tmp.comments.id).render();
 		});

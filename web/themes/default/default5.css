@@ -226,3 +226,10 @@ table.table thead td {
 	border: 1px #ccc solid;
 	background: white;
 }
+.item_row.warning {
+ 	background-color: #f2dede !important;
+}
+#item-list .list-group-item {
+	border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}

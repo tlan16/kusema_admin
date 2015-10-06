@@ -108,6 +108,20 @@ class DetailsController extends DetailsPageAbstract
 					}
 					break;
 				}
+				case 'Answer': {
+					switch ($field)
+					{
+						case 'content': {
+							$entity->setContent(trim($value));
+							break;
+						}
+						case 'active': {
+							$entity->setActive(intval($value)===1);
+							break;
+						}
+					}
+					break;
+				}
 			}
 			
 			$results ['item'] = $entity->save()->getJson ();

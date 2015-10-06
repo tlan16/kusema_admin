@@ -1,4 +1,12 @@
 textarea[save-item=content], textarea[save-item=comments] {
 	min-height: 300px;
 }
-input[placeholder] { width: 100% !important; }
+input[placeholder] {
+	width: 100% !important; 
+}
+#answers_div .panel-body span.text-right {
+	padding-right: 3px;
+}
+#answers_div .panel-body {
+	text-align: justify;
+}

@@ -28,6 +28,11 @@
 			<!-- FrontEnd:: Question Details page -->
 			<url ServiceParameter="Question.Details.DetailsController" pattern="question/{id}.html" parameters.id="\d+"/>
 			
+			<!-- FrontEnd:: Topic list page -->
+			<url ServiceParameter="Topic.List.ListController" pattern="topics.html" />
+			<!-- FrontEnd:: Topic Details page -->
+			<url ServiceParameter="Topic.Details.DetailsController" pattern="topic/{id}.html" parameters.id="\d+"/>
+			
 			<!-- FrontEnd:: Configurable Statics page -->
 			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />
 			<!-- FrontEnd:: Generic Statics page -->

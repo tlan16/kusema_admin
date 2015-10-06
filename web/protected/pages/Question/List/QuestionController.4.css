@@ -2,13 +2,6 @@
 .item_row .topics a {
 	text-decoration: none;
 }
-.item_row.warning {
- 	background-color: #f2dede !important;
-}
-#item-list .list-group-item {
-	border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
 @media only screen and (max-width: 992px) {
 	#item-list .list-group-item span.title {
 		font-weight: bold;

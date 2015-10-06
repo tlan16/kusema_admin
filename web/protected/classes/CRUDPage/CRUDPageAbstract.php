@@ -184,5 +184,33 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 	{
 		return trim($this->_focusEntity);
 	}
+	public function getItem($sender, $param)
+	{
+		$results = $errors = array();
+		try
+		{
+			$class = trim($this->_focusEntity);
+			$ids = isset($param->CallbackParameter->ids) ? $param->CallbackParameter->ids : array();
+			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
+			if(count($ids) > 0)
+			{
+				if($deactivate === true)
+				{
+					foreach ($ids as $id)
+					{
+						$obj = $class::get($id);
+						if($obj instanceof $class)
+							$obj->setActive(false)->save();
+					}
+				}
+				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);
+			}
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
 }
 ?>
