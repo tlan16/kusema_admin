@@ -46,7 +46,15 @@ CommentsDivJs.prototype = {
 							tmp.me._showEditPanel(tmp.comments);
 						})
 					})
-					.insert({'bottom': !comments.id ? '' : new Element('i', {'class': 'btn btn-xs btn-danger glyphicon glyphicon-trash'}) })
+					.insert({'bottom': !comments.id ? '' : new Element('i', {'class': 'btn btn-xs btn-danger glyphicon glyphicon-trash'}) 
+						.observe('click', function(e){
+							tmp.btn = $(this);
+							if(confirm('This comment will be deactivated, continue?')) {
+								tmp.me._disableAllBtns(tmp.btn);
+								tmp.me._updateComments(comments.id, "");
+							}
+						})
+					})
 				})
 			});
 		return tmp.newRow;
@@ -204,9 +212,7 @@ CommentsDivJs.prototype = {
 								tmp.btn = $(this);
 								tmp.value = $F(tmp.btn.up('.new_comments_wrapper').down('input[new_comments="comments"]'));
 								if(tmp.value.trim() !== '') {
-									tmp.btn.up('.new_comments_wrapper').getElementsBySelector('.btn').each(function(btn){
-										btn.writeAttribute('disabled',true);
-									})
+									tmp.me._disableAllBtns(tmp.btn);
 									tmp.me._updateComments('new', tmp.value);
 								}
 							})
@@ -215,6 +221,17 @@ CommentsDivJs.prototype = {
 				})
 			});
 		return tmp.newDiv;
+	}
+	,_disableAllBtns(btn) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.btn = (btn || null);
+		if(tmp.btn && tmp.btn.up('.panel')) {
+			tmp.btn.up('.panel').getElementsBySelector('.btn,input').each(function(btn){
+				btn.writeAttribute('disabled',true);
+			})
+		}
+		return tmp.me;
 	}
 	/**
 	 * render the div
