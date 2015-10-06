@@ -42,6 +42,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 							return;
 						tmp.me._item = tmp.result.item;
 						tmp.me.load();
+						tmp.me.refreshParentWindow();
 					};
 					tmp.me.saveItem(tmp.input, {
 						'value': tmp.value
@@ -103,10 +104,11 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	,refreshParentWindow: function() {
 		var tmp = {};
 		tmp.me = this;
-		if(!window.opener)
+		if(!parent.window)
 			return;
-		tmp.parentWindow = window.opener;
-		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .product_item[product_id=' + tmp.me._item.id + ']');
+		tmp.parentWindow = parent.window;
+		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .item_row[item_id=' + tmp.me._item.id + ']');
+		console.debug(tmp.row);
 		if(tmp.row) {
 			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
 			if(tmp.row.hasClassName('success'))

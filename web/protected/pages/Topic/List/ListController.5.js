@@ -27,11 +27,14 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug(row.active === true);
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'strong' : 'span');
-		tmp.row = new Element('span', {'class': 'row'}).addClassName(row.active === true ? '' : 'warning')
+		tmp.row = new Element('span', {'class': 'row'})
 			.store('data', row)
+			.addClassName( (row.active === false && tmp.isTitle === false ) ? 'warning' : '')
+			.addClassName('list-group-item')
+			.addClassName('item_row')
+			.writeAttribute('item_id', row.id)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-6'}).update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-md-4'}).update(row.refId) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
@@ -86,10 +89,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				}
 			},
 			'beforeClose'	    : function() {
-				if(row && row.id && $(tmp.me.resultDivId).down('.item_row[item_id=' + row.id + ']') && $$('iframe.fancybox-iframe').first().contentWindow.pageJs._item) {
-					console.debug($(tmp.me.resultDivId).down('.item_row[item_id=' + row.id + ']'));
-					$(tmp.me.resultDivId).down('.item_row[item_id=' + row.id + ']').replace(tmp.me._getResultRow($$('iframe.fancybox-iframe').first().contentWindow.pageJs._item));
-				}
 			}
  		});
 		return tmp.me;
