@@ -31,7 +31,7 @@
 			<!-- FrontEnd:: Topic list page -->
 			<url ServiceParameter="Topic.List.ListController" pattern="topics.html" />
 			<!-- FrontEnd:: Topic Details page -->
-			<url ServiceParameter="Topic.Details.DetailsController" pattern="topic/{id}.html" parameters.id="\d+"/>
+			<url ServiceParameter="Topic.Details.DetailsController" pattern="topic/{id}.html" parameters.id="new|\d+"/>
 			
 			<!-- FrontEnd:: Configurable Statics page -->
 			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />

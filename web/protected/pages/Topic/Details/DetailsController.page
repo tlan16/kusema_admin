@@ -9,5 +9,6 @@
 		<div id='refId_div'></div>
 		<div id='active_div'></div>
 		<div id='comments_div'></div>
+		<div id='save_btn'></div>
 	</div>
 </com:TContent>

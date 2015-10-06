@@ -41,6 +41,7 @@ class DetailsController extends DetailsPageAbstract
 				,'refId' => 'refId_div'
 				,'active' => 'active_div'
 				,'comments' => 'comments_div'
+				,'saveBtn' => 'save_btn'
 		)) . ";";
 		$js .= "pageJs.load();";
 		$js .= "pageJs.bindAllEventNObjects();";
@@ -66,11 +67,11 @@ class DetailsController extends DetailsPageAbstract
 			Dao::beginTransaction();
 			if (! isset ( $params->CallbackParameter->entityName ) || ($entityName = trim ( $params->CallbackParameter->entityName )) === '')
 				$entityName = $focusEntity;
-			if (! isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
+			if (!isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
 				throw new Exception ( 'System Error: entityId is not provided!' );
-			if (! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
+			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
 				throw new Exception ( 'System Error: no such a entity exisits!' );
-			if (! isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field )) === '')
+			if ($entityId !== 'new' && ( !isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field ))  === '') )
 				throw new Exception ( 'System Error: invalid field passed in!' );
 			if (! isset ( $params->CallbackParameter->value ))
 				throw new Exception ( 'System Error: invalid value passed in!' );
@@ -78,6 +79,14 @@ class DetailsController extends DetailsPageAbstract
 			switch ($entityName)
 			{
 				case $focusEntity: {
+					if($entityId === 'new') {
+						if (!isset ( $value->name ) || ($name = trim ( $value->name )) === '')
+							throw new Exception ( 'System Error: name is not provided!' );
+						if (!isset ( $value->refId ) || ($refId = trim ( $value->refId )) === '')
+							$refId = '';
+						$entity = $focusEntity::create($name, $refId);
+						break;
+					}
 					switch ($field)
 					{
 						case 'name': {

@@ -19,10 +19,11 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	,setPreData: function() {
 		return this;
 	}
-	,_getBasicInputDiv:function(saveItem, value, container, title) {
+	,_getBasicInputDiv:function(saveItem, value, container, title, required) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
 		
 		if(!container.id)
 			tmp.me._signRandID(container);
@@ -30,9 +31,12 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		if(!tmp.container)
 			return;
 		tmp.input = new Element('input')
+			.writeAttribute('required', tmp.required)
 			.writeAttribute('save-item', saveItem)
 			.setValue(value)
 			.observe('change',function(e){
+				if(!tmp.me._item || !tmp.me._item.id)
+					return tmp.me;
 				tmp.input = $(this);
 				tmp.value = $F(tmp.input);
 				if(value !== tmp.value.trim()) {
@@ -50,6 +54,41 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 						,'entityId': tmp.me._item.id
 					}, tmp.callback);
 				}
+			});
+		
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.input).addClassName('col-md-12') );
+		
+		return tmp.me;
+	}
+	,_closeFancyBox() {
+		if(parent.jQuery && parent.jQuery.fancybox)
+			parent.jQuery.fancybox.close();
+		return this;
+	}
+	,_getSaveBtn:function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		tmp.container = $(tmp.me._containerIds.saveBtn);
+		tmp.input = new Element('i')
+			.addClassName('btn btn-success btn-md')
+			.update('Save')
+			.observe('click',function(e){
+				if(tmp.me._item && tmp.me._item.id)
+					tmp.me._closeFancyBox();
+				tmp.btn = $(this);
+				tmp.value = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+				if(tmp.btn.readAttribute('disabled') === "disabled" || tmp.value === null)
+					return tmp.me;
+				tmp.btn.writeAttribute('disabled', true);
+				tmp.callback = function(result) {
+					// TODO: close the pop
+//					tmp.me.refreshParentWindow();
+				};
+				tmp.me.saveItem(tmp.input, {
+					'value': tmp.value
+					,'entityId': 'new'
+				}, tmp.callback);
 			});
 		
 		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.input).addClassName('col-md-12') );
@@ -88,8 +127,9 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me._init();
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
-		tmp.me._getBasicInputDiv('name', tmp.me._item.name, $(tmp.me._containerIds.name))
+		tmp.me._getBasicInputDiv('name', tmp.me._item.name, $(tmp.me._containerIds.name), null ,true)
 			._getBasicInputDiv('refId', tmp.me._item.refId, $(tmp.me._containerIds.refId))
+			._getSaveBtn()
 		;
 		return tmp.me;
 	}

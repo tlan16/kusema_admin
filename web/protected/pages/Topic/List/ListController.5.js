@@ -39,16 +39,12 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-md-4'}).update(row.refId) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
 				tmp.isTitle === true ?  
-					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
+					(new Element('span', {'class': 'btn btn-success btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 						.insert({'bottom': ' NEW' })
 						.observe('click', function(){
-							if($$('.save-item-panel').length === 0) {
-								$(this).up('thead').insert({'bottom': tmp.me._getEditPanel({}) });
-								tmp.me.loadSelect2();
-							}
+							
 						})
-						.hide() //TODO
 					)
 				: 
 					(new Element('span', {'class': 'btn-group btn-group-xs'})
