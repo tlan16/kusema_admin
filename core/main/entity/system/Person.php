@@ -220,17 +220,61 @@ class Person extends BaseEntityAbstract
     	$objs = self::getAllByCriteria('firstName like ? and lastName like ?', array($firstName, $lastName), $activeOnly, 1, 1);
     	return count($objs) > 0 ? $objs[0] : null;
     }
+    
     public function subscribeUnit(Unit $unit) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $unit);
     }
+    public function getSubscribedUnits() {
+    	$result = array();
+    	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_SUBSCRIPTION, 'eName' => 'Unit'));
+    	foreach ($objs as $obj)
+    	{
+    		if( ($unit = Unit::get($obj->getEntityId())) instanceof Unit )
+    		$result[] = $unit;
+    	}
+    	return $result;
+    }
+    
     public function subscribeTopic(Topic $topic) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $topic);
     }
+    public function getSubscribedTopics() {
+    	$result = array();
+    	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_SUBSCRIPTION, 'eName' => 'Topic'));
+    	foreach ($objs as $obj)
+    	{
+    		if( ($topic = Unit::get($obj->getEntityId())) instanceof Topic )
+    		$result[] = $topic;
+    	}
+    	return $result;
+    }
+    
     public function enrollUnit(Unit $unit) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $unit);
     }
+    public function getEnrolleddUnits() {
+    	$result = array();
+    	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_ENROLLMENT, 'eName' => 'Unit'));
+    	foreach ($objs as $obj)
+    	{
+    		if( ($unit = Unit::get($obj->getEntityId())) instanceof Unit )
+    		$result[] = $unit;
+    	}
+    	return $result;
+    }
+    
     public function enrollTopic(Topic $topic) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $topic);
+    }
+    public function getEnrolledTopics() {
+    	$result = array();
+    	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_ENROLLMENT, 'eName' => 'Topic'));
+    	foreach ($objs as $obj)
+    	{
+    		if( ($topic = Unit::get($obj->getEntityId())) instanceof Topic )
+    		$result[] = $topic;
+    	}
+    	return $result;
     }
 }
 
