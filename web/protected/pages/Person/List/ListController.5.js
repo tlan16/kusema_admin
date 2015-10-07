@@ -79,7 +79,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			'fitToView'     : false,
 			'autoSize'      : false,
 			'type'			: 'iframe',
-			'href'			: '/topic/' + row.id + '.html',
+			'href'			: '/person/' + row.id + '.html',
 			'helpers'		: {
 				'overlay': {
 			    	'locked': false

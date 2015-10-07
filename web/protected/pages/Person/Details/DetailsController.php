@@ -12,12 +12,12 @@ class DetailsController extends DetailsPageAbstract
 	 * (non-PHPdoc)
 	 * @see BPCPageAbstract::$menuItem
 	 */
-	public $menuItem = 'topic.detail';
+	public $menuItem = 'person.detail';
 	/**
 	 * (non-PHPdoc)
 	 * @see BPCPageAbstract::$_focusEntityName
 	 */
-	protected $_focusEntity = 'Topic';
+	protected $_focusEntity = 'Person';
 	/**
 	 * constructor
 	 */
@@ -37,8 +37,9 @@ class DetailsController extends DetailsPageAbstract
 		$js = parent::_getEndJs();
 		$js .= "pageJs.setPreData(" . json_encode(array()) . ");";
 		$js .= "pageJs._containerIds=" . json_encode(array(
-				'name' => 'name_div'
-				,'refId' => 'refId_div'
+				'firstName' => 'firstName_div'
+				,'lastName' => 'lastName_div'
+				,'email' => 'email_div'
 				,'active' => 'active_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
@@ -89,14 +90,20 @@ class DetailsController extends DetailsPageAbstract
 					}
 					switch ($field)
 					{
-						case 'name': {
+						case 'firstName': {
 							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid name passed in!' );
-							$entity->setName($value);
+								throw new Exception ( 'System Error: invalid firstName passed in!' );
+							$entity->setFirstName($value);
 							break;
 						}
-						case 'refId': {
-							$entity->setRefId(trim($value));
+						case 'lastName': {
+							if(($value = trim($value)) === '')
+								throw new Exception ( 'System Error: invalid lastName passed in!' );
+							$entity->setLastName($value);
+							break;
+						}
+						case 'email': {
+							$entity->setEmail($value);
 							break;
 						}
 					}

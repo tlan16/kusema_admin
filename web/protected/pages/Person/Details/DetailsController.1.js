@@ -127,8 +127,10 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me._init();
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
-		tmp.me._getBasicInputDiv('name', tmp.me._item.name, $(tmp.me._containerIds.name), null ,true)
-			._getBasicInputDiv('refId', tmp.me._item.refId, $(tmp.me._containerIds.refId))
+		tmp.me
+			._getBasicInputDiv('firstName', tmp.me._item.firstName, $(tmp.me._containerIds.firstName), null ,true)
+			._getBasicInputDiv('lastName', tmp.me._item.lastName, $(tmp.me._containerIds.lastName), null ,true)
+			._getBasicInputDiv('email', tmp.me._item.email, $(tmp.me._containerIds.email), null ,true)
 			._getSaveBtn()
 		;
 		return tmp.me;
@@ -148,7 +150,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			return;
 		tmp.parentWindow = parent.window;
 		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .item_row[item_id=' + tmp.me._item.id + ']');
-		console.debug(tmp.row);
 		if(tmp.row) {
 			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
 			if(tmp.row.hasClassName('success'))
