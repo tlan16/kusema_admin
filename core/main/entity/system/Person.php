@@ -220,6 +220,15 @@ class Person extends BaseEntityAbstract
     	$objs = self::getAllByCriteria('firstName like ? and lastName like ?', array($firstName, $lastName), $activeOnly, 1, 1);
     	return count($objs) > 0 ? $objs[0] : null;
     }
+    public function subscribeUnit(Unit $unit) {
+    	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $unit);
+    }
+    public function subscribeTopic(Topic $topic) {
+    	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $topic);
+    }
+    public function enrollUnit(Unit $unit) {
+    	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $unit);
+    }
 }
 
 ?>

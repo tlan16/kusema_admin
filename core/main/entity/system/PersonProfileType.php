@@ -1,14 +1,15 @@
 <?php
 /**
- * UserProfileType Entity
+ * PersonProfileType Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserProfileType extends BaseEntityAbstract
+class PersonProfileType extends BaseEntityAbstract
 {
-	const ID_ROLE = 1;
+	const ID_SUBSCRIPTION = 1;
+	const ID_ENROLLMENT = 2;
     /**
      * The name of the UserProfile
      * @var string
@@ -42,7 +43,7 @@ class UserProfileType extends BaseEntityAbstract
      */
     public function __loadDaoMap()
     {
-        DaoMap::begin($this, 'up_tp');
+        DaoMap::begin($this, 'pp_tp');
         DaoMap::setStringType('name', 'varchar', 100);
         
         parent::__loadDaoMap();
