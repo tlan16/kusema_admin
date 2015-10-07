@@ -1,0 +1,54 @@
+<com:TContent ID="MainContent">
+<com:Application.controls.select2.select2 />
+<com:Application.controls.fancybox.FancyBox />
+<com:TCallback ID="updateItemBtn" onCallBack="Page.updateItem" />
+	<div class="pagewrapper item-list-wrapper">
+		<div class="panel panel-default" id="searchPanel">
+			<div class="panel-heading">
+				<label for="showSearch">Show Search Criteria?</label>
+				<input id="showSearch" type="checkbox" checked onclick="$(this).up('#searchPanel').down('.panel-body').toggle();$(this).up('#searchPanel').down('#searchBtn').toggle();">
+				<span id="searchBtn" class="pull-right btn btn-primary btn-sm" data-loading-text="searching ..." onclick="pageJs.getSearchCriteria().getResults(true, <%= $this->pageSize %>);" >Search</span>
+			</div>
+			<div class="panel-body search-panel" style="/**display: none;**/">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group form-group-sm input-group">
+                           <label for="p.firstName" class="input-group-addon">First Name:</label>
+                           <input type="text" class="form-control input-sm" search_field="p.firstName" placeholder="The First Name of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group form-group-sm input-group">
+                           <label for="p.lastName" class="input-group-addon">Last Name:</label>
+                           <input type="text" class="form-control input-sm" search_field="p.lastName" placeholder="The Last Name of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group form-group-sm input-group">
+                           <label for="p.email" class="input-group-addon">Email:</label>
+                           <input type="text" class="form-control input-sm" search_field="p.email" placeholder="The Email of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group form-group-sm input-group">
+                           <label for="p.active" class="input-group-addon">Active?</label>
+                           <select class="input-sm select2" search_field="p.active" data-minimum-results-for-search="-1">
+                           		<option value="1">YES</option>
+                           		<option value="0">NO</option>
+                           		<option value="3">ALL</option>
+                           </select>
+                       </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Found <label id="total-found-count">0</label> <%= $this->getFocusEntity() %>:
+			</div>
+			<div class="panel-body" style="padding: 0;">
+                <div id="item-list" style="margin-bottom: 0;"></div>
+            </div>
+		</div> 
+	</div>
+</com:TContent>

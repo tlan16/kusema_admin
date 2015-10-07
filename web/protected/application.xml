@@ -28,6 +28,11 @@
 			<!-- FrontEnd:: Question Details page -->
 			<url ServiceParameter="Question.Details.DetailsController" pattern="question/{id}.html" parameters.id="\d+"/>
 			
+			<!-- FrontEnd:: Person list page -->
+			<url ServiceParameter="Person.List.ListController" pattern="person.html" />
+			<!-- FrontEnd:: Person Details page -->
+			<url ServiceParameter="Person.Details.DetailsController" pattern="person/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: Topic list page -->
 			<url ServiceParameter="Topic.List.ListController" pattern="topics.html" />
 			<!-- FrontEnd:: Topic Details page -->

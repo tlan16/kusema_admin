@@ -24,6 +24,11 @@ class Menu extends TTemplateControl
 				'icon' => '<span class="glyphicon glyphicon-th-list"></span>',
 				'questions' => array('url' => '/questions.html', 'name' => 'Questions', 'icon' => '')
 			)
+			,'Resource' => array(
+				'icon' => '<span class="fa fa-user-plus"></span>',
+				'topics' => array('url' => '/topics.html', 'name' => 'Topic', 'icon' => ''),
+				'person' => array('url' => '/person.html', 'name' => 'People', 'icon' => '')
+			)
 			,'Statics' => array(
 				'name' => 'Statics',
 				'url' => '/statics/config.html',
