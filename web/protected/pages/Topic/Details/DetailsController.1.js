@@ -148,7 +148,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			return;
 		tmp.parentWindow = parent.window;
 		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .item_row[item_id=' + tmp.me._item.id + ']');
-		console.debug(tmp.row);
 		if(tmp.row) {
 			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
 			if(tmp.row.hasClassName('success'))
