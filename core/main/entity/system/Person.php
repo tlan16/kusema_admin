@@ -130,19 +130,6 @@ class Person extends BaseEntityAbstract
     }
     /**
      * (non-PHPdoc)
-     * @see BaseEntityAbstract::getJson()
-     */
-    public function getJson($extra = array(), $reset = false)
-    {
-    	$array = $extra;
-    	if(!$this->isJsonLoaded($reset))
-    	{
-    		$array['fullname'] = trim($this->getFullName());
-    	}
-    	return parent::getJson($array, $reset);
-    }
-    /**
-     * (non-PHPdoc)
      * @see BaseEntity::__toString()
      */
     public function __toString()
@@ -168,6 +155,23 @@ class Person extends BaseEntityAbstract
         DaoMap::createIndex('lastName');
         DaoMap::createIndex('email');
         DaoMap::commit();
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$array = $extra;
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$array['fullname'] = trim($this->getFullName());
+    		$array['subscribedUnit'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getSubscribedUnits());
+    		$array['subscribedTopic'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getSubscribedTopics());
+    		$array['enrolledUnit'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getEnrolleddUnits());
+    		$array['enrolledTopic'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getEnrolledTopics());
+    	}
+    	return parent::getJson($array, $reset);
     }
     /**
      * create a new Person
@@ -243,7 +247,7 @@ class Person extends BaseEntityAbstract
     	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_SUBSCRIPTION, 'eName' => 'Topic'));
     	foreach ($objs as $obj)
     	{
-    		if( ($topic = Unit::get($obj->getEntityId())) instanceof Topic )
+    		if( ($topic = Topic::get($obj->getEntityId())) instanceof Topic )
     		$result[] = $topic;
     	}
     	return $result;
@@ -271,7 +275,7 @@ class Person extends BaseEntityAbstract
     	$objs = PersonProfile::getAllByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_ENROLLMENT, 'eName' => 'Topic'));
     	foreach ($objs as $obj)
     	{
-    		if( ($topic = Unit::get($obj->getEntityId())) instanceof Topic )
+    		if( ($topic = Topic::get($obj->getEntityId())) instanceof Topic )
     		$result[] = $topic;
     	}
     	return $result;
