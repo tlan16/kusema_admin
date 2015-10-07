@@ -60,6 +60,75 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.me;
 	}
+	,_getBasicSelect2Div:function(saveItem, value, container, title, required) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
+		
+		if(!container.id)
+			tmp.me._signRandID(container);
+		tmp.container = $(container.id);
+		if(!tmp.container)
+			return;
+		tmp.select2 = new Element('select')
+			.writeAttribute('multiple', 'multiple')
+			.writeAttribute('required', tmp.required)
+			.writeAttribute('save-item', saveItem);
+		
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName('col-md-12') );
+		
+		tmp.me._signRandID(tmp.select2);
+		console.debug(tmp.select2);
+		
+		tmp.data = value;
+		tmp.value = [];
+		tmp.data.each(function(item){
+			//console.debug(item);
+			tmp.value.push(item.id);
+			tmp.select2.insert({'bottom': new Element('option', {'value': item.id, 'selected': true}).update(item.text) });
+		});
+		
+//		console.debug(tmp.data);
+//		console.debug(tmp.value);
+		
+		jQuery('#' + tmp.select2.id).select2({
+			minimumInputLength: 3
+			,multiple: true
+			,data: tmp.data
+//			,closeOnSelect: false
+//			,val: tmp.value
+			,ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'POST'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
+				}
+				,processResults: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		})
+		.on("change", function(e) {
+			if($(this).value)
+				console.debug($(this).value);
+        });
+		console.debug('tmp.data');
+		console.debug(tmp.data);
+//		jQuery('#'+tmp.select2.id).select2('data', tmp.data);
+       jQuery('#'+tmp.select2.id).val(tmp.value);
+		
+		return tmp.me;
+	}
 	,_closeFancyBox() {
 		if(parent.jQuery && parent.jQuery.fancybox)
 			parent.jQuery.fancybox.close();
@@ -127,10 +196,15 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me._init();
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.subscribedTopic = [];
+		tmp.me._item.subscribedTopic.each(function(item){
+			tmp.subscribedTopic.push({'id': parseInt(item.id), 'text': item.name});
+		});
 		tmp.me
-			._getBasicInputDiv('firstName', tmp.me._item.firstName, $(tmp.me._containerIds.firstName), null ,true)
-			._getBasicInputDiv('lastName', tmp.me._item.lastName, $(tmp.me._containerIds.lastName), null ,true)
+			._getBasicInputDiv('firstName', tmp.me._item.firstName, $(tmp.me._containerIds.firstName), "First Name" ,true)
+			._getBasicInputDiv('lastName', tmp.me._item.lastName, $(tmp.me._containerIds.lastName), "Last Name" ,true)
 			._getBasicInputDiv('email', tmp.me._item.email, $(tmp.me._containerIds.email), null ,true)
+			._getBasicSelect2Div('subscribedTopic', tmp.subscribedTopic, $(tmp.me._containerIds.subscribedTopic), "Subscribed Topic" ,true)
 			._getSaveBtn()
 		;
 		return tmp.me;
