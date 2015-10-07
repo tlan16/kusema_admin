@@ -229,6 +229,9 @@ class Person extends BaseEntityAbstract
     public function enrollUnit(Unit $unit) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $unit);
     }
+    public function enrollTopic(Topic $topic) {
+    	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $topic);
+    }
 }
 
 ?>
