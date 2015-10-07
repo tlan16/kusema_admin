@@ -30,7 +30,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.observe('change',function(e){
 				tmp.input = $(this);
 				tmp.value = $F(tmp.input);
-				if(tmp.me._item.title !== tmp.value.trim()) {
+				if(tmp.me._item.title !== tmp.value) {
 					tmp.callback = function(result) {
 						tmp.result = result;
 						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
@@ -69,7 +69,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.observe('change',function(e){
 				tmp.input = $(this);
 				tmp.value = $F(tmp.input);
-				if(tmp.me._item.authorName !== tmp.value.trim()) {
+				if(tmp.me._item.authorName !== tmp.value) {
 					tmp.callback = function(result) {
 						tmp.result = result;
 						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
@@ -189,8 +189,8 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.lastname = (lastname || tmp.me._item.author.lastName);
 		tmp.email = (email || tmp.me._item.author.email);
 		
-		tmp.fullname = (tmp.firstname.trim() === '' ? '' : (tmp.firstname.trim() + ' ') ) + tmp.lastname.trim();
-		tmp.email = (tmp.email.trim() === '' ? '' : (' (' + tmp.email.trim() + ')') );
+		tmp.fullname = (tmp.firstname === '' ? '' : (tmp.firstname + ' ') ) + tmp.lastname;
+		tmp.email = ((!tmp.email || tmp.email === '') ? '' : (' (' + tmp.email + ')') );
 		return tmp.fullname + tmp.email; 
 	}
 	,_getContentDiv() {
@@ -304,7 +304,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			,autofocus: true
 			,onSave: function(e) {
 				tmp.textarea = e.$textarea[0];
-				tmp.value = e.getContent().trim();
+				tmp.value = e.getContent();
 				tmp.me.hideModalBox();
 				if( (!tmp.answer && tmp.value !== '') || (tmp.answer && tmp.value !== tmp.answer.content) ) {
 					tmp.callback = function(result) {
