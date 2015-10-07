@@ -38,6 +38,11 @@
 			<!-- FrontEnd:: Topic Details page -->
 			<url ServiceParameter="Topic.Details.DetailsController" pattern="topic/{id}.html" parameters.id="new|\d+"/>
 			
+			<!-- FrontEnd:: Unit list page -->
+			<url ServiceParameter="Unit.List.ListController" pattern="units.html" />
+			<!-- FrontEnd:: Unit Details page -->
+			<url ServiceParameter="Unit.Details.DetailsController" pattern="unit/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: Configurable Statics page -->
 			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />
 			<!-- FrontEnd:: Generic Statics page -->

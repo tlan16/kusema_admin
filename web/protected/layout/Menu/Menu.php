@@ -27,6 +27,7 @@ class Menu extends TTemplateControl
 			,'Resource' => array(
 				'icon' => '<span class="fa fa-user-plus"></span>',
 				'topics' => array('url' => '/topics.html', 'name' => 'Topic', 'icon' => ''),
+				'units' => array('url' => '/units.html', 'name' => 'Unit', 'icon' => ''),
 				'person' => array('url' => '/person.html', 'name' => 'People', 'icon' => '')
 			)
 			,'Statics' => array(
