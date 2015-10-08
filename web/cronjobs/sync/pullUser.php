@@ -5,7 +5,7 @@ class pullUser extends syncAbstract
 	public static function run()
 	{
 		parent::run();
-		UserConnector::importUser(array(), true);
+		PersonConnector::importPerson(array(), true);
 	}
 }
 

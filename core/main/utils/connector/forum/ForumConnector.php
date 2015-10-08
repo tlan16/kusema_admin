@@ -2,7 +2,7 @@
 abstract class ForumConnector
 {
 	const CONNECTOR_TYPE_QUESTION = 'Question';
-	const CONNECTOR_TYPE_USER = 'User';
+	const CONNECTOR_TYPE_PERSON = 'Person';
 	const CONNECTOR_TYPE_TOPIC = 'Topic';
 	const CONNECTOR_TYPE_UNIT = 'Unit';
 	/**

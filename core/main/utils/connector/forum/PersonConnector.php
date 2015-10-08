@@ -1,5 +1,5 @@
 <?php
-class UserConnector extends ForumConnector
+class PersonConnector extends ForumConnector
 {
 	/**
 	 * get unit list from external system
@@ -16,17 +16,17 @@ class UserConnector extends ForumConnector
 		return $result;
 	}
 	/**
-	 * import external system User into system
+	 * import external system Person into system
 	 * 
 	 * @param array	 $existing
 	 * @param bool	 $debug
 	 * 
 	 * @throws Exception
 	 */
-	public static function importUser($existing = array(), $debug = false)
+	public static function importPerson($existing = array(), $debug = false)
 	{
 		$connector = self::getConnector(
-				ForumConnector::CONNECTOR_TYPE_USER
+				ForumConnector::CONNECTOR_TYPE_PERSON
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
@@ -86,9 +86,9 @@ class UserConnector extends ForumConnector
 				$systemPerson = Person::create($firstName, $lastName, $email);
 				if($connector->debug === true)
 					echo 'Person[' . $systemPerson->getId() . '] created/updated with firstName "' . $systemPerson->getFirstName() . '", lastName"' . $systemPerson->getLastName() . '"' . PHP_EOL;
-				$systemUserAccount = UserAccount::create($username, 'disabled', $systemPerson, Role::get(Role::ID_FORUM_USER));
-				if($connector->debug === true)
-					echo 'UserAccount[' . $systemUserAccount->getId() . '] created/updated with firstName "' . $systemUserAccount->getUserName() . '", Person[' . $systemUserAccount->getPerson()->getId() . '], Role "' . Role::get(Role::ID_FORUM_USER)->getName() . '"' . PHP_EOL;
+// 				$systemUserAccount = UserAccount::create($username, 'disabled', $systemPerson, Role::get(Role::ID_FORUM_USER));
+// 				if($connector->debug === true)
+// 					echo 'UserAccount[' . $systemUserAccount->getId() . '] created/updated with firstName "' . $systemUserAccount->getUserName() . '", Person[' . $systemUserAccount->getPerson()->getId() . '], Role "' . Role::get(Role::ID_FORUM_USER)->getName() . '"' . PHP_EOL;
 				
 				if($transStarted === false)
 				{
