@@ -11,25 +11,25 @@
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="unit.name" class="input-group-addon">Name:</label>
                            <input type="text" class="form-control input-sm" search_field="unit.name" placeholder="The name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="unit.code" class="input-group-addon">Code:</label>
                            <input type="text" class="form-control input-sm" search_field="unit.code" placeholder="The Code of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="unit.refId" class="input-group-addon">Reference Id:</label>
                            <input type="text" class="form-control input-sm" search_field="unit.refId" placeholder="The ref ID of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="unit.active" class="input-group-addon">Active?</label>
                            <select class="input-sm select2" search_field="unit.active" data-minimum-results-for-search="-1">

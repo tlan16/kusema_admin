@@ -71,6 +71,7 @@ class ListController extends CRUDPageAbstract
 				switch ($field)
 				{
 					case 'unit.name':
+					case 'unit.code':
 					case 'unit.refId':
 						{
 							$searchTokens = array();
