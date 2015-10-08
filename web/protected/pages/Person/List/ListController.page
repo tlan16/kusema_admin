@@ -11,25 +11,25 @@
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="p.firstName" class="input-group-addon">First Name:</label>
                            <input type="text" class="form-control input-sm" search_field="p.firstName" placeholder="The First Name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="p.lastName" class="input-group-addon">Last Name:</label>
                            <input type="text" class="form-control input-sm" search_field="p.lastName" placeholder="The Last Name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="p.email" class="input-group-addon">Email:</label>
                            <input type="text" class="form-control input-sm" search_field="p.email" placeholder="The Email of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="p.active" class="input-group-addon">Active?</label>
                            <select class="input-sm select2" search_field="p.active" data-minimum-results-for-search="-1">
