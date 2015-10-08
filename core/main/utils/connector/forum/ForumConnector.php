@@ -81,6 +81,8 @@ abstract class ForumConnector
 				$data = json_decode($data, true);
 			return $data;
 		}
+		if($this->debug === true)
+			echo __FUNCTION__ . ': url => "' . $url . '"' . PHP_EOL;
 		$data = ComScriptCURL::readUrl($url);
 		if($isJson === true)
 			$data = json_decode($data, true);

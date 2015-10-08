@@ -15,6 +15,21 @@ class UnitConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
+	public static function getUnitById($id, $debug = false)
+	{
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_UNIT
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+		$objs = $connector->getList(array(), '?&limit=1&conditions=' . json_encode(array('_id' => urlencode(trim($id)))));
+		if(!is_array($objs) || count($objs) === 0)
+			return null;
+		self::importUnit($objs, $debug);
+		return ( Unit::getByRefId($id, false) );
+	}
 	/**
 	 * import external system Units into system
 	 * 
@@ -47,11 +62,6 @@ class UnitConnector extends ForumConnector
 				$active = (isset($obj["deleted"]) ? (intval(trim($obj["deleted"])) === 0) : false);
 				
 				$topics = self::processField($obj, 'topics', array());
-				$systemTopics = array();
-				foreach ($topics as $topicId)
-				{
-					$systemTopics[] = TopicConnector::getTopicById($topicId, $debug);
-				}
 				if($connector->debug === true)
 				{
 					$msg =  $rowCount . ': topic data from forum' . PHP_EOL;
@@ -66,10 +76,11 @@ class UnitConnector extends ForumConnector
 				}
 				
 				$systemObj =Unit::create($name, $code, $refId, null, $active);
-				foreach ($systemTopics as $systemTopic)
+				foreach ($topics as $topiRefcId)
 				{
-					if($systemTopic instanceof Topic)
-						$systemObj->addTopic($systemTopic);
+					if(!($systemTopic = Topic::getByRefId($topiRefcId)) instanceof Topic)
+						$systemTopic = TopicConnector::getTopicById($topiRefcId, $debug);
+					$systemObj->addTopic($systemTopic);
 					if($connector->debug === true)
 						echo 'Topic[' . $systemTopic->getId() . '] ' . $systemTopic->getName() . ' is associated with Unit[' . $systemObj->getId() . '] ' . $systemObj->getName() . PHP_EOL;  
 				}

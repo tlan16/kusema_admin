@@ -273,8 +273,10 @@ class InfoEntityAbstract extends BaseEntityAbstract
 			$array['author'] = $this->getAuthor() instanceof Person ? $this->_getPersonJson($this->getAuthor()) : null;
 			if(($topics = $this->getTopics()) && count($topics) > 0)
 				$array['topics'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Topic"] ? array($id=>$b["Topic"]) : null;'), $topics);
+			else $array['topics'] = array();
 			if(($units = $this->getUnits()) && count($units) > 0)
 				$array['units'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Unit"] ? array($id=>$b["Unit"]) : null;'), $units);
+			else $array['units'] = array();
 // 			if(($votes = $this->getVotes()) && count($votes) > 0)
 // 				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
 		}

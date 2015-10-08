@@ -274,6 +274,7 @@ CREATE TABLE `person` (
 	`firstName` varchar(50) NOT NULL DEFAULT '',
 	`lastName` varchar(50) NOT NULL DEFAULT '',
 	`email` varchar(100) NULL DEFAULT '',
+	`refId` varchar(50) NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -285,6 +286,7 @@ CREATE TABLE `person` (
 	,INDEX (`firstName`)
 	,INDEX (`lastName`)
 	,INDEX (`email`)
+	,INDEX (`refId`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `personprofile`;
 CREATE TABLE `personprofile` (

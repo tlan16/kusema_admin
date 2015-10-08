@@ -48,6 +48,8 @@ class ComScriptCURL
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_TIMEOUT => $timeout, // set this to 8 hours so we dont timeout on big files
 				CURLOPT_URL     => $url
+				,CURLOPT_SSL_VERIFYHOST     => 0 // ignore invalid ssl
+				,CURLOPT_SSL_VERIFYPEER     => 0 // ignore invalid ssl
 // 				,CURLOPT_PROXY   => 'proxy.bytecraft.internal:3128'
 		);
 		foreach($extraOpts as $key => $value)

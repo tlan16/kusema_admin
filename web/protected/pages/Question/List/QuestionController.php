@@ -71,12 +71,32 @@ class QuestionController extends CRUDPageAbstract
 				switch ($field)
 				{
 					case 'quest.title':
+						{
+							if($field === 'quest.title' && (!isset($serachCriteria['quest.title.token']) || ($token = (strtolower(trim($serachCriteria['quest.title.token'])) !== 'on'))))
+							{
+								$where[] =  $field . " like :title ";
+								$params['title'] = '%' . $value . '%';
+								break;
+							} else {
+								$searchTokens = array();
+								StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+								$likeArray = array();
+								foreach($searchTokens as $index => $tokenArray) {
+									$key = 'token' . $index;
+									$params[$key] = '%' . implode('%', $tokenArray) . '%';
+									$likeArray[] = $field . " like :" . $key;
+								}
+							
+								$where[] = '(' . implode(' OR ', $likeArray) . ')';
+								break;
+							}
+						}
 					case 'quest.content':
 						{
 							if($field === 'quest.content' && (!isset($serachCriteria['quest.content.token']) || ($token = (strtolower(trim($serachCriteria['quest.content.token'])) !== 'on'))))
 							{
-								$where[] =  $field . " like ? ";
-								$params[] = '%' . $value . '%';
+								$where[] =  $field . " like :content ";
+								$params['content'] = '%' . $value . '%';
 								break;
 							} else {
 								$searchTokens = array();
