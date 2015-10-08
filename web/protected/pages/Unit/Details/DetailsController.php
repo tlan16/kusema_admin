@@ -96,6 +96,12 @@ class DetailsController extends DetailsPageAbstract
 							$entity->setName($value);
 							break;
 						}
+						case 'code': {
+							if(($value = trim($value)) === '')
+								throw new Exception ( 'System Error: invalid code passed in!' );
+							$entity->setCode($value);
+							break;
+						}
 						case 'refId': {
 							$entity->setRefId(trim($value));
 							break;
