@@ -150,9 +150,9 @@ class Unit extends BaseEntityAbstract
     	$year = $year === null ? null : intval($year);
     	$active = (intval($active) === 1);
     	
-    	if($refId !== '' && ($obj = self::getByRefId($refId)) instanceof self)
+    	if($refId !== '' && ($obj = self::getByRefId($refId, false)) instanceof self)
     		$obj = $obj;
-    	elseif(($obj = self::getByCode($code)) instanceof self)
+    	elseif(($obj = self::getByCode($code, false)) instanceof self)
     	$obj = $obj;
     	else $obj = new self();
     	
