@@ -60,7 +60,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.me;
 	}
-	,_getBasicSelect2Div:function(saveItem, value, container, title, required) {
+	,_getBasicSelect2Div:function(searchEntityName, saveItem, value, container, title, required) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
@@ -76,40 +76,35 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.writeAttribute('required', tmp.required)
 			.writeAttribute('save-item', saveItem);
 		
-		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName('col-md-12') );
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2, true).addClassName('col-md-12') );
 		
 		tmp.me._signRandID(tmp.select2);
-		console.debug(tmp.select2);
 		
 		tmp.data = value;
 		tmp.value = [];
 		tmp.data.each(function(item){
-			//console.debug(item);
 			tmp.value.push(item.id);
 			tmp.select2.insert({'bottom': new Element('option', {'value': item.id, 'selected': true}).update(item.text) });
 		});
 		
-//		console.debug(tmp.data);
-//		console.debug(tmp.value);
 		
 		jQuery('#' + tmp.select2.id).select2({
-			minimumInputLength: 3
+			minimumInputLength: 1
 			,multiple: true
 			,data: tmp.data
-//			,closeOnSelect: false
-//			,val: tmp.value
+			,width: "100%"
 			,ajax: {
 				delay: 250
 				,url: '/ajax/getAll'
 				,type: 'POST'
 				,data: function (params) {
-					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': searchEntityName};
 				}
 				,processResults: function(data, page, query) {
 					tmp.result = [];
 					if(data.resultData && data.resultData.items) {
 						data.resultData.items.each(function(item){
-							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+							tmp.result.push({'id': item.id, 'text': ( (item.code ? item.code+' ' : '') + item.name), 'data': item});
 						});
 					}
 					return { 'results' : tmp.result };
@@ -118,14 +113,25 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			,cache: true
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 		})
+		.val(tmp.value)
 		.on("change", function(e) {
-			if($(this).value)
-				console.debug($(this).value);
+			tmp.select2 = jQuery('#' + tmp.select2.id);
+			tmp.value = tmp.select2.val();
+			tmp.select2.prop('disabled', true);
+			tmp.callback = function(result) {
+				tmp.result = result;
+				if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+					return;
+				tmp.me._item = tmp.result.item;
+				tmp.me.load();
+				tmp.me.refreshParentWindow();
+			};
+			tmp.me.saveItem(tmp.input, {
+				'value': tmp.value
+				,'field': tmp.select2.attr('save-item')
+				,'entityId': tmp.me._item.id
+			}, tmp.callback);
         });
-		console.debug('tmp.data');
-		console.debug(tmp.data);
-//		jQuery('#'+tmp.select2.id).select2('data', tmp.data);
-       jQuery('#'+tmp.select2.id).val(tmp.value);
 		
 		return tmp.me;
 	}
@@ -198,13 +204,28 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.subscribedTopic = [];
 		tmp.me._item.subscribedTopic.each(function(item){
-			tmp.subscribedTopic.push({'id': parseInt(item.id), 'text': item.name});
+			tmp.subscribedTopic.push({'id': item.id, 'text': ( (item.code ? item.code+' ' : '') + item.name)});
+		});
+		tmp.subscribedUnit = [];
+		tmp.me._item.subscribedUnit.each(function(item){
+			tmp.subscribedUnit.push({'id': item.id, 'text': ( (item.code ? item.code+' ' : '') + item.name)});
+		});
+		tmp.enrolledTopic = [];
+		tmp.me._item.enrolledTopic.each(function(item){
+			tmp.enrolledTopic.push({'id': item.id, 'text': ( (item.code ? item.code+' ' : '') + item.name)});
+		});
+		tmp.enrolledUnit = [];
+		tmp.me._item.enrolledUnit.each(function(item){
+			tmp.enrolledUnit.push({'id': item.id, 'text': ( (item.code ? item.code+' ' : '') + item.name)});
 		});
 		tmp.me
 			._getBasicInputDiv('firstName', tmp.me._item.firstName, $(tmp.me._containerIds.firstName), "First Name" ,true)
 			._getBasicInputDiv('lastName', tmp.me._item.lastName, $(tmp.me._containerIds.lastName), "Last Name" ,true)
 			._getBasicInputDiv('email', tmp.me._item.email, $(tmp.me._containerIds.email), null ,true)
-			._getBasicSelect2Div('subscribedTopic', tmp.subscribedTopic, $(tmp.me._containerIds.subscribedTopic), "Subscribed Topic" ,true)
+			._getBasicSelect2Div('Topic','subscribedTopic', tmp.subscribedTopic, $(tmp.me._containerIds.subscribedTopic), "Subscribed Topic" ,true)
+			._getBasicSelect2Div('Unit','subscribedUnit', tmp.subscribedUnit, $(tmp.me._containerIds.subscribedUnit), "Subscribed Unit" ,true)
+			._getBasicSelect2Div('Topic','enrolledTopic', tmp.enrolledTopic, $(tmp.me._containerIds.enrolledTopic), "Enrolled Topic" ,true)
+			._getBasicSelect2Div('Unit','enrolledUnit', tmp.enrolledUnit, $(tmp.me._containerIds.enrolledUnit), "Enrolled Unit" ,true)
 			._getSaveBtn()
 		;
 		return tmp.me;

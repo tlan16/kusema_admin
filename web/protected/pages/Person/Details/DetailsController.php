@@ -40,6 +40,10 @@ class DetailsController extends DetailsPageAbstract
 				'firstName' => 'firstName_div'
 				,'lastName' => 'lastName_div'
 				,'email' => 'email_div'
+				,'subscribedUnit' => 'subscribed_unit_div'
+				,'subscribedTopic' => 'subscribed_topic_div'
+				,'enrolledUnit' => 'enrolled_unit_div'
+				,'enrolledTopic' => 'enrolled_topic_div'
 				,'active' => 'active_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
@@ -104,6 +108,38 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'email': {
 							$entity->setEmail($value);
+							break;
+						}
+						case 'subscribedTopic': {
+							foreach ($value as $id)
+							{
+								if(($topic = Topic::get(intval($id))) instanceof Topic)
+									$entity->subscribeTopic($topic);
+							}
+							break;
+						}
+						case 'subscribedUnit': {
+							foreach ($value as $id)
+							{
+								if(($unit = Unit::get(intval($id))) instanceof Unit)
+									$entity->subscribeUnit($unit);
+							}
+							break;
+						}
+						case 'enrolledTopic': {
+							foreach ($value as $id)
+							{
+								if(($topic = Topic::get(intval($id))) instanceof Topic)
+									$entity->enrollTopic($topic);
+							}
+							break;
+						}
+						case 'enrolledUnit': {
+							foreach ($value as $id)
+							{
+								if(($unit = Unit::get(intval($id))) instanceof Unit)
+									$entity->enrollUnit($unit);
+							}
 							break;
 						}
 					}
