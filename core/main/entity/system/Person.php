@@ -219,8 +219,8 @@ class Person extends BaseEntityAbstract
     	$email = ( ($email === null || trim($email) === '') ? null : trim($email));
     	$refId = ( ($refId === null || trim($refId) === '') ? null : trim($refId));
     	
-    	if($refId !== null && self::getByRefId($refId, true) instanceof self)
-    		$obj = self::getByRefId($refId);
+    	if($refId !== null && ($obj = self::getByRefId($refId, false)) instanceof self)
+    		$obj = $obj;
 //     	if($email !== null && self::getByEmail($email, true) instanceof self)
 //     		$obj = self::getByEmail($email);
 //     	elseif(self::getByName($firstName, $lastName, true) instanceof self)
