@@ -159,8 +159,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		}
 		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning').addClassName(tmp.isTitle === true ? 'hidden-xs': '')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-xs-12 col-sm-2 col-md-2 col-lg-2'}).update(row.title) })
-			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-xs-12 col-sm-4 col-md-4 col-lg-4'}).update(row.content) })
+			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-xs-12 col-sm-3 col-md-3 col-lg-3'}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md visible-sm'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'vote col-sm-1 visible-lg visible-md visible-sm'}).update(tmp.isTitle === true ? 'Vote' : row.vote) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-1 visible-lg visible-md visible-sm'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
 			})
