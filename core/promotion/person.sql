@@ -1,7 +1,7 @@
 TRUNCATE TABLE `person`;
 INSERT INTO `person` (`id`, `firstName`, `lastName`, `email`, `active`, `created`, `createdById`, `updated`, `updatedById`) VALUES
 (10, 'System', 'User', NULL, 1, '2014-03-06 19:47:35', 10, '2015-08-21 04:14:32', 10),
-(24, 'Frank', 'Lan', NULL, 1, '2014-12-20 13:23:44', 10, '2015-08-21 04:14:37', 20),
+(24, 'Frank', 'Lan', NULL, 1, '2014-12-20 13:23:44', 10, '2015-08-21 04:14:37', 10),
 (25, 'Hogan', 'Holleran', 'Hogan_Holleran@chirkov.org', 1, '2015-10-03 11:12:59', 10, '2015-10-03 01:13:30', 10),
 (26, 'Janovsky', 'Stachiewicz', 'Janovsky_Stachiewicz@ballantyne.gov', 1, '2015-10-03 11:12:59', 10, '2015-10-03 01:13:30', 10),
 (27, 'Stucky', 'Memoli', 'Stucky_Memoli@arnott.edu', 1, '2015-10-03 11:12:59', 10, '2015-10-03 01:13:00', 10),
