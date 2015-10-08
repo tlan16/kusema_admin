@@ -260,6 +260,10 @@ class Person extends BaseEntityAbstract
     	return count($objs) > 0 ? $objs[0] : null;
     }
     
+    public function clearSubscribeUnit() {
+    	PersonProfile::deleteByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_SUBSCRIPTION, 'eName' => 'Unit'));
+    	return $this;
+    }
     public function subscribeUnit(Unit $unit) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $unit);
     }
@@ -274,6 +278,10 @@ class Person extends BaseEntityAbstract
     	return $result;
     }
     
+    public function clearSubscribeTopic() {
+    	PersonProfile::deleteByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_SUBSCRIPTION, 'eName' => 'Topic'));
+    	return $this;
+    }
     public function subscribeTopic(Topic $topic) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_SUBSCRIPTION), $topic);
     }
@@ -288,6 +296,10 @@ class Person extends BaseEntityAbstract
     	return $result;
     }
     
+    public function clearEnrollUnit() {
+    	PersonProfile::deleteByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_ENROLLMENT, 'eName' => 'Unit'));
+    	return $this;
+    }
     public function enrollUnit(Unit $unit) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $unit);
     }
@@ -302,6 +314,10 @@ class Person extends BaseEntityAbstract
     	return $result;
     }
     
+    public function clearEnrollTopic() {
+    	PersonProfile::deleteByCriteria('personId = :pId and typeId = :tId and entityName = :eName', array('pId' => $this->getId(), 'tId' => PersonProfileType::ID_ENROLLMENT, 'eName' => 'Topic'));
+    	return $this;
+    }
     public function enrollTopic(Topic $topic) {
     	return PersonProfile::create($this, PersonProfileType::get(PersonProfileType::ID_ENROLLMENT), $topic);
     }

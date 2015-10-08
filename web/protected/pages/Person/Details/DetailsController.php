@@ -111,6 +111,7 @@ class DetailsController extends DetailsPageAbstract
 							break;
 						}
 						case 'subscribedTopic': {
+							$entity->clearSubscribeTopic();
 							foreach ($value as $id)
 							{
 								if(($topic = Topic::get(intval($id))) instanceof Topic)
@@ -119,6 +120,7 @@ class DetailsController extends DetailsPageAbstract
 							break;
 						}
 						case 'subscribedUnit': {
+							$entity->clearSubscribeUnit();
 							foreach ($value as $id)
 							{
 								if(($unit = Unit::get(intval($id))) instanceof Unit)
@@ -127,6 +129,7 @@ class DetailsController extends DetailsPageAbstract
 							break;
 						}
 						case 'enrolledTopic': {
+							$entity->clearEnrollTopic();
 							foreach ($value as $id)
 							{
 								if(($topic = Topic::get(intval($id))) instanceof Topic)
@@ -135,6 +138,7 @@ class DetailsController extends DetailsPageAbstract
 							break;
 						}
 						case 'enrolledUnit': {
+							$entity->clearEnrollUnit();
 							foreach ($value as $id)
 							{
 								if(($unit = Unit::get(intval($id))) instanceof Unit)
