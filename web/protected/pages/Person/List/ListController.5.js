@@ -4,7 +4,7 @@
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CRUDPageJs(), {
 	_getTitleRowData: function() {
-		return {'id': "ID", 'active': 'Active', 'firstName': 'First Name', 'lastName': 'Last Name', 'email': 'Email'};
+		return {'id': "ID", 'active': 'Active', 'refId': 'Ref ID', 'firstName': 'First Name', 'lastName': 'Last Name', 'email': 'Email'};
 	}
 	,_bindSearchKey: function() {
 		var tmp = {}
@@ -35,8 +35,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'firstName col-md-4'}).update(row.firstName) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'lastName col-md-4'}).update(row.lastName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'firstName col-md-3'}).update(row.firstName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'lastName col-md-3'}).update(row.lastName) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-md-2'}).update(row.refId) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'email col-md-2'}).update(row.email) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
 				tmp.isTitle === true ?  
