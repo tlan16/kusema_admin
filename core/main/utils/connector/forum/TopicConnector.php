@@ -23,6 +23,41 @@ class TopicConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
+	public static function createTopic(Topic $topic, $debug = false)
+	{
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_TOPIC
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+		
+		if(self::getTopicById($topic->getName()) instanceof Topic)
+			return self::getTopicById($topic->getName());
+		$array = array(
+			'name' => $topic->getName()
+			,'deleted' => $topic->getActive()
+		);
+		
+		$response = ComScriptCURL::readUrl($connector->getBaseUrl(), null, $array);
+		if(isset($response['_id']) && trim($response['_id']) !== '')
+		{		
+			try {
+				$transStarted = false;
+				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
+				
+				$topic->setRefId($response['_id'])->save();
+				
+				if($transStarted === false)
+					Dao::commitTransaction();
+			} catch (Exception $ex) {
+				if($transStarted === false)
+					Dao::rollbackTransaction();
+				throw $ex;
+			}
+		}
+	}
 	/**
 	 * get system Topic by external system topic id
 	 * 

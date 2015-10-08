@@ -92,7 +92,10 @@ class Topic extends BaseEntityAbstract
     	$active = (intval($active) === 1);
     	
     	if($refId !== '' && ($obj = self::getByRefId($refId)) instanceof self)
+    	{
     		$obj = $obj;
+    		$refId = $obj->getRefId();
+    	}
     	elseif(($obj = self::getByName($name)) instanceof self)
     		$obj = $obj;
     	else $obj = new self();

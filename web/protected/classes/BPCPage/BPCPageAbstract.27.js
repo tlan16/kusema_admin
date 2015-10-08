@@ -368,4 +368,14 @@ BPCPageJs.prototype = {
 			return string;
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
+	,_elTojQuery(el) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.el = (el || null);
+		if(tmp.el === null)
+			return null;
+		tmp.me._signRandID(tmp.el);
+		tmp.el = jQuery('#'+tmp.el.id);
+		return tmp.el;
+	}
 };
