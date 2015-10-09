@@ -2,6 +2,13 @@
 class PersonConnector extends ForumConnector
 {
 	/**
+	 * get the base url
+	 */
+	private function getBaseUrl()
+	{
+		return $this->_rest . 'users';
+	}
+	/**
 	 * get unit list from external system
 	 * 
 	 * @param array $attributes
@@ -15,7 +22,65 @@ class PersonConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function getPersonById($id, $debug = false)
+	public static function sync(Person $person, $debug = false)
+	{
+		$response = array();
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_PERSON
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+	
+		if($person->getRefId() !== null && $person->getRefId() !== '')
+		{
+			$array = array(
+					'authcateSubscriptions' => array(
+							'topics' => array()
+							,'groups' => array()
+					)
+					,'manualSubscriptions' => array(
+							'topics' => array()
+							,'groups' => array()
+					)
+			);
+			foreach ($person->getEnrolledTopics() as $topic)
+			{
+				if($topic->getRefId() !== null && $topic->getRefId() !== '')
+				{
+					$array['authcateSubscriptions']['topics'][] = $topic->getRefId();
+				}
+				if(count($array['authcateSubscriptions']['topics']) === 0)
+					$array['authcateSubscriptions']['topics'] = false;
+			}
+			foreach ($person->getEnrolleddUnits() as $unit)
+			{
+				if($unit->getRefId() !== null && $unit->getRefId() !== '')
+				{
+					$array['authcateSubscriptions']['groups'][] = $unit->getRefId();
+				}
+			}
+			foreach ($person->getSubscribedTopics() as $topic)
+			{
+				if($topic->getRefId() !== null && $topic->getRefId() !== '')
+				{
+					$array['manualSubscriptions']['topics'][] = $topic->getRefId();
+				}
+			}
+			foreach ($person->getSubscribedUnits() as $unit)
+			{
+				if($unit->getRefId() !== null && $unit->getRefId() !== '')
+				{
+					$array['manualSubscriptions']['groups'][] = $unit->getRefId();
+				}
+			}
+			$url = $connector->getBaseUrl() . '/' . $person->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		}
+		return $response;
+	}
+	public static function getById($id, $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_PERSON
@@ -27,7 +92,7 @@ class PersonConnector extends ForumConnector
 		$objs = $connector->getList(array(), '?&limit=1&conditions=' . json_encode(array('_id' => urlencode(trim($id)))));
 		if(!is_array($objs) || count($objs) === 0)
 			return null;
-		self::importPerson($objs, $debug);
+		self::import($objs, $debug);
 		return ( Person::getByRefId($id, false) );
 	}
 	/**
@@ -38,7 +103,7 @@ class PersonConnector extends ForumConnector
 	 * 
 	 * @throws Exception
 	 */
-	public static function importPerson($existing = array(), $debug = false)
+	public static function import($existing = array(), $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_PERSON
@@ -107,29 +172,42 @@ class PersonConnector extends ForumConnector
 				if($connector->debug === true)
 					echo 'Person[' . $systemPerson->getId() . '] created/updated with firstName "' . $systemPerson->getFirstName() . '", lastName"' . $systemPerson->getLastName() . '", refId"' . $systemPerson->getRefId() . '"' . PHP_EOL;
 				
+				$systemPerson->clearEnrollTopic()->clearEnrollUnit()->clearSubscribeTopic()->clearSubscribeUnit();
 				foreach ($manualSubscriptionsTopics as $topicRefId)
 				{
+					if(trim($topicRefId) === '')
+						continue;
 					if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
-						$topic = TopicConnector::getTopicById($topicRefId);
-					$systemPerson->subscribeTopic($topic);
+						$topic = TopicConnector::getById($topicRefId);
+					if($topic instanceof Topic)
+						$systemPerson->subscribeTopic($topic);
 				}
 				foreach ($manualSubscriptionsUnits as $unitRefId)
 				{
+					if(trim($unitRefId) === '')
+						continue;
 					if(!($unit = Unit::getByRefId($unitRefId)) instanceof Unit)
-						$unit = UnitConnector::getUnitById($unitRefId);
-					$systemPerson->subscribeUnit($unit);
+						$unit = UnitConnector::getById($unitRefId);
+					if($unit instanceof Unit)
+						$systemPerson->subscribeUnit($unit);
 				}
 				foreach ($authcateSubscriptionsTopics as $topicRefId)
 				{
+					if(trim($topicRefId) === '')
+						continue;
 					if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
-						$topic = TopicConnector::getTopicById($topicRefId);
-					$systemPerson->enrollTopic($topic);
+						$topic = TopicConnector::getById($topicRefId);
+					if($topic instanceof Topic)
+						$systemPerson->enrollTopic($topic);
 				}
 				foreach ($authcateSubscriptionsUnits as $unitRefId)
 				{
+					if(trim($unitRefId) === '')
+						continue;
 					if(!($unit = Unit::getByRefId($unitRefId)) instanceof Unit)
-						$unit = UnitConnector::getUnitById($unitRefId);
-					$systemPerson->enrollUnit($unit);
+						$unit = UnitConnector::getById($unitRefId);
+					if($unit instanceof Unit)
+						$systemPerson->enrollUnit($unit);
 				}
 					
 				if($transStarted === false)

@@ -5,7 +5,7 @@ class pullQuestion extends syncAbstract
 	public static function run()
 	{
 		parent::run();
-		QuestionConnector::importQuestion(array(), true);
+		QuestionConnector::import(array(), true);
 	}
 }
 

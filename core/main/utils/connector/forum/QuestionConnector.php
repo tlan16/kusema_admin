@@ -1,10 +1,17 @@
 <?php
 class QuestionConnector extends ForumConnector
 {
+	/**
+	 * get the base url
+	 */
+	private function getBaseUrl()
+	{
+		return $this->_rest . 'questions';
+	}
 	public function getList($attributes = array())
 	{
 		$result = array();
-		$url = $this->_rest . 'questions';
+		$url = $this->getBaseUrl();
 		echo $url . PHP_EOL;
 		$extraAttributes = array();
 		foreach ($extraAttributes as $value)
@@ -12,7 +19,35 @@ class QuestionConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function importQuestion($existing = array(), $debug = false)
+	public static function sync(Question $question, $debug = false)
+	{
+		$response = array();
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_QUESTION
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+	
+		if($question->getRefId() !== null && $question->getRefId() !== '')
+		{
+			$array = array(
+					'group' => trim( (count($units = $question->getUnits()) > 0 ? $units[0]->getRefId() : "") )
+					,'message' => $question->getContent()
+					,'title' => $question->getTitle()
+					,'deleted' => !($question->getActive())
+// 					,'comments' => array()
+					,'anonymous' => !( trim($question->getAuthorName()) === '' )
+// 					,'answers' => array()
+// 					,'topics' => array()
+			);
+			$url = $connector->getBaseUrl() . '/' . $question->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		}
+		return $response;
+	}
+	public static function import($existing = array(), $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_QUESTION
@@ -82,37 +117,54 @@ class QuestionConnector extends ForumConnector
 				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 				
 				$authorRefId = $author;
+				if(trim($authorRefId) === '')
+				{
+					if($connector->debug === true)
+						echo 'invalid author given for question ' . $refId . ', skipping this question' . PHP_EOL;
+					continue;
+				}
 				if(!($author = Person::getByRefId($authorRefId)) instanceof Person)
-					$author = PersonConnector::getPersonById($authorRefId);
+					$author = PersonConnector::getById($authorRefId);
+				if(!$author instanceof Person)
+					continue;
 				$question = Question::create($title, $content, $refId, $author, $authorName, $active);
 				foreach ($upVotes as $upVote)
 				{
 					if(!($person = Person::getByRefId($upVote)) instanceof Person)
-						$person = PersonConnector::getPersonById($upVote);
-					var_dump($person);
+						$person = PersonConnector::getById($upVote);
+					if(!$person instanceof Person)
+						continue;
 					$question->voteUp($person);
 				}
 				foreach ($downVotes as $downVote)
 				{
 					if(!($person = Person::getByRefId($downVote)) instanceof Person)
-						$person = PersonConnector::getPersonById($downVote);
+						$person = PersonConnector::getById($downVote);
+					if(!$person instanceof Person)
+						continue;
 					$question->voteDown($person);
 				}
 				if(($unit = trim($unit)) !== '')
 				{
 					$unitRefId = $unit;
+					if(trim($unitRefId) === '')
+						continue;
 					if(!($unit = Unit::getByRefId($unitRefId)) instanceof Unit)
 						$unit = UnitConnector::getUnitById($unitRefId);
+					if(!$unit instanceof Unit)
+						continue;
 					$question->addUnit($unit);
 				}
 				foreach ($topics as $topic)
 				{
-					if(($topicRefId = trim($topic)) !== '')
-					{
-						if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
-							$topic = TopicConnector::getTopicById($topicRefId);
-						$question->addTopic($topic);
-					}
+					$topicRefId = $topic;
+					if(trim($topicRefId) === '')
+						continue;
+					if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
+						$topic = TopicConnector::getTopicById($topicRefId);
+					if(!$topic instanceof Topic)
+						continue;
+					$question->addTopic($topic);
 				}
 				
 				if($connector->debug === true)

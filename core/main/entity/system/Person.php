@@ -331,6 +331,10 @@ class Person extends BaseEntityAbstract
     	}
     	return $result;
     }
+    public function sync() {
+    	PersonConnector::sync($this);
+    	return $this;
+    }
 }
 
 ?>

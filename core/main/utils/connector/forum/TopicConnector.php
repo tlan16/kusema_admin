@@ -33,8 +33,8 @@ class TopicConnector extends ForumConnector
 				, $debug
 				);
 		
-		if(self::getTopicById($topic->getName()) instanceof Topic)
-			return self::getTopicById($topic->getName());
+		if(self::getById($topic->getName()) instanceof Topic)
+			return self::getById($topic->getName());
 		$array = array(
 			'name' => $topic->getName()
 			,'deleted' => $topic->getActive()
@@ -67,7 +67,7 @@ class TopicConnector extends ForumConnector
 	 * 
 	 * @return Topic
 	 */
-	public static function getTopicById($id, $debug = false)
+	public static function getById($id, $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_TOPIC

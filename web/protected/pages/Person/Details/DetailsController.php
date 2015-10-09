@@ -78,7 +78,7 @@ class DetailsController extends DetailsPageAbstract
 				throw new Exception ( 'System Error: no such a entity exisits!' );
 			if ($entityId !== 'new' && ( !isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field ))  === '') )
 				throw new Exception ( 'System Error: invalid field passed in!' );
-			if (! isset ( $params->CallbackParameter->value ))
+			if (!isset($params->CallbackParameter->value) && $params->CallbackParameter->value !== null)
 				throw new Exception ( 'System Error: invalid value passed in!' );
 			$value = $params->CallbackParameter->value;
 			switch ($entityName)
@@ -112,6 +112,7 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'subscribedTopic': {
 							$entity->clearSubscribeTopic();
+							$value = (!is_array($value) ? array() : $value);
 							foreach ($value as $id)
 							{
 								if(($topic = Topic::get(intval($id))) instanceof Topic)
@@ -121,6 +122,7 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'subscribedUnit': {
 							$entity->clearSubscribeUnit();
+							$value = (!is_array($value) ? array() : $value);
 							foreach ($value as $id)
 							{
 								if(($unit = Unit::get(intval($id))) instanceof Unit)
@@ -130,6 +132,7 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'enrolledTopic': {
 							$entity->clearEnrollTopic();
+							$value = (!is_array($value) ? array() : $value);
 							foreach ($value as $id)
 							{
 								if(($topic = Topic::get(intval($id))) instanceof Topic)
@@ -139,6 +142,7 @@ class DetailsController extends DetailsPageAbstract
 						}
 						case 'enrolledUnit': {
 							$entity->clearEnrollUnit();
+							$value = (!is_array($value) ? array() : $value);
 							foreach ($value as $id)
 							{
 								if(($unit = Unit::get(intval($id))) instanceof Unit)
@@ -151,7 +155,7 @@ class DetailsController extends DetailsPageAbstract
 				}
 			}
 			
-			$results ['item'] = $entity->save()->getJson ();
+			$results ['item'] = $entity->save()->sync()->getJson();
 			Dao::commitTransaction ();
 		}
 		catch(Exception $ex)

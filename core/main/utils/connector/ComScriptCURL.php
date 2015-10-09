@@ -60,7 +60,8 @@ class ComScriptCURL
 				$options[CURLOPT_POST] = true;
 			else
 				$options[CURLOPT_CUSTOMREQUEST] = $customerRequest;
-			$options[CURLOPT_POSTFIELDS] = http_build_query($data);
+			$options[CURLOPT_POSTFIELDS] = self::buildQuery($data);
+			var_dump($options[CURLOPT_POSTFIELDS]);
 		}
 		$ch = curl_init();
 		curl_setopt_array($ch, $options);
@@ -91,6 +92,42 @@ class ComScriptCURL
 			return false;
 		} else {
 			return true;
+		}
+	}
+	public static function buildQuery($input, $numeric_prefix = '', $arg_separator = '&', $enc_type = 2, $keyvalue_separator = '=', $prefix = '') {
+		if (is_array ( $input )) {
+			$arr = array ();
+			foreach ( $input as $key => $value ) {
+				$name = $prefix;
+				if (strlen ( $prefix )) {
+					$name .= '[';
+					if (! is_numeric ( $key )) {
+						$name .= $key;
+					}
+					$name .= ']';
+				} else {
+					if (is_numeric ( $key )) {
+						$name .= $numeric_prefix;
+					}
+					$name .= $key;
+				}
+				if ((is_array ( $value ) || is_object ( $value )) && count ( $value )) {
+					$arr [] = self::buildQuery ( $value, $numeric_prefix, $arg_separator, $enc_type, $keyvalue_separator, $name );
+				} else {
+					if ($enc_type === 2) {
+						$arr [] = rawurlencode ( $name ) . $keyvalue_separator . rawurlencode ( $value ?  : '' );
+					} else {
+						$arr [] = urlencode ( $name ) . $keyvalue_separator . urlencode ( $value ?  : '' );
+					}
+				}
+			}
+			return implode ( $arg_separator, $arr );
+		} else {
+			if ($enc_type === 2) {
+				return rawurlencode ( $input );
+			} else {
+				return urlencode ( $input );
+			}
 		}
 	}
 }

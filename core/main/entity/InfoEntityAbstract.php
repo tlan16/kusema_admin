@@ -272,10 +272,10 @@ class InfoEntityAbstract extends BaseEntityAbstract
 			$array['updatedBy'] = array('id'=> $this->getUpdatedBy()->getId(), 'person' => $this->_getPersonJson($this->getUpdatedBy()->getPerson()) );
 			$array['author'] = $this->getAuthor() instanceof Person ? $this->_getPersonJson($this->getAuthor()) : null;
 			if(($topics = $this->getTopics()) && count($topics) > 0)
-				$array['topics'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Topic"] ? array($id=>$b["Topic"]) : null;'), $topics);
+				$array['topics'] = array_map(create_function('$a', 'return $a->getJson();'), $topics);
 			else $array['topics'] = array();
 			if(($units = $this->getUnits()) && count($units) > 0)
-				$array['units'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Unit"] ? array($id=>$b["Unit"]) : null;'), $units);
+				$array['units'] = array_map(create_function('$a', 'return $a->getJson();'), $units);
 			else $array['units'] = array();
 // 			if(($votes = $this->getVotes()) && count($votes) > 0)
 // 				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
@@ -398,7 +398,18 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		if(trim($typeId) === '')
 			throw new Exception($InfoTypeClass . '::ID_TOPIC is empty or invalid');
 		
-		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		$infos = $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		
+		$result = array();
+		if(is_array($infos))
+		{
+			foreach ($infos as $info)
+			{
+				if($info->getEntityId() && ($topic = Topic::get($info->getEntityId())) instanceof Topic)
+					$result[] = $topic;
+			}
+		}
+		return $result;
 	}
 	public function addUnit(Unit $unit, $overRideValue = false)
 	{
@@ -424,6 +435,16 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		if(trim($typeId) === '')
 			throw new Exception($InfoTypeClass . '::ID_UNIT is empty or invalid');
 		
-		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		$infos =  $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		$result = array();
+		if(is_array($infos))
+		{
+			foreach ($infos as $info)
+			{
+				if($info->getEntityId() && ($unit = Unit::get($info->getEntityId())) instanceof Unit)
+					$result[] = $unit;
+			}
+		}
+		return $result;
 	}
 }
