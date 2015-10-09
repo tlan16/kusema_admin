@@ -144,7 +144,7 @@ class Unit extends BaseEntityAbstract
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
-    	if(($code = strtoupper(trim($code))) === '')
+    	if(($code = strtolower(trim($code))) === '')
     		throw new Exception('Code cannot be empty to create a new ' . __CLASS__);
     	$refId = trim($refId);
     	$year = $year === null ? null : intval($year);

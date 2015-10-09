@@ -23,7 +23,7 @@ class TopicConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function createTopic(Topic $topic, $debug = false)
+	public static function create(Topic $topic, $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_TOPIC
@@ -40,7 +40,7 @@ class TopicConnector extends ForumConnector
 			,'deleted' => $topic->getActive()
 		);
 		
-		$response = ComScriptCURL::readUrl($connector->getBaseUrl(), null, $array);
+		$response = json_decode(ComScriptCURL::readUrl($connector->getBaseUrl(), null, $array), true);
 		if(isset($response['_id']) && trim($response['_id']) !== '')
 		{		
 			try {
@@ -57,6 +57,7 @@ class TopicConnector extends ForumConnector
 				throw $ex;
 			}
 		}
+		return $topic;
 	}
 	/**
 	 * get system Topic by external system topic id

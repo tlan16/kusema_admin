@@ -2,20 +2,63 @@
 class UnitConnector extends ForumConnector
 {
 	/**
+	 * get the base url
+	 */
+	private function getBaseUrl()
+	{
+		return $this->_rest . 'groups';
+	}
+	/**
 	 * get unit list from external system
 	 * 
 	 * @param array $attributes
 	 * 
 	 * @return array
 	 */
-	public function getList($attributes = array())
+	public function getList($attributes = array(), $posturl = '')
 	{
 		$result = array();
-		$url = $this->_rest . 'groups';
+		$url = ($this->getBaseUrl() . trim($posturl));
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function getUnitById($id, $debug = false)
+	public static function create(Unit $unit, $debug = false)
+	{
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_UNIT
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+		if(self::getById($unit->getCode()) instanceof Unit)
+			return self::getById($unit->getCode());
+		$array = array(
+			'title' => $unit->getName()
+			,'unitCode' => $unit->getCode()
+			,'name' => $unit->getCode() . ': ' . $unit->getName()
+			,'deleted' => $unit->getActive()
+		);
+		$response = json_decode(ComScriptCURL::readUrl($connector->getBaseUrl(), null, $array), true);
+		if(isset($response['_id']) && trim($response['_id']) !== '')
+		{		
+			try {
+				$transStarted = false;
+				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
+				
+				$unit->setRefId($response['_id'])->save();
+				
+				if($transStarted === false)
+					Dao::commitTransaction();
+			} catch (Exception $ex) {
+				if($transStarted === false)
+					Dao::rollbackTransaction();
+				throw $ex;
+			}
+		}
+		return  $unit;
+	}
+	public static function getById($id, $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_UNIT
@@ -27,7 +70,7 @@ class UnitConnector extends ForumConnector
 		$objs = $connector->getList(array(), '?&limit=1&conditions=' . json_encode(array('_id' => urlencode(trim($id)))));
 		if(!is_array($objs) || count($objs) === 0)
 			return null;
-		self::importUnit($objs, $debug);
+		self::import($objs, $debug);
 		return ( Unit::getByRefId($id, false) );
 	}
 	/**
@@ -38,7 +81,7 @@ class UnitConnector extends ForumConnector
 	 * 
 	 * @throws Exception
 	 */
-	public static function importUnit($existing = array(), $debug = false)
+	public static function import($existing = array(), $debug = false)
 	{
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_UNIT
