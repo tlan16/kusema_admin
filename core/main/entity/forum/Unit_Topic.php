@@ -112,20 +112,20 @@ class Unit_Topic extends BaseEntityAbstract
     	if($unit === null && $topic === null)
     		throw new Exception('one of Unit or Topic must given');
     	$activeOnly = (intval($activeOnly) === 1);
-    	$criteria = '';
+    	$criteria = '1';
     	$param = array();
     	if($unit instanceof Unit)
     	{
-    		$criteria .= 'unitId = ?';
-    		$param[] = $unit->getId();
+    		$criteria .= ' and unitId = :uId';
+    		$param['uId'] = $unit->getId();
     	}
     	if($topic instanceof Topic)
     	{
-    		$criteria .= (trim($criteria) === '' ? '' : ' and ') . 'topicId = ?';
-    		$param[] = $topic->getId();
+    		$criteria .= ' and topicId = :tId';
+    		$param['tId'] = $topic->getId();
     	}
-    	$objs = self::getAllByCriteria($criteria, $param, $activeOnly, 1, 1);
-    	return count($objs) > 0 ? $objs[0] : null;
+    	$objs = self::getAllByCriteria($criteria, $param, $activeOnly);
+    	return $objs;
     }
 }
 ?>

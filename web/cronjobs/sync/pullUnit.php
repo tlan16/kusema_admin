@@ -5,7 +5,7 @@ class pullUnit extends syncAbstract
 	public static function run()
 	{
 		parent::run();
-		UnitConnector::importUnit(array(), true);
+		UnitConnector::import(array(), true);
 	}
 }
 

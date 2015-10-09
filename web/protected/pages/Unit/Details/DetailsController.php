@@ -40,6 +40,7 @@ class DetailsController extends DetailsPageAbstract
 				'name' => 'name_div'
 				,'code' => 'code_div'
 				,'refId' => 'refId_div'
+				,'topics' => 'topics_div'
 				,'active' => 'active_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
@@ -106,12 +107,22 @@ class DetailsController extends DetailsPageAbstract
 							$entity->setRefId(trim($value));
 							break;
 						}
+						case 'topics': {
+							$entity->clearTopics();
+							foreach ($value as $id)
+							{
+								var_dump(Topic::get(intval($id)));
+								if(($topic = Topic::get(intval($id))) instanceof Topic)
+									$entity->addTopic($topic);
+							}
+							break;
+						}
 					}
 					break;
 				}
 			}
 			
-			$results ['item'] = $entity->save()->getJson ();
+			$results ['item'] = $entity->save()->getJson();
 			Dao::commitTransaction ();
 		}
 		catch(Exception $ex)

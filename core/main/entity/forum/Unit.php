@@ -129,6 +129,29 @@ class Unit extends BaseEntityAbstract
         DaoMap::createIndex('year');
         DaoMap::commit();
     }
+     /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::postSave()
+     */
+    public function postSave() 
+    {
+    	if(trim($this->getRefId()) !== '')
+    		UnitConnector::sync($this);
+    }
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntityAbstract::getJson()
+     */
+    public function getJson($extra = array(), $reset = false)
+    {
+    	$array = $extra;
+    	if(!$this->isJsonLoaded($reset))
+    	{
+    		$topics = $this->getTopics();
+    		$array['topics'] = (count($topics) === 0 ? array() : (array_map(create_function('$a', 'return $a->getJson();'), $topics)) );
+    	}
+    	return parent::getJson($array, $reset);
+    }
     /**
      * create a new Unit
      *
@@ -186,6 +209,11 @@ class Unit extends BaseEntityAbstract
     	$objs = self::getAllByCriteria('code like ?', array($code), $activeOnly, 1, 1);
     	return count($objs) > 0 ? $objs[0] : null;
     }
+    public function clearTopics()
+    {
+    	Unit_Topic::deleteByCriteria('unitId = :uId', array('uId' => $this->getId()));
+    	return $this;
+    }
     /**
      * get topics for this Unit
      *
@@ -196,8 +224,11 @@ class Unit extends BaseEntityAbstract
     public function getTopics($activeOnly = true)
     {
     	$activeOnly = (intval($activeOnly) === 1);
+    	$result = array();
     	$objs = Unit_Topic::getByUnitAndTopic($this, null, $activeOnly);
-    	return $objs;
+    	foreach ($objs as $obj)
+    		$result[] = $obj->getTopic();
+    	return $result;
     }
     /**
      * add a Topic to Unit 

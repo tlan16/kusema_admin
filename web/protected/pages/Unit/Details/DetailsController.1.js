@@ -31,11 +31,17 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me = this;
 		tmp.me._init();
 		
+		tmp.topics = [];
+		tmp.me._item.topics.each(function(item){
+			tmp.topics.push({'id': item.id, 'text': item.name});
+		});
+		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.me
 			._getBasicInputDiv('name', tmp.me._item.name, $(tmp.me._containerIds.name), null ,true)
 			._getBasicInputDiv('code', tmp.me._item.code, $(tmp.me._containerIds.code), null ,true)
 			._getBasicInputDiv('refId', tmp.me._item.refId, $(tmp.me._containerIds.refId))
+			._getBasicSelect2Div('Topic','topics', tmp.topics, $(tmp.me._containerIds.topics), "Topics" ,true)
 			._getSaveBtn()
 		;
 		return tmp.me;

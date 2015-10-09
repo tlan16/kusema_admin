@@ -22,6 +22,38 @@ class UnitConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
+	public static function sync(Unit $unit, $debug = false)
+	{
+		$response = array();
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_UNIT
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+	
+		if($unit->getRefId() !== null && $unit->getRefId() !== '')
+		{
+			$array = array(
+				'title' => $unit->getName()
+				,'unitCode' => $unit->getCode()
+				,'name' => $unit->getCode() . ': ' . $unit->getName()
+				,'deleted' => $unit->getActive()
+				,'topics' => array()
+			);
+			foreach ($unit->getTopics() as $topic)
+			{
+				if($topic->getRefId() !== null && $topic->getRefId() !== '')
+				{
+					$array['topics'][] = $topic->getRefId();
+				}
+			}
+			$url = $connector->getBaseUrl() . '/' . $unit->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		}
+		return $response;
+	}
 	public static function create(Unit $unit, $debug = false)
 	{
 		$connector = self::getConnector(
@@ -119,6 +151,7 @@ class UnitConnector extends ForumConnector
 				}
 				
 				$systemObj =Unit::create($name, $code, $refId, null, $active);
+				$systemObj->clearTopics();
 				foreach ($topics as $topiRefcId)
 				{
 					if(!($systemTopic = Topic::getByRefId($topiRefcId)) instanceof Topic)
