@@ -2,6 +2,8 @@
 abstract class ForumConnector
 {
 	const CONNECTOR_TYPE_QUESTION = 'Question';
+	const CONNECTOR_TYPE_ANSWER = 'Answer';
+	const CONNECTOR_TYPE_COMMENTS = 'Comments';
 	const CONNECTOR_TYPE_PERSON = 'Person';
 	const CONNECTOR_TYPE_TOPIC = 'Topic';
 	const CONNECTOR_TYPE_UNIT = 'Unit';

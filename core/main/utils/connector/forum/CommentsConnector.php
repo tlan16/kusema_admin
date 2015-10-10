@@ -1,12 +1,12 @@
 <?php
-class QuestionConnector extends ForumConnector
+class CommentsConnector extends ForumConnector
 {
 	/**
 	 * get the base url
 	 */
 	private function getBaseUrl()
 	{
-		return $this->_rest . 'questions';
+		return $this->_rest . 'comments';
 	}
 	public function getList($attributes = array(), $posturl = '')
 	{
@@ -15,28 +15,11 @@ class QuestionConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function getById($id, $debug = false)
-	{
-		if(($obj = Question::getByRefId($id)) instanceof Question)
-			return $obj;
-		$connector = self::getConnector(
-				ForumConnector::CONNECTOR_TYPE_QUESTION
-				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
-				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
-				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
-				, $debug
-				);
-		$objs = $connector->getList(array(), '?&limit=1&conditions=' . json_encode(array('_id' => urlencode(trim($id)))));
-		if(!is_array($objs) || count($objs) === 0)
-			return null;
-		self::import($objs, $debug);
-		return ( Question::getByRefId($id, false) );
-	}
 	public static function sync(Question $question, $debug = false)
 	{
 		$response = array();
 		$connector = self::getConnector(
-				ForumConnector::CONNECTOR_TYPE_QUESTION
+				ForumConnector::CONNECTOR_TYPE_COMMENTS
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
@@ -60,10 +43,27 @@ class QuestionConnector extends ForumConnector
 		}
 		return $response;
 	}
+	public static function getById($id, $debug = false)
+	{
+		if(($obj = Answer::getByRefId($id)) instanceof Answer)
+			return $obj;
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_COMMENTS
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+		$objs = $connector->getList(array(), '?&limit=1&conditions=' . json_encode(array('_id' => urlencode(trim($id)))));
+		if(!is_array($objs) || count($objs) === 0)
+			return null;
+		self::import($objs, $debug);
+		return ( Answer::getByRefId($id, false) );
+	}
 	public static function import($existing = array(), $debug = false)
 	{
 		$connector = self::getConnector(
-				ForumConnector::CONNECTOR_TYPE_QUESTION
+				ForumConnector::CONNECTOR_TYPE_COMMENTS
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
@@ -75,47 +75,54 @@ class QuestionConnector extends ForumConnector
 		{
 			try {
 				$refId = $obj["_id"];
+				if(trim($refId) === '')
+					continue;
 				$version = $obj["__v"];
 				$author = self::processField($obj, 'author');
-				$unit = self::processField($obj, 'group');
-				$topics = self::processField($obj, 'topics', array());
-				$title = self::processField($obj, 'title');
+				$parent = self::processField($obj, 'parent');
 				$content = self::processField($obj, 'message');
+				
 				$active = !(self::processField($obj, 'deleted', false));
 				$upVotes = self::processField($obj, 'upVotes', array());
 				$downVotes = self::processField($obj, 'downVotes', array());
 				$anonymous = self::processField($obj, 'anonymous',false);
 				$authorName = self::processField($obj, 'authorName', ($anonymous === true ? 'anonymous' : '') );
 				
-				if(($title = trim($title)) === '')
+				if(trim($author) === '')
 				{
 					if($connector->debug === true)
 					{
-						echo 'invalid title passed in, question [' . $refId . '] skipped' . PHP_EOL;
+						echo 'invalid author passed in, commnet [' . $refId . '] skipped' . PHP_EOL;
 						echo print_r($obj, true);
 					}
 					continue;
 				}
-				if(($content = trim($content)) === '')
+				if(trim($parent) === '')
 				{
 					if($connector->debug === true)
 					{
-						echo 'invalid content(message) passed in, question [' . $refId . '] skipped' . PHP_EOL;
+						echo 'invalid parent id passed in, commnet [' . $refId . '] skipped' . PHP_EOL;
+						echo print_r($obj, true);
+					}
+					continue;
+				}
+				if(trim($content) === '')
+				{
+					if($connector->debug === true)
+					{
+						echo 'invalid content(message) passed in, commnet [' . $refId . '] skipped' . PHP_EOL;
 						echo print_r($obj, true);
 					}
 					continue;
 				}
 				
-
 				if($connector->debug === true)
 				{
 					$msg =  $rowCount . ': user data from forum' . PHP_EOL;
 					$msg .= "\t refId(_id) => " . $refId . PHP_EOL;
 					$msg .= "\t version(__v) => " . $version . PHP_EOL;
+					$msg .= "\t parent => " . trim($parent) . PHP_EOL;
 					$msg .= "\t author => " . $author . PHP_EOL;
-					$msg .= "\t unit(group) => " . $unit . PHP_EOL;
-					$msg .= "\t topics => " . print_r($topics,true) . PHP_EOL;
-					$msg .= "\t title => " . trim($title) . PHP_EOL;
 					$msg .= "\t content(message) => " . trim($content) . PHP_EOL;
 					$msg .= "\t active(!deleted) => " . trim($active) . PHP_EOL;
 					$msg .= "\t upVotes => " . print_r($upVotes,true) . PHP_EOL;
@@ -126,69 +133,56 @@ class QuestionConnector extends ForumConnector
 					echo $msg;
 				}
 				
+				$parentRefId = $parent;
+				if(($parent = QuestionConnector::getById($parentRefId)) instanceof Question)
+					$parent = $parent;
+				elseif(($parent = AnswerConnector::getById($parentRefId)) instanceof Answer)
+					$parent = $parent;
+				else {
+					if($connector->debug === true)
+					{
+						echo 'invalid parent passed in, commnet [' . $refId . '] skipped' . PHP_EOL;
+						echo print_r($obj, true);
+					}
+					continue;
+				}
+				
+				$authorRefId = $author;
+				$author = PersonConnector::getById($authorRefId, $debug);
+				if(!$author instanceof Person)
+					continue;
+				
 				$transStarted = false;
 				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 				
-				$authorRefId = $author;
-				if(trim($authorRefId) === '')
+				$comments = $parent->addComments("", $content, $refId, $author, $authorName, $active);
+				if($connector->debug === true)
+					echo 'Comments[' . $comments->getId() . '] created/updated with title "' . $comments->getTitle() . '", content"' . $comments->getContent() . '" for ' . get_class($parent) . '[' . $parent->getId() . ']' . PHP_EOL;
+				
+				if(is_array($upVotes))
 				{
-					if($connector->debug === true)
-						echo 'invalid author given for question ' . $refId . ', skipping this question' . PHP_EOL;
-					continue;
-				}
-				if(!($author = Person::getByRefId($authorRefId)) instanceof Person)
-					$author = PersonConnector::getById($authorRefId);
-				if(!$author instanceof Person)
-					continue;
-				$question = Question::create($title, $content, $refId, $author, $authorName, $active);
-				foreach ($upVotes as $upVote)
-				{
-					if(!($person = Person::getByRefId($upVote)) instanceof Person)
-						$person = PersonConnector::getById($upVote);
-					if(!$person instanceof Person)
-						continue;
-					$question->voteUp($person);
+					foreach ($upVotes as $upVote)
+					{
+						$person = PersonConnector::getById($upVote, $debug);
+						if(!$person instanceof Person)
+							continue;
+						$comments->voteUp($person);
+					}
 				}
 				foreach ($downVotes as $downVote)
 				{
-					if(!($person = Person::getByRefId($downVote)) instanceof Person)
-						$person = PersonConnector::getById($downVote);
+					$person = PersonConnector::getById($downVote);
 					if(!$person instanceof Person)
 						continue;
-					$question->voteDown($person);
-				}
-				if(($unit = trim($unit)) !== '')
-				{
-					$unitRefId = $unit;
-					if(trim($unitRefId) === '')
-						continue;
-					if(!($unit = Unit::getByRefId($unitRefId)) instanceof Unit)
-						$unit = UnitConnector::getUnitById($unitRefId);
-					if(!$unit instanceof Unit)
-						continue;
-					$question->addUnit($unit);
-				}
-				foreach ($topics as $topic)
-				{
-					$topicRefId = $topic;
-					if(trim($topicRefId) === '')
-						continue;
-					if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
-						$topic = TopicConnector::getTopicById($topicRefId);
-					if(!$topic instanceof Topic)
-						continue;
-					$question->addTopic($topic);
+					$comments->voteDown($person);
 				}
 				
-				if($connector->debug === true)
-					echo 'Question[' . $question->getId() . '] created/updated with title "' . $question->getTitle() . '", content"' . $question->getContent() . '"' . PHP_EOL;
-
 				if($transStarted === false)
 				{
 					$rowCount++;
 					Dao::commitTransaction();
 				} else {
-					if($connector->debug === true)
+					if($debug === true)
 						echo '***warning*** $transStarted !== false' . PHP_EOL;
 				};
 			} catch (Exception $ex) {

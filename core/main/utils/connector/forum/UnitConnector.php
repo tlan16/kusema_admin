@@ -92,6 +92,8 @@ class UnitConnector extends ForumConnector
 	}
 	public static function getById($id, $debug = false)
 	{
+		if(($obj = Unit::getByRefId($id)) instanceof Unit)
+			return $obj;
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_UNIT
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)

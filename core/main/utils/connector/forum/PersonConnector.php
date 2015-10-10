@@ -15,10 +15,10 @@ class PersonConnector extends ForumConnector
 	 * 
 	 * @return array
 	 */
-	public function getList($attributes = array())
+	public function getList($attributes = array(), $posturl = '')
 	{
 		$result = array();
-		$url = $this->_rest . 'users';
+		$url = ($this->getBaseUrl() . trim($posturl));
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
@@ -82,6 +82,8 @@ class PersonConnector extends ForumConnector
 	}
 	public static function getById($id, $debug = false)
 	{
+		if(($obj = Person::getByRefId($id)) instanceof Person)
+			return $obj;
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_PERSON
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)

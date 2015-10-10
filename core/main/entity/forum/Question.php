@@ -95,7 +95,7 @@ class Question extends InfoEntityAbstract
 	 * @param string 		$title
 	 * @param string 		$content
 	 * @param string 		$refId
-	 * @param UserAccount	$author
+	 * @param Person		$author
 	 * @param string 		$authorName
 	 * @param bool			$active
 	 * 

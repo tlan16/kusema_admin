@@ -69,6 +69,8 @@ class TopicConnector extends ForumConnector
 	 */
 	public static function getById($id, $debug = false)
 	{
+		if(($obj = Topic::getByRefId($id)) instanceof Topic)
+			return $obj;
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_TOPIC
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
