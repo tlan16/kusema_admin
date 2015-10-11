@@ -163,7 +163,7 @@ class QuestionConnector extends ForumConnector
 					if(trim($unitRefId) === '')
 						continue;
 					if(!($unit = Unit::getByRefId($unitRefId)) instanceof Unit)
-						$unit = UnitConnector::getUnitById($unitRefId);
+						$unit = UnitConnector::getById($unitRefId);
 					if(!$unit instanceof Unit)
 						continue;
 					$question->addUnit($unit);
@@ -174,7 +174,7 @@ class QuestionConnector extends ForumConnector
 					if(trim($topicRefId) === '')
 						continue;
 					if(!($topic = Topic::getByRefId($topicRefId)) instanceof Topic)
-						$topic = TopicConnector::getTopicById($topicRefId);
+						$topic = TopicConnector::getById($topicRefId);
 					if(!$topic instanceof Topic)
 						continue;
 					$question->addTopic($topic);

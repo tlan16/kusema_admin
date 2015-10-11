@@ -157,7 +157,7 @@ class UnitConnector extends ForumConnector
 				foreach ($topics as $topiRefcId)
 				{
 					if(!($systemTopic = Topic::getByRefId($topiRefcId)) instanceof Topic)
-						$systemTopic = TopicConnector::getTopicById($topiRefcId, $debug);
+						$systemTopic = TopicConnector::getById($topiRefcId, $debug);
 					$systemObj->addTopic($systemTopic);
 					if($connector->debug === true)
 						echo 'Topic[' . $systemTopic->getId() . '] ' . $systemTopic->getName() . ' is associated with Unit[' . $systemObj->getId() . '] ' . $systemObj->getName() . PHP_EOL;  
