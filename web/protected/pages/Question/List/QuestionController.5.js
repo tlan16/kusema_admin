@@ -51,9 +51,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Topic(s)</strong>') })
 				});
 			row.topics.each(function(item){
-				tmp.key = Object.keys(item)[0];
-				tmp.topics.insert({'bottom': new Element('tr', {'info_id': tmp.key}).addClassName('topic_row')
-					.insert({'bottom': new Element('td').update(item[tmp.key]['name']) })
+				console.debug(item);
+				tmp.topics.insert({'bottom': new Element('tr', {'info_id': item.id}).addClassName('topic_row')
+					.insert({'bottom': new Element('td').update(item.name) })
 					.insert({'bottom': new Element('td')
 						.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
 							.observe('click', function(e){
@@ -73,7 +73,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 							);
 							tmp.me._signRandID(tmp.topicInput);
 							jQuery('#'+tmp.topicInput.id).select2({
-								minimumInputLength: 3
+								minimumInputLength: 1
 								,ajax: {
 									delay: 250
 									,url: '/ajax/getAll'
@@ -106,9 +106,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Unit(s)</strong>') })
 				});
 			row.units.each(function(item){
-				tmp.key = Object.keys(item)[0];
-				tmp.units.insert({'bottom': new Element('tr', {'info_id': tmp.key}).addClassName('unit_row')
-					.insert({'bottom': new Element('td').update('<u>'+item[tmp.key]['code'] + "</u>:\t" + item[tmp.key]['name']) })
+				tmp.units.insert({'bottom': new Element('tr', {'info_id': item.id}).addClassName('unit_row')
+					.insert({'bottom': new Element('td').update('<u>'+item.code + "</u>:\t" + item.name) })
 					.insert({'bottom': new Element('td')
 						.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
 							.observe('click', function(e){
@@ -128,13 +127,13 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 							);
 							tmp.me._signRandID(tmp.unitInput);
 							jQuery('#'+tmp.unitInput.id).select2({
-								minimumInputLength: 3
+								minimumInputLength: 1
 								,ajax: {
 									delay: 250
-									,url: '/ajax/getAll'
+									,url: '/ajax/getUnit'
 									,type: 'POST'
 									,data: function (params) {
-										return {"searchTxt": 'code like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Unit'};
+										return {"searchTxt": params.term};
 									}
 									,processResults: function(data, page, query) {
 										tmp.result = [];

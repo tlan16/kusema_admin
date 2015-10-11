@@ -152,18 +152,17 @@ class UnitConnector extends ForumConnector
 					echo $msg;
 				}
 				
-				$systemObj =Unit::create($name, $code, $refId, null, $active);
-				$systemObj->clearTopics();
+				$unit =Unit::create($name, $code, $refId, null, $active);
+				$unit->clearTopics();
 				foreach ($topics as $topiRefcId)
 				{
-					if(!($systemTopic = Topic::getByRefId($topiRefcId)) instanceof Topic)
-						$systemTopic = TopicConnector::getById($topiRefcId, $debug);
-					$systemObj->addTopic($systemTopic);
-					if($connector->debug === true)
-						echo 'Topic[' . $systemTopic->getId() . '] ' . $systemTopic->getName() . ' is associated with Unit[' . $systemObj->getId() . '] ' . $systemObj->getName() . PHP_EOL;  
+					$topic = TopicConnector::getById($topiRefcId, $debug);
+					if(!$topic instanceof Topic)
+						continue;
+					$unit->addTopic($topic);
 				}
 				if($connector->debug === true)
-					echo 'Unit[' . $systemObj->getId() . '] created/updated with name "' . $systemObj->getName() . '", code"' . $code . '", refId"' . $systemObj->getRefId() . '", active"' . intval($systemObj->getActive()) . '"' . PHP_EOL;
+					echo 'Unit[' . $unit->getId() . '] created/updated with name "' . $unit->getName() . '", code"' . $code . '", refId"' . $unit->getRefId() . '", active"' . intval($unit->getActive()) . '"' . PHP_EOL;
 				
 				if($transStarted === false)
 				{

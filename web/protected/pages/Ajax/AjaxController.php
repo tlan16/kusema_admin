@@ -35,6 +35,25 @@ class AjaxController extends TService
         $this->getResponse()->appendHeader('Content-Type: application/json');
         $this->getResponse()->write(StringUtilsAbstract::getJson($results, $errors));
   	}
+  	private function _getUnit(Array $params)
+  	{
+  		if(!isset($params['searchTxt']) || ($searchTxt = trim($params['searchTxt'])) === '')
+  			throw new Exception('SYSTEM ERROR: INCOMPLETE searchTxt PROVIDED');
+  	
+  		$pageSize = (isset($params['pageSize']) && ($pageSize = trim($params['pageSize'])) !== '' ? $pageSize : DaoQuery::DEFAUTL_PAGE_SIZE);
+  		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : 1);
+  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('updated' => 'desc'));
+  	
+		$where = ' name like :searchTxt or code like :searchTxt';
+  		$sqlParams = array('searchTxt' => '%' . $searchTxt . '%');
+  		$returnArray = json_encode(array());
+  		$stats = array();
+  		$unitArray = Unit::getAllByCriteria($where, $sqlParams);
+  		$results = array();
+  		$results['items'] = array_map(create_function('$a', 'return $a->getJson();'), $unitArray);
+  		$results['pageStats'] = $stats;
+  		return $results;
+  	}
 	/**
 	 * Getting the comments for an entity
 	 *

@@ -1,6 +1,8 @@
-@CHARSET "UTF-8";
 .item_row .topics a {
 	text-decoration: none;
+}
+.item_row .refId {
+	word-wrap: break-word;
 }
 @media only screen and (max-width: 992px) {
 	#item-list .list-group-item span.title {

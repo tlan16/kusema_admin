@@ -6,12 +6,11 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$userAccount = UserAccount::get(10);
-	$userAccount->clearRoles()->addRole(Role::get(Role::ID_SYSTEM_ADMIN));
-	$userAccount = UserAccount::get(24);
-	$userAccount->clearRoles()->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER));
-	$userAccount = UserAccount::get(25);
-	$userAccount->clearRoles()->addRole(Role::get(Role::ID_ADMIN_USER));
+	$question = Question::get(1);
+	$question->voteUp(Core::getUser()->getPerson());
+	$question->voteUp(Core::getUser()->getPerson());
+	$question->voteUp(Core::getUser()->getPerson());
+	$question->voteDown(Core::getUser()->getPerson());
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

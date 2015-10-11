@@ -194,8 +194,7 @@ class QuestionController extends CRUDPageAbstract
 			{
 				case 'removeTopic':
 					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
+						QuestionInfo::deleteByCriteria('entityName = ? and entityId = ?',array('Topic', $entityId));
 						break;
 					}
 				case 'addTopic':
@@ -206,8 +205,7 @@ class QuestionController extends CRUDPageAbstract
 					}
 				case 'removeUnit':
 					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
+						QuestionInfo::deleteByCriteria('entityName = ? and entityId = ?',array('Unit', $entityId));
 						break;
 					}
 				case 'addUnit':
