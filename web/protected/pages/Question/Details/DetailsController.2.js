@@ -359,7 +359,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.newDiv = tmp.me._getFormGroup('Answer', tmp.answer, true)
 			.store(answer)
 			.writeAttribute({'class': 'col-md-12', 'answer_id': answer.id});
-		
 		return tmp.newDiv;
 	}
 	,_initAnswerCommentsDivs: function(answer_id) {

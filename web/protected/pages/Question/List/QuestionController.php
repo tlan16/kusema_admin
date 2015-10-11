@@ -50,86 +50,92 @@ class QuestionController extends CRUDPageAbstract
 		try
 		{
 			$class = trim($this->_focusEntity);
-			$pageNo = 1;
-			$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
-			if(isset($param->CallbackParameter->pagination))
-			{
-				$pageNo = $param->CallbackParameter->pagination->pageNo;
-				$pageSize = $param->CallbackParameter->pagination->pageSize;
-			}
 			
-			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
-				
-			$where = array(1);
-			$params = array();
-			foreach($serachCriteria as $field => $value)
+			if(isset($param->CallbackParameter->id) && ($question = Question::get(intval($param->CallbackParameter->id))) instanceof Question)
+				$results['item'] = $question->getJson();
+			else
 			{
-				if((is_array($value) && count($value) === 0) || (is_string($value) && ($value = trim($value)) === ''))
-					continue;
-				
-				$query = $class::getQuery();
-				switch ($field)
+				$pageNo = 1;
+				$pageSize = DaoQuery::DEFAUTL_PAGE_SIZE;
+				if(isset($param->CallbackParameter->pagination))
 				{
-					case 'quest.title':
-						{
-							if($field === 'quest.title' && (!isset($serachCriteria['quest.title.token']) || ($token = (strtolower(trim($serachCriteria['quest.title.token'])) !== 'on'))))
-							{
-								$where[] =  $field . " like :title ";
-								$params['title'] = '%' . $value . '%';
-								break;
-							} else {
-								$searchTokens = array();
-								StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-								$likeArray = array();
-								foreach($searchTokens as $index => $tokenArray) {
-									$key = 'token' . $index;
-									$params[$key] = '%' . implode('%', $tokenArray) . '%';
-									$likeArray[] = $field . " like :" . $key;
-								}
-							
-								$where[] = '(' . implode(' OR ', $likeArray) . ')';
-								break;
-							}
-						}
-					case 'quest.content':
-						{
-							if($field === 'quest.content' && (!isset($serachCriteria['quest.content.token']) || ($token = (strtolower(trim($serachCriteria['quest.content.token'])) !== 'on'))))
-							{
-								$where[] =  $field . " like :content ";
-								$params['content'] = '%' . $value . '%';
-								break;
-							} else {
-								$searchTokens = array();
-								StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-								$likeArray = array();
-								foreach($searchTokens as $index => $tokenArray) {
-									$key = 'token' . $index;
-									$params[$key] = '%' . implode('%', $tokenArray) . '%';
-									$likeArray[] = $field . " like :" . $key;
-								}
-								
-								$where[] = '(' . implode(' OR ', $likeArray) . ')';
-								break;
-							}
-						}
-					case 'quest.active':
-						{
-							$value = intval($value);
-							if($value === 0 || $value === 1)
-							{
-								$where[] =  $field . " = :active ";
-								$params['active'] = $value;
-							}
-							break;
-						}
+					$pageNo = $param->CallbackParameter->pagination->pageNo;
+					$pageSize = $param->CallbackParameter->pagination->pageSize;
 				}
+				
+				$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
+					
+				$where = array(1);
+				$params = array();
+				foreach($serachCriteria as $field => $value)
+				{
+					if((is_array($value) && count($value) === 0) || (is_string($value) && ($value = trim($value)) === ''))
+						continue;
+					
+					$query = $class::getQuery();
+					switch ($field)
+					{
+						case 'quest.title':
+							{
+								if($field === 'quest.title' && (!isset($serachCriteria['quest.title.token']) || ($token = (strtolower(trim($serachCriteria['quest.title.token'])) !== 'on'))))
+								{
+									$where[] =  $field . " like :title ";
+									$params['title'] = '%' . $value . '%';
+									break;
+								} else {
+									$searchTokens = array();
+									StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+									$likeArray = array();
+									foreach($searchTokens as $index => $tokenArray) {
+										$key = 'token' . $index;
+										$params[$key] = '%' . implode('%', $tokenArray) . '%';
+										$likeArray[] = $field . " like :" . $key;
+									}
+								
+									$where[] = '(' . implode(' OR ', $likeArray) . ')';
+									break;
+								}
+							}
+						case 'quest.content':
+							{
+								if($field === 'quest.content' && (!isset($serachCriteria['quest.content.token']) || ($token = (strtolower(trim($serachCriteria['quest.content.token'])) !== 'on'))))
+								{
+									$where[] =  $field . " like :content ";
+									$params['content'] = '%' . $value . '%';
+									break;
+								} else {
+									$searchTokens = array();
+									StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+									$likeArray = array();
+									foreach($searchTokens as $index => $tokenArray) {
+										$key = 'token' . $index;
+										$params[$key] = '%' . implode('%', $tokenArray) . '%';
+										$likeArray[] = $field . " like :" . $key;
+									}
+									
+									$where[] = '(' . implode(' OR ', $likeArray) . ')';
+									break;
+								}
+							}
+						case 'quest.active':
+							{
+								$value = intval($value);
+								if($value === 0 || $value === 1)
+								{
+									$where[] =  $field . " = :active ";
+									$params['active'] = $value;
+								}
+								break;
+							}
+					}
+				}
+				$stats = array();
+				$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('created' => 'desc'), $stats);
+				$results['pageStats'] = $stats;
+				$results['items'] = array();
+				foreach($objects as $obj)
+					$results['items'][] = $obj->getJson();
 			}
-			$stats = array();
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('created' => 'desc'), $stats);
-			$results['pageStats'] = $stats;
-			$results['items'] = array();
-			foreach($objects as $obj)
-				$results['items'][] = $obj->getJson();
 		}
 		catch(Exception $ex)
 		{

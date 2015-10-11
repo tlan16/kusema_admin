@@ -24,6 +24,27 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		
 		jQuery('.select2').select2();
 	}
+	,_reloadListedItems: function() {
+		var tmp = {};
+		tmp.me = this;
+		$(tmp.me.resultDivId).getElementsBySelector('.item_row[item_id]').each(function(row){
+			tmp.id = row.readAttribute('item_id');
+			tmp.me.postAjax(tmp.me.getCallbackId('getItems'), {'id': tmp.id}, {
+				'onSuccess': function(sender, param) {
+					try{
+						tmp.result = tmp.me.getResp(param, false, true);
+						if(!tmp.result || !tmp.result.item)
+							return;
+						tmp.row = $(tmp.me.resultDivId).down('#'+tmp.me.resultDivId+'-body').down('.item_row[item_id=' + tmp.result.item.id + ']');
+						tmp.newRow = tmp.me._getResultRow(tmp.result.item).addClassName('list-group-item').addClassName('item_row').writeAttribute('item_id', tmp.result.item.id);
+						tmp.row.replace(tmp.newRow);
+					} catch (e) {
+						tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
+					}
+				}
+			});
+		});
+	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
@@ -166,8 +187,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-xs-12 col-sm-2 col-md-2 col-lg-2'}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md visible-sm'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'col-sm-2 visible-lg visible-md visible-sm'})
-				.insert({'bottom': new Element(tmp.tag, {'class': 'vote col-sm-4'}).update(tmp.isTitle === true ? 'Vote' : row.vote) })
-				.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-sm-4'}).update(tmp.isTitle === true ? 'Ref ID' : row.refId) })
+				.insert({'bottom': new Element(tmp.tag, {'class': 'vote col-sm-3'}).update(tmp.isTitle === true ? 'Vote' : row.vote) })
+				.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-sm-9'}).update(tmp.isTitle === true ? 'Ref ID' : row.refId) })
 			})
 			.insert({'bottom': new Element(tmp.tag, {'class': 'created col-sm-1 visible-lg visible-md visible-sm'})
 				.update(tmp.isTitle === true ? 'Time' : tmp.time) 
@@ -232,7 +253,10 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			    	'locked': false
 				}
 			},
-			'beforeClose'	    : function() {
+			'beforeClose': function() {
+			},
+			'afterClose': function() {
+				tmp.me._reloadListedItems();
 			}
  		});
 		return tmp.me;
