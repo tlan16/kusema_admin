@@ -6,11 +6,10 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$question = Question::get(1);
-	$question->voteUp(Core::getUser()->getPerson());
-	$question->voteUp(Core::getUser()->getPerson());
-	$question->voteUp(Core::getUser()->getPerson());
-	$question->voteDown(Core::getUser()->getPerson());
+	$question = Question::get(17);
+	$return = QuestionConnector::sync($question);
+	
+	var_dump($return);
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

@@ -133,14 +133,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		;
 		return tmp.me;
 	}
-	/**
-	 * Public: binding all the js events
-	 */
-	,bindAllEventNObjects: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
-	}
 	,refreshParentWindow: function() {
 		var tmp = {};
 		tmp.me = this;

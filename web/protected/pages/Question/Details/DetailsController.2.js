@@ -5,20 +5,6 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	_readOnlyMode: false
 	,_selectTypeTxt: 'Select One...'
-	/**
-	 * Getting a form group for forms
-	 */
-	,_getFormGroup: function (label, input, noFormControl) {
-		return new Element('div', {'class': 'form-group form-group-sm'})
-			.insert({'bottom': new Element('label').update(label) })
-			.insert({'bottom': input.addClassName(noFormControl === true ? '' : 'form-control') });
-	}
-	/**
-	 * Set some pre defined data before javascript start
-	 */
-	,setPreData: function() {
-		return this;
-	}
 	,_getTitleDiv: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -37,6 +23,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 							return;
 						tmp.me._item = tmp.result.item;
 						tmp.me._getTitleDiv();
+						tmp.me.refreshParentWindow();
 					};
 					tmp.me.saveItem(tmp.input, {
 						'value': tmp.value
@@ -76,6 +63,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 							return;
 						tmp.me._item = tmp.result.item;
 						tmp.me._getAuthorDiv();
+						tmp.me.refreshParentWindow();
 					};
 					tmp.me.saveItem(tmp.input, {
 						'value': tmp.value
@@ -109,6 +97,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 							return;
 						tmp.me._item = tmp.result.item;
 						tmp.me._getAuthorDiv();
+						tmp.me.refreshParentWindow();
 					};
 					tmp.me.saveItem(tmp.btn, {
 						'value': tmp.value
@@ -171,16 +160,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		return tmp.me;
 	}
-	,_elTojQuery(el) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.el = (el || null);
-		if(tmp.el === null)
-			return null;
-		tmp.me._signRandID(tmp.el);
-		tmp.el = jQuery('#'+tmp.el.id);
-		return tmp.el;
-	}
 	,getAuthorDisplay(firstname, lastname, email) {
 		var tmp = {};
 		tmp.me = this;
@@ -217,6 +196,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 						return;
 					tmp.me._item = tmp.result.item;
 					tmp.me._getContentDiv();
+					tmp.me.refreshParentWindow();
 				};
 				tmp.me.saveItem(tmp.textarea, {
 					'value': tmp.value
@@ -416,31 +396,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getAnswersDiv()
 			;
 		return tmp.me;
-	}
-	/**
-	 * Public: binding all the js events
-	 */
-	,bindAllEventNObjects: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
-	}
-	,refreshParentWindow: function() {
-		var tmp = {};
-		tmp.me = this;
-		if(!window.opener)
-			return;
-		tmp.parentWindow = window.opener;
-		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .product_item[product_id=' + tmp.me._item.id + ']');
-		if(tmp.row) {
-			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
-			if(tmp.row.hasClassName('success'))
-				tmp.row.addClassName('success');
-		}
-		tmp.newPObtn = $(tmp.parentWindow.document.body).down('#' + tmp.me._btnIdNewPO);
-		if(tmp.newPObtn) {
-			tmp.parentWindow.pageJs.selectProduct(tmp.me._item, tmp.newPObtn);
-		}
 	}
 	,readOnlyMode: function(){
 		var tmp = {};

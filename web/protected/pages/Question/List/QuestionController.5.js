@@ -51,7 +51,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Topic(s)</strong>') })
 				});
 			row.topics.each(function(item){
-				console.debug(item);
 				tmp.topics.insert({'bottom': new Element('tr', {'info_id': item.id}).addClassName('topic_row')
 					.insert({'bottom': new Element('td').update(item.name) })
 					.insert({'bottom': new Element('td')
@@ -156,7 +155,13 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				})
 			});
 		}
-		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning').addClassName(tmp.isTitle === true ? 'hidden-xs': '')
+		tmp.row = new Element('span', {'class': 'row'})
+			.store('data', row)
+			.addClassName( (row.active === false && tmp.isTitle === false ) ? 'warning' : '')
+			.addClassName('list-group-item')
+			.addClassName('item_row')
+			.writeAttribute('item_id', row.id)
+			.addClassName(tmp.isTitle === true ? 'hidden-xs': '')
 			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-xs-12 col-sm-2 col-md-2 col-lg-2'}).update(row.title) })
 			.insert({'bottom': new Element((tmp.isTitle === true ? 'strong' : 'span'), {'class': 'content col-xs-12 col-sm-2 col-md-2 col-lg-2'}).update(row.content) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'author col-sm-2 visible-lg visible-md visible-sm'}).update(tmp.isTitle === true ? 'Author' : tmp.author) })
@@ -215,6 +220,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		jQuery.fancybox({
 			'width'			: '95%',
 			'height'		: '95%',
+			'preload'		: true,
 			'autoScale'     : false,
 			'autoDimensions': false,
 			'fitToView'     : false,
@@ -225,6 +231,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				'overlay': {
 			    	'locked': false
 				}
+			},
+			'beforeClose'	    : function() {
 			}
  		});
 		return tmp.me;

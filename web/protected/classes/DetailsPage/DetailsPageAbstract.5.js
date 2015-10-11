@@ -74,6 +74,14 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			parent.jQuery.fancybox.close();
 		return this;
 	}
+	/**
+	 * Public: binding all the js events
+	 */
+	,bindAllEventNObjects: function() {
+		var tmp = {};
+		tmp.me = this;
+		return tmp.me;
+	}
 	,_getBasicInputDiv:function(saveItem, value, container, title, required) {
 		var tmp = {};
 		tmp.me = this;
@@ -190,7 +198,12 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		
 		return tmp.me;
 	}
-	
+	/**
+	 * Set some pre defined data before javascript start
+	 */
+	,setPreData: function() {
+		return this;
+	}
 	,setItem: function(item) {
 		this._item = item;
 		return this;

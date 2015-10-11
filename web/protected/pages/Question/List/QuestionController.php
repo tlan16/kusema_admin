@@ -138,6 +138,44 @@ class QuestionController extends CRUDPageAbstract
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
 	/**
+	 * delete the items
+	 *
+	 * @param unknown $sender
+	 * @param unknown $param
+	 * @throws Exception
+	 *
+	 */
+	public function deleteItems($sender, $param)
+	{
+		$results = $errors = array();
+		try
+		{
+			$class = trim($this->_focusEntity);
+			$ids = isset($param->CallbackParameter->ids) ? $param->CallbackParameter->ids : array();
+			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
+			if(count($ids) > 0)
+			{
+				if($deactivate === true)
+				{
+					foreach ($ids as $id)
+					{
+						$obj = $class::get($id);
+						if($obj instanceof $class)
+							$obj->setActive(false)->save();
+					}
+				}
+				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);
+				if($obj instanceof Question)
+					QuestionConnector::sync($obj);
+			}
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	/**
 	 * save the items
 	 *
 	 * @param unknown $sender
@@ -215,7 +253,8 @@ class QuestionController extends CRUDPageAbstract
 						break;
 					}
 			}
-			
+			if($item instanceof Question)
+				QuestionConnector::sync($item);
 			$results['item'] = $item->getJson();
 		}
 		catch(Exception $ex)

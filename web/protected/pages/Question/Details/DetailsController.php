@@ -129,7 +129,10 @@ class DetailsController extends DetailsPageAbstract
 					break;
 				}
 			}
-			
+			if($entity instanceof Question)
+				QuestionConnector::sync($entity);
+			if($entity instanceof Answer)
+				AnswerConnector::sync($entity);
 			$results ['item'] = $entity->save()->getJson ();
 			Dao::commitTransaction ();
 		}
