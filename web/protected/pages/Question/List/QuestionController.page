@@ -11,7 +11,7 @@
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="quest.title" class="input-group-addon">Title:</label>
                            <input type="text" class="form-control input-sm" search_field="quest.title" placeholder="The title of the <%= $this->getFocusEntity() %>">
@@ -21,7 +21,7 @@
 						   </label>
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="quest.content" class="input-group-addon">Content:</label>
                            <input type="text" class="form-control input-sm" search_field="quest.content" placeholder="The content of the <%= $this->getFocusEntity() %>">
@@ -31,13 +31,27 @@
 						   </label>
                        </div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="quest.active" class="input-group-addon">Active?</label>
-                           <select class="input-sm select2" search_field="quest.active" data-minimum-results-for-search="-1">
+                           <select class="input-sm select2" search_field="quest.active" data-minimum-results-for-search="-1" data-width="100%">
                            		<option value="1">YES</option>
                            		<option value="0">NO</option>
                            		<option value="3">ALL</option>
+                           </select>
+                       </div>
+					</div>
+					<div class="col-sm-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="quest.topics" class="input-group-addon">Topics</label>
+                           <select class="input-sm select2" search_field="quest.topics" data-width="100%">
+                           </select>
+                       </div>
+					</div>
+					<div class="col-sm-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="quest.units" class="input-group-addon">Units</label>
+                           <select class="input-sm select2" search_field="quest.units" data-width="100%">
                            </select>
                        </div>
 					</div>

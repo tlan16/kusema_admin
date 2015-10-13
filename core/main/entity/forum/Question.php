@@ -220,4 +220,90 @@ class Question extends InfoEntityAbstract
 		$json = (intval($json) === 1);
 		return ( ($obj = $class::get($id)) instanceof $class ? ($json === true ? $obj->getJson($extra) : $obj) : null );
 	}
+	public static function getQuestions(array $title = array(), $content = '', $authorId = 0, $authorName = '', $refId = '', $vote = '', $active = true, array $created = array(), array $updated = array(), array $topics = array(), array $units = array(), $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
+	{
+		$where = array(1);
+		$params = array();
+		$innerJoins = array();
+		
+		if(isset($title['txt']) && ($searchTxt = trim($title['txt'])) !== '')
+		{
+			$field = 'title';
+			if(isset($title['token']) && $title['token'] === true)
+			{
+				$searchTokens = array();
+				StringUtilsAbstract::permute(preg_split("/[\s,]+/", $searchTxt), $searchTokens);
+				$likeArray = array();
+				foreach($searchTokens as $index => $tokenArray) {
+					$key = $field . $index;
+					$params[$key] = '%' . implode('%', $tokenArray) . '%';
+					$likeArray[] = $field . " like :" . $key;
+				}
+				$where[] = '(' . implode(' OR ', $likeArray) . ')';
+			} else {
+				$where[] = 'quest.title like :title';
+				$params[$field] = '%' . $searchTxt . '%';
+			}
+		}
+		
+		if(isset($content['txt']) && ($searchTxt = trim($content['txt'])) !== '')
+		{
+			$field = 'content';
+			if(isset($content['token']) && $content['token'] === true)
+			{
+				$searchTokens = array();
+				StringUtilsAbstract::permute(preg_split("/[\s,]+/", $searchTxt), $searchTokens);
+				$likeArray = array();
+				foreach($searchTokens as $index => $tokenArray) {
+					$key = $field . $index;
+					$params[$key] = '%' . implode('%', $tokenArray) . '%';
+					$likeArray[] = $field . " like :" . $key;
+				}
+				$where[] = '(' . implode(' OR ', $likeArray) . ')';
+			} else {
+				$where[] = 'quest.content like :content';
+				$params[$field] = '%' . $searchTxt . '%';
+			}
+		}
+		
+		if($active === true || $active === false)
+		{
+			$where[] = 'quest.active = :active';
+			$params['active'] = intval($active);
+		}
+		
+		if(count($topics) > 0)
+		{
+			$field = 'tpcId';
+			$ps = array();
+			$keys = array();
+			foreach($topics as $index => $value){
+				$key = $field . '_' . $index;
+				$keys[] = ':' . $key;
+				$ps[$key] = trim($value);
+			}
+			$key = $field . '_' . 'entityName';
+			$ps[$key] = 'Topic';
+			self::getQuery()->eagerLoad('Question.infos', 'inner join', 'quest_info_tpc', 'quest.id = quest_info_tpc.questionId and quest_info_tpc.entityName = :' . $key . ' and quest_info_tpc.entityId in (' . implode(',', $keys) . ')');
+			$params = array_merge($params, $ps);
+		}
+		
+		if(count($units) > 0)
+		{
+			$field = 'unitId';
+			$ps = array();
+			$keys = array();
+			foreach($units as $index => $value){
+				$key = $field . '_' . $index;
+				$keys[] = ':' . $key;
+				$ps[$key] = trim($value);
+			}
+			$key = $field . '_' . 'entityName';
+			$ps[$key] = 'Unit';
+			self::getQuery()->eagerLoad('Question.infos', 'inner join', 'quest_info_unit', 'quest.id = quest_info_unit.questionId and quest_info_unit.entityName = :' . $key . ' and quest_info_unit.entityId in (' . implode(',', $keys) . ')');
+			$params = array_merge($params, $ps);
+		}
+		
+		return Question::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, $orderBy, $stats);
+	}
 }

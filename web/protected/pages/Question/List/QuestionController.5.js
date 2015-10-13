@@ -23,6 +23,54 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		tmp.me = this;
 		
 		jQuery('.select2').select2();
+		
+		jQuery('#searchPanel [search_field="quest.topics"]').select2({
+			minimumInputLength: 1
+			,multiple: true
+			,ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'POST'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
+				}
+				,processResults: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
+		
+		jQuery('#searchPanel [search_field="quest.units"]').select2({
+			minimumInputLength: 1
+			,multiple: true
+			,ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'POST'
+				,data: function (params) {
+					return {"searchTxt": 'code like ? or name like ?', 'searchParams': ['%' + params.term + '%', '%' + params.term + '%'], 'entityName': 'Unit'};
+				}
+				,processResults: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.code + ': ' + item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
 	}
 	,_reloadListedItems: function() {
 		var tmp = {};

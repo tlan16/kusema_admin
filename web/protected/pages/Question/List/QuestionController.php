@@ -63,6 +63,24 @@ class QuestionController extends CRUDPageAbstract
 					$pageSize = $param->CallbackParameter->pagination->pageSize;
 				}
 				
+				/////
+				
+				$title = array('txt' => '', 'token' => false);
+				$content = '';
+				$authorId = 0;
+				$authorName = '';
+				$refId = '';
+				$vote = '';
+				$active = true;
+				$created = array();
+				$updated = array();
+				$topics = array();
+				$units = array();
+				$pageNo = $pageNo;
+				$pageSize = $pageSize;
+				$orderBy = array('created' => 'desc');
+				$stats = array();
+				
 				$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
 					
 				$where = array(1);
@@ -79,58 +97,48 @@ class QuestionController extends CRUDPageAbstract
 							{
 								if($field === 'quest.title' && (!isset($serachCriteria['quest.title.token']) || ($token = (strtolower(trim($serachCriteria['quest.title.token'])) !== 'on'))))
 								{
-									$where[] =  $field . " like :title ";
-									$params['title'] = '%' . $value . '%';
-									break;
+									$title['txt'] = $value;
 								} else {
-									$searchTokens = array();
-									StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-									$likeArray = array();
-									foreach($searchTokens as $index => $tokenArray) {
-										$key = 'token' . $index;
-										$params[$key] = '%' . implode('%', $tokenArray) . '%';
-										$likeArray[] = $field . " like :" . $key;
-									}
-								
-									$where[] = '(' . implode(' OR ', $likeArray) . ')';
-									break;
+									$title['token'] = true;
+									$title['txt'] = $value;
 								}
+								break;
 							}
 						case 'quest.content':
 							{
 								if($field === 'quest.content' && (!isset($serachCriteria['quest.content.token']) || ($token = (strtolower(trim($serachCriteria['quest.content.token'])) !== 'on'))))
 								{
-									$where[] =  $field . " like :content ";
-									$params['content'] = '%' . $value . '%';
-									break;
+									$content['txt'] = $value;
 								} else {
-									$searchTokens = array();
-									StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-									$likeArray = array();
-									foreach($searchTokens as $index => $tokenArray) {
-										$key = 'token' . $index;
-										$params[$key] = '%' . implode('%', $tokenArray) . '%';
-										$likeArray[] = $field . " like :" . $key;
-									}
-									
-									$where[] = '(' . implode(' OR ', $likeArray) . ')';
-									break;
+									$content['token'] = true;
+									$content['txt'] = $value;
 								}
+								break;
 							}
 						case 'quest.active':
 							{
-								$value = intval($value);
-								if($value === 0 || $value === 1)
-								{
-									$where[] =  $field . " = :active ";
-									$params['active'] = $value;
-								}
+								if(intval($value) === 3)
+									$active = null;
+								else $active = (intval($value) === 1);
+								break;
+							}
+						case 'quest.topics':
+							{
+								if(is_array($value) && count($value) > 0)
+									$topics = $value;
+								break;
+							}
+						case 'quest.units':
+							{
+								if(is_array($value) && count($value) > 0)
+									$units = $value;
 								break;
 							}
 					}
 				}
-				$stats = array();
-				$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('created' => 'desc'), $stats);
+				$objects = Question::getQuestions(
+					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
+				);
 				$results['pageStats'] = $stats;
 				$results['items'] = array();
 				foreach($objects as $obj)
