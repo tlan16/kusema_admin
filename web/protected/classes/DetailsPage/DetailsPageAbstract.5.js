@@ -25,7 +25,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			if(tmp.row.hasClassName('success'))
 				tmp.row.addClassName('success');
 		} else if($(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body')) {
-			console.debug(tmp.me._item);
 			$(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body').insert({'top': tmp.parentWindow.pageJs._getResultRow(tmp.me._item) });
 		}
 	}
