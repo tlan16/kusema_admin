@@ -72,8 +72,8 @@ class QuestionController extends CRUDPageAbstract
 				$refId = '';
 				$vote = '';
 				$active = true;
-				$created = array();
-				$updated = array();
+				$created = array('from' => null, 'to' => null);
+				$updated = array('from' => null, 'to' => null);
 				$topics = array();
 				$units = array();
 				$pageNo = $pageNo;
@@ -134,11 +134,36 @@ class QuestionController extends CRUDPageAbstract
 									$units = $value;
 								break;
 							}
+						case 'quest.created_from':
+							{
+								if(trim($value) !== '' && ($from = date_parse_from_format("d/m/Y", trim($value))) !== false)
+								{
+									$created['from'] = new UDate();
+									$created['from']->setTimeZone(UDate::TIME_ZONE_MELB);
+									$created['from']->setDate($from['day'], $from['month'], $from['year']);
+									$created['from']->setTime(0, 0, 0);
+									$created['from']->setTimeZone();
+								}
+								break;
+							}
+						case 'quest.created_to':
+							{
+								if(trim($value) !== '' && ($to = date_parse("d/m/Y", trim($value))) !== false)
+								{
+									$created['to'] = new UDate();
+									$created['to']->setTimeZone(UDate::TIME_ZONE_MELB);
+									$created['to']->setDate($to['day'], $to['month'], $to['year']);
+									$created['to']->setTime(23, 59, 59);
+								}
+								break;
+							}
 					}
 				}
+				Dao::$debug = true;
 				$objects = Question::getQuestions(
 					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
 				);
+				Dao::$debug = false;
 				$results['pageStats'] = $stats;
 				$results['items'] = array();
 				foreach($objects as $obj)

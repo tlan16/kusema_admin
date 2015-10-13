@@ -71,6 +71,10 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			,cache: true
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 		});
+		
+		jQuery('.datepicker').datetimepicker({
+			format: 'DD/MM/YYYY'
+		});
 	}
 	,_reloadListedItems: function() {
 		var tmp = {};

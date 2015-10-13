@@ -304,6 +304,18 @@ class Question extends InfoEntityAbstract
 			$params = array_merge($params, $ps);
 		}
 		
+		if(isset($created['from']) && $created['from'] instanceof UDate)
+		{
+			$where[] = 'quest.created >= :created_from';
+			$params['created_from'] = trim($created['from']);
+		}
+		
+		if(isset($created['to']) && $created['to'] instanceof UDate)
+		{
+			$where[] = 'quest.created <= :created_to';
+			$params['created_to'] = trim($created['to']);
+		}
+		
 		return Question::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, $orderBy, $stats);
 	}
 }
