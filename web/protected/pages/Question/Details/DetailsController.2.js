@@ -393,6 +393,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getContentDiv()
 			._getCommentsDiv()
 			._getAnswersDiv()
+			._getSaveBtn()
 			;
 		return tmp.me;
 	}

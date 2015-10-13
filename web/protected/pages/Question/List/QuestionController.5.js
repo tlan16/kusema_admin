@@ -293,7 +293,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		jQuery.fancybox({
 			'width'			: '95%',
 			'height'		: '95%',
-			'preload'		: true,
+			'modal'			: true,
 			'autoScale'     : false,
 			'autoDimensions': false,
 			'fitToView'     : false,

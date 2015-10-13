@@ -44,6 +44,7 @@ class DetailsController extends DetailsPageAbstract
 				,'comments' => 'comments_div'
 				,'newAnswer' => 'new_answers_btn_div'
 				,'answers' => 'answers_div'
+				,'saveBtn' => 'save_btn'
 		)) . ";";
 		$js .= "pageJs.load();";
 		$js .= "pageJs.bindAllEventNObjects();";
