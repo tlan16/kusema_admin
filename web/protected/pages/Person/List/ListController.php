@@ -98,6 +98,9 @@ class ListController extends CRUDPageAbstract
 						}
 				}
 			}
+			// forum users only
+			$where[] = 'refId is not null and refId != :emptyString';
+			$params['emptyString'] = "";
 			$stats = array();
 			// Don't expose system user
 			$where[] = 'id != :sysUserId';
