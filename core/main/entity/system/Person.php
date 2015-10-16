@@ -192,7 +192,7 @@ class Person extends BaseEntityAbstract
     	$array = $extra;
     	if(!$this->isJsonLoaded($reset))
     	{
-    		$array['fullname'] = trim($this->getFullName());
+    		$array['fullName'] = trim($this->getFullName());
     		$array['subscribedUnit'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getSubscribedUnits());
     		$array['subscribedTopic'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getSubscribedTopics());
     		$array['enrolledUnit'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getEnrolleddUnits());

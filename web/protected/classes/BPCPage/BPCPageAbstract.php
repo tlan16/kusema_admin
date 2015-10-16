@@ -107,16 +107,18 @@ abstract class BPCPageAbstract extends TPage
 		$clientScript = $this->getPage()->getClientScript();
 		$clientScript->registerHeadScriptFile('jQuery', "https://code.jquery.com/jquery-2.1.4.min.js");
 
-		$clientScript->registerHeadScriptFile('Bootstrap.js', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js");
-		$clientScript->registerStyleSheetFile('Bootstrap.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",'screen');
-		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css",'screen');
+		$clientScript->registerHeadScriptFile('Bootstrap.js', "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js");
+		$clientScript->registerStyleSheetFile('Bootstrap.css', "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css",'screen');
+		$clientScript->registerStyleSheetFile('Bootstrap.theme.css', "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css",'screen');
 		//bootstrap form validator
 		$folder = $this->publishFilePath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrapValidator' . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR);
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.js', $folder . '/js/formValidation.min.js');
 		$clientScript->registerHeadScriptFile('Bootstrap.validator.framework.js', $folder . '/js/framework/bootstrap.min.js');
 		$clientScript->registerStyleSheetFile('Bootstrap.validator.css', $folder . '/css/formValidation.min.css','screen');
 		// font awesome
-		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",'screen');
+		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css",'screen');
+		// accounting js
+		$clientScript->registerHeadScriptFile('Accounting.js', "https://cdnjs.cloudflare.com/ajax/libs/accounting.js/0.4.1/accounting.min.js");
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path

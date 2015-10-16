@@ -124,13 +124,17 @@ class QuestionController extends CRUDPageAbstract
 							}
 						case 'quest.topics':
 							{
-								if(is_array($value) && count($value) > 0)
+								if(!is_array($value) && intval($value) !== 0)
+									$topics = [intval($value)];
+								elseif(is_array($value) && count($value) > 0)
 									$topics = $value;
 								break;
 							}
 						case 'quest.units':
 							{
-								if(is_array($value) && count($value) > 0)
+								if(!is_array($value) && intval($value) !== 0)
+									$units = [intval($value)];
+								elseif(is_array($value) && count($value) > 0)
 									$units = $value;
 								break;
 							}
@@ -148,7 +152,7 @@ class QuestionController extends CRUDPageAbstract
 							}
 						case 'quest.created_to':
 							{
-								if(trim($value) !== '' && ($to = date_parse("d/m/Y", trim($value))) !== false)
+								if(trim($value) !== '' && ($to = date_parse_from_format("d/m/Y", trim($value))) !== false)
 								{
 									$created['to'] = new UDate();
 									$created['to']->setTimeZone(UDate::TIME_ZONE_MELB);
@@ -159,11 +163,12 @@ class QuestionController extends CRUDPageAbstract
 							}
 					}
 				}
-				Dao::$debug = true;
+				var_dump([
+					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
+				]);
 				$objects = Question::getQuestions(
 					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
 				);
-				Dao::$debug = false;
 				$results['pageStats'] = $stats;
 				$results['items'] = array();
 				foreach($objects as $obj)

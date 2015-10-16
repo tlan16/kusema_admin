@@ -177,7 +177,9 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 					tmp.count = $(tmp.me.totalNoOfItemsId).innerHTML * 1 - 1;
 					$(tmp.me.totalNoOfItemsId).update(tmp.count <= 0 ? 0 : tmp.count);
 					if(tmp.row) {
-						tmp.row.remove();
+						if(tmp.result && tmp.result.items && Array.isArray(tmp.result.items) && tmp.result.items.length > 0)
+							tmp.row.replace( tmp.me._getResultRow(tmp.result.items[0]) );
+						else tmp.row.remove();
 					}
 				} catch (e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR</span>', e, true);

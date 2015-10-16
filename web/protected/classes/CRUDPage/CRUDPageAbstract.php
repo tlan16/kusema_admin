@@ -148,13 +148,15 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
 			if(count($ids) > 0)
 			{
-				if($deactivate === true)
+				if($deactivate === true || $deactivate === false)
 				{
+					$results['items'] = array();
 					foreach ($ids as $id)
 					{
 						$obj = $class::get($id);
 						if($obj instanceof $class)
-							$obj->setActive(false)->save();
+							$obj->setActive(!$deactivate)->save();
+						$results['items'][] = $obj->getJson();
 					}
 				}
 				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);

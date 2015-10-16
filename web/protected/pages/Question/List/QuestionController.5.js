@@ -22,19 +22,26 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		
-		jQuery('.select2').select2();
+		jQuery('select.select2').each(function(){
+			tmp.options = {};
+			if($(this).readAttribute('data-minimum-results-for-search') === 'Infinity' || $(this).readAttribute('data-minimum-results-for-search') === 'infinity' || $(this).readAttribute('data-minimum-results-for-search') == -1)
+				tmp.options['minimumResultsForSearch'] = 'Infinity';
+			jQuery(this).select2(tmp.options);
+		});
 		
-		jQuery('#searchPanel [search_field="quest.topics"]').select2({
-			minimumInputLength: 1
-			,multiple: true
-			,ajax: {
+		tmp.selectBox = jQuery('#searchPanel [search_field="quest.topics"]').select2({
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: true,
+			width: "100%",
+			ajax: {
 				delay: 250
 				,url: '/ajax/getAll'
-				,type: 'POST'
+				,type: 'GET'
 				,data: function (params) {
-					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Topic', 'pageNo': 1};
 				}
-				,processResults: function(data, page, query) {
+				,results: function(data, page, query) {
 					tmp.result = [];
 					if(data.resultData && data.resultData.items) {
 						data.resultData.items.each(function(item){
@@ -48,17 +55,19 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 		});
 		
-		jQuery('#searchPanel [search_field="quest.units"]').select2({
-			minimumInputLength: 1
-			,multiple: true
-			,ajax: {
+		tmp.selectBox = jQuery('#searchPanel [search_field="quest.units"]').select2({
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: true,
+			width: "100%",
+			ajax: {
 				delay: 250
 				,url: '/ajax/getAll'
-				,type: 'POST'
+				,type: 'GET'
 				,data: function (params) {
-					return {"searchTxt": 'code like ? or name like ?', 'searchParams': ['%' + params.term + '%', '%' + params.term + '%'], 'entityName': 'Unit'};
+					return {"searchTxt": 'code like ? or name like ?', 'searchParams': ['%' + params + '%', '%' + params + '%'], 'entityName': 'Unit', 'pageNo': 1};
 				}
-				,processResults: function(data, page, query) {
+				,results: function(data, page, query) {
 					tmp.result = [];
 					if(data.resultData && data.resultData.items) {
 						data.resultData.items.each(function(item){
@@ -74,27 +83,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		
 		jQuery('.datepicker').datetimepicker({
 			format: 'DD/MM/YYYY'
-		});
-	}
-	,_reloadListedItems: function() {
-		var tmp = {};
-		tmp.me = this;
-		$(tmp.me.resultDivId).getElementsBySelector('.item_row[item_id]').each(function(row){
-			tmp.id = row.readAttribute('item_id');
-			tmp.me.postAjax(tmp.me.getCallbackId('getItems'), {'id': tmp.id}, {
-				'onSuccess': function(sender, param) {
-					try{
-						tmp.result = tmp.me.getResp(param, false, true);
-						if(!tmp.result || !tmp.result.item)
-							return;
-						tmp.row = $(tmp.me.resultDivId).down('#'+tmp.me.resultDivId+'-body').down('.item_row[item_id=' + tmp.result.item.id + ']');
-						tmp.newRow = tmp.me._getResultRow(tmp.result.item).addClassName('list-group-item').addClassName('item_row').writeAttribute('item_id', tmp.result.item.id);
-						tmp.row.replace(tmp.newRow);
-					} catch (e) {
-						tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
-					}
-				}
-			});
 		});
 	}
 	,_getResultRow: function(row, isTitle) {
@@ -141,19 +129,20 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						.observe('click', function(e){
 							jQuery('.select2').select2("close");
 							$(this).replace(new Element('dd')
-								.insert({'bottom': tmp.topicInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
+								.insert({'bottom': tmp.topicInput = new Element('input').addClassName('select2').setStyle('width: 99%;') })
 							);
 							tmp.me._signRandID(tmp.topicInput);
-							jQuery('#'+tmp.topicInput.id).select2({
-								minimumInputLength: 1
-								,ajax: {
+							tmp.selectBox = jQuery('#'+tmp.topicInput.id).select2({
+								minimumInputLength: 1,
+								width: "100%",
+								ajax: {
 									delay: 250
 									,url: '/ajax/getAll'
-									,type: 'POST'
+									,type: 'GET'
 									,data: function (params) {
-										return {"searchTxt": 'name like ?', 'searchParams': ['%' + params.term + '%'], 'entityName': 'Topic'};
+										return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Topic', 'pageNo': 1};
 									}
-									,processResults: function(data, page, query) {
+									,results: function(data, page, query) {
 										tmp.result = [];
 										if(data.resultData && data.resultData.items) {
 											data.resultData.items.each(function(item){
@@ -165,7 +154,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								}
 								,cache: true
 								,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
-							}).select2("open").on("change", function(e) {
+							});
+							tmp.selectBox.select2("open");
+							tmp.selectBox.on("change", function(e) {
 								if(parseInt($(this).value) !== 0)
 									tmp.me._updateItem($(this), $(this).value, null, 'addTopic');
 					        });
@@ -304,11 +295,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				'overlay': {
 			    	'locked': false
 				}
-			},
-			'beforeClose': function() {
-			},
-			'afterClose': function() {
-				tmp.me._reloadListedItems();
 			}
  		});
 		return tmp.me;

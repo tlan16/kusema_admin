@@ -38,6 +38,7 @@ class DetailsController extends DetailsPageAbstract
 		$js .= "pageJs.setPreData(" . json_encode(array()) . ");";
 		$js .= "pageJs._containerIds=" . json_encode(array(
 				'title' => 'title_div'
+				,'authorName' => 'authorName_div'
 				,'author' => 'author_div'
 				,'content' => 'content_div'
 				,'topicsUnits' => 'topics_units_div'
@@ -66,74 +67,27 @@ class DetailsController extends DetailsPageAbstract
 		$results = $errors = array();
 		try
 		{
+			$focusEntity = $this->getFocusEntity();
+			if (!isset ( $params->CallbackParameter->title ) || ($title = trim ( $params->CallbackParameter->title )) === '')
+				throw new Exception ( 'System Error: invalid name passed in.' );
+			$authorName = '';
+			if (isset ( $params->CallbackParameter->authorName ) )
+				$authorName = trim($params->CallbackParameter->authorName);
+			if (!isset ( $params->CallbackParameter->author ) || ($authorId = intval( $params->CallbackParameter->author )) === 0 || !($author = Person::get($authorId)) instanceof Person)
+				throw new Exception ( 'System Error: invalid author passed in.' );
+			$content = '';
+			if (isset ( $params->CallbackParameter->content ) )
+				$content = trim($params->CallbackParameter->content);
+			
+			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
+				throw new Exception ( 'System Error: invalid id passed in.' );
+			
 			Dao::beginTransaction();
-			if (! isset ( $params->CallbackParameter->entityName ) || ($entityName = trim ( $params->CallbackParameter->entityName )) === '')
-				throw new Exception ( 'System Error: EntityName is not provided!' );
-			if (! isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
-				throw new Exception ( 'System Error: entityId is not provided!' );
-			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
-				throw new Exception ( 'System Error: no such a entity exisits!' );
-			if (! isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field )) === '')
-				throw new Exception ( 'System Error: invalid field passed in!' );
-			if (! isset ( $params->CallbackParameter->value ))
-				throw new Exception ( 'System Error: invalid value passed in!' );
-			$value = $params->CallbackParameter->value;
-			switch ($entityName)
-			{
-				case 'Question': {
-					switch ($field)
-					{
-						case 'title': {
-							if(($title = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid title passed in!' );
-							$entity->setTitle($title);
-							break;
-						}
-						case 'alias': {
-							$entity->setAuthorName(trim($value));
-							break;
-						}
-						case 'author': {
-							if(!($author = Person::get(intval($value))) instanceof Person)
-								throw new Exception ( 'System Error: invalid author passed in!' );
-							$entity->setAuthor($author);
-							break;
-						}
-						case 'active': {
-							$entity->setActive(intval($value)===1);
-							break;
-						}
-						case 'content': {
-							$entity->setContent(trim($value));
-							break;
-						}
-						case 'answer': { // this only happens when creating new Answer for the Question
-							$entity = $entity->addAnswer("", trim($value));
-							//$entity will now become an instant of Answer
-							break;
-						}
-					}
-					break;
-				}
-				case 'Answer': {
-					switch ($field)
-					{
-						case 'content': {
-							$entity->setContent(trim($value));
-							break;
-						}
-						case 'active': {
-							$entity->setActive(intval($value)===1);
-							break;
-						}
-					}
-					break;
-				}
-			}
-			if($entity instanceof Question)
-				QuestionConnector::sync($entity);
-			if($entity instanceof Answer)
-				AnswerConnector::sync($entity);
+			
+			if(!isset($entity) || !$entity instanceof $focusEntity)
+				$entity = $focusEntity::create($name,$description);
+			else $entity->setTitle($title)->setAuthorName($authorName)->setAuthor($author)->setContent($content);
+			
 			$results ['item'] = $entity->save()->getJson ();
 			Dao::commitTransaction ();
 		}

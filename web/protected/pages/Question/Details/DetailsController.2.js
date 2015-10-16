@@ -5,161 +5,6 @@ var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	_readOnlyMode: false
 	,_selectTypeTxt: 'Select One...'
-	,_getTitleDiv: function() {
-		var tmp = {};
-		tmp.me = this;
-		
-		tmp.container = $(tmp.me._containerIds.title);
-		tmp.title = new Element('input')
-			.writeAttribute('save-item', 'title')
-			.setValue(tmp.me._item.title)
-			.observe('change',function(e){
-				tmp.input = $(this);
-				tmp.value = $F(tmp.input);
-				if(tmp.me._item.title !== tmp.value) {
-					tmp.callback = function(result) {
-						tmp.result = result;
-						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
-							return;
-						tmp.me._item = tmp.result.item;
-						tmp.me._getTitleDiv();
-						tmp.me.refreshParentWindow();
-					};
-					tmp.me.saveItem(tmp.input, {
-						'value': tmp.value
-						,'field': tmp.input.readAttribute('save-item')
-						,'entityName': 'Question'
-						,'entityId': tmp.me._item.id
-					}, tmp.callback);
-				}
-			});
-		tmp.vote = new Element('input')
-			.writeAttribute('disabled', true)
-			.writeAttribute('save-item', 'title')
-			.setValue(tmp.me._item.vote);
-		
-		tmp.container.update("")
-			.insert({'bottom': tmp.me._getFormGroup('Title', tmp.title).addClassName('col-md-10')  })
-			.insert({'bottom': tmp.me._getFormGroup('Vote', tmp.vote).addClassName('col-md-2')  })
-		;
-		return tmp.me;
-	}
-	,_getAuthorDiv: function() {
-		var tmp = {};
-		tmp.me = this;
-		
-		tmp.container = $(tmp.me._containerIds.author);
-		
-		tmp.alias = new Element('input')
-			.writeAttribute('save-item', 'alias')
-			.setValue(tmp.me._item.authorName)
-			.observe('change',function(e){
-				tmp.input = $(this);
-				tmp.value = $F(tmp.input);
-				if(tmp.me._item.authorName !== tmp.value) {
-					tmp.callback = function(result) {
-						tmp.result = result;
-						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
-							return;
-						tmp.me._item = tmp.result.item;
-						tmp.me._getAuthorDiv();
-						tmp.me.refreshParentWindow();
-					};
-					tmp.me.saveItem(tmp.input, {
-						'value': tmp.value
-						,'field': tmp.input.readAttribute('save-item')
-						,'entityName': 'Question'
-						,'entityId': tmp.me._item.id
-					}, tmp.callback);
-				}
-			});
-		
-		tmp.author = new Element('select')
-			.writeAttribute('save-item', 'author')
-			.setValue(tmp.me._item.authorName)
-			.insert({'bottom': new Element('option')
-				.writeAttribute({'value': tmp.me._item.author.id, 'id': tmp.me._item.author.id, 'text': tmp.me.getAuthorDisplay() })
-				.update(tmp.me.getAuthorDisplay())
-			});
-			
-		tmp.active = new Element('div')
-			.addClassName('btn btn-md')
-			.addClassName(tmp.me._item.active === true ? 'btn-danger' : 'btn-success')
-			.writeAttribute('save-item', 'active')
-			.update(tmp.me._item.active === true ? 'active <i class="fa fa-arrow-right"></i> inactive' : 'inactive <i class="fa fa-arrow-right"></i> active')
-			.observe('click',function(e){
-				tmp.btn = $(this);
-				if(confirm('Are you sure you want to ' + (tmp.me._item.active === true ? 'deactivate' : 're-activate') + ' this item?')) {
-					tmp.value = !tmp.me._item.active;
-					tmp.callback = function(result) {
-						tmp.result = result;
-						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
-							return;
-						tmp.me._item = tmp.result.item;
-						tmp.me._getAuthorDiv();
-						tmp.me.refreshParentWindow();
-					};
-					tmp.me.saveItem(tmp.btn, {
-						'value': tmp.value
-						,'field': tmp.btn.readAttribute('save-item')
-						,'entityName': 'Question'
-						,'entityId': tmp.me._item.id
-					}, tmp.callback);
-				}
-			});
-		
-		tmp.container.update('')
-			.insert({'bottom': tmp.me._getFormGroup('Alias', tmp.alias).addClassName('col-md-4') })
-			.insert({'bottom': tmp.me._getFormGroup('Author', tmp.author.wrap(new Element('div')), true ).addClassName('col-md-4') })
-			.insert({'bottom': tmp.me._getFormGroup('Active', tmp.active).addClassName('col-md-4') });
-		
-		tmp.author = tmp.me._elTojQuery(tmp.author);
-		tmp.author.select2({
-			minimumInputLength: 3
-			,width: '100%'
-			,ajax: {
-				delay: 250
-				,url: '/ajax/getAll'
-				,type: 'POST'
-				,data: function (params) {
-					return {"searchTxt": 'firstName like :searchTxt or lastName like :searchTxt or email like :searchTxt', 'searchParams': {'searchTxt': '%' + params.term + '%'}, 'entityName': 'Person'};
-				}
-				,processResults: function(data, page, query) {
-					tmp.result = [];
-					if(data.resultData && data.resultData.items) {
-						data.resultData.items.each(function(item){
-							tmp.result.push({'id': item.id, 'text': pageJs.getAuthorDisplay(item.firstName, item.lastName, item.email), 'data': item});
-						});
-					}
-					return { 'results' : tmp.result };
-				}
-			}
-			,cache: true
-			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
-		}).on("change", function(e) {
-			if(parseInt($(this).value) !== 0) {
-				tmp.select2 = $(this);
-				tmp.value = parseInt(tmp.select2.value);
-				if(parseInt(tmp.me._item.author.id) !== tmp.value) {
-					tmp.callback = function(result) {
-						tmp.result = result;
-						if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
-							return;
-						tmp.me._item = tmp.result.item;
-						tmp.me._getAuthorDiv();
-					};
-					tmp.me.saveItem(tmp.select2, {
-						'value': tmp.value
-						,'field': tmp.select2.readAttribute('save-item')
-						,'entityName': 'Question'
-						,'entityId': tmp.me._item.id
-					}, tmp.callback);
-				}
-			}
-        });
-		
-		return tmp.me;
-	}
 	,getAuthorDisplay(firstname, lastname, email) {
 		var tmp = {};
 		tmp.me = this;
@@ -171,43 +16,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.fullname = (tmp.firstname === '' ? '' : (tmp.firstname + ' ') ) + tmp.lastname;
 		tmp.email = ((!tmp.email || tmp.email === '') ? '' : (' (' + tmp.email + ')') );
 		return tmp.fullname + tmp.email; 
-	}
-	,_getContentDiv() {
-		var tmp = {};
-		tmp.me = this;
-
-		tmp.container = $(tmp.me._containerIds.content);
-		
-		tmp.content = new Element('textarea')
-			.writeAttribute('save-item', 'content')
-			.setValue(tmp.me._item.content);
-		
-		tmp.container.update( tmp.me._getFormGroup('Content', tmp.content, true).addClassName('col-md-12') );
-		
-		tmp.content = tmp.me._elTojQuery(tmp.content);
-		tmp.content.markdown({
-			iconlibrary: 'fa'
-			,onBlur: function(e) {
-				tmp.textarea = e.$textarea[0];
-				tmp.value = e.getContent();
-				tmp.callback = function(result) {
-					tmp.result = result;
-					if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
-						return;
-					tmp.me._item = tmp.result.item;
-					tmp.me._getContentDiv();
-					tmp.me.refreshParentWindow();
-				};
-				tmp.me.saveItem(tmp.textarea, {
-					'value': tmp.value
-					,'field': tmp.textarea.readAttribute('save-item')
-					,'entityName': 'Question'
-					,'entityId': tmp.me._item.id
-				}, tmp.callback);
-			}
-		});
-		
-		return tmp.me;
 	}
 	,_getCommentsDiv() {
 		var tmp = {};
@@ -388,14 +196,93 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		$(tmp.me.getHTMLID('itemDiv')).insert({'before': tmp.me.getLoadingImg() });
 		$(tmp.me.getHTMLID('itemDiv')).hide();
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
-		tmp.me._getTitleDiv()
-			._getAuthorDiv()
-			._getContentDiv()
+		
+		tmp.authorSelect2Options = {
+				minimumInputLength: 1,
+				width: "100%",
+				ajax: {
+					delay: 250
+					,url: '/ajax/getAll'
+					,type: 'GET'
+					,data: function (params) {
+						return {"searchTxt": 'firstName like ? or lastName like ? or email like ?', 'searchParams': ['%' + params + '%', '%' + params + '%', '%' + params + '%'], 'entityName': 'Person', 'pageNo': 1};
+					}
+					,results: function(data, page, query) {
+						tmp.result = [];
+						if(data.resultData && data.resultData.items) {
+							data.resultData.items.each(function(item){
+								tmp.result.push({'id': item.id, 'text': item.fullName, 'data': item});
+							});
+						}
+						return { 'results' : tmp.result };
+					}
+				}
+				,cache: true
+				,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+			};
+		
+		tmp.me
+			._getInputDiv('title', (tmp.me._item.title || ''), $(tmp.me._containerIds.title), null ,true)
+			._getInputDiv('authorName', (tmp.me._item.authorName || ''), $(tmp.me._containerIds.authorName), 'Alias', false, 'col-md-6')
+			._getSelect2Div('Person', 'author', (tmp.me._item.author ? {'id': tmp.me._item.author.id, 'text': tmp.me._item.author.fullName, 'data': tmp.me._item.author} : ''), $(tmp.me._containerIds.author), null, true, tmp.authorSelect2Options, 'col-md-6')
+			._getMarkdownDiv('content', (tmp.me._item.content || ''), $(tmp.me._containerIds.content), null, true)
 			._getCommentsDiv()
 			._getAnswersDiv()
-			._getSaveBtn()
+			._getSaveBtn(tmp.me._collectQuestionData)
 			;
 		return tmp.me;
+	}
+	,_getSaveBtn:function() {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me._refreshDirty();
+		if(!tmp.me._containerIds || !tmp.me._containerIds.saveBtn)
+			return tmp.me;
+		tmp.container = $(tmp.me._containerIds.saveBtn);
+		if(!tmp.container)
+			return tmp.me;
+		tmp.save = new Element('i')
+			.addClassName('btn btn-success btn-md')
+			.update('Save')
+			.observe('click',function(e){
+				tmp.btn = $(this);
+				tmp.data = tmp.me._collectQuestionData();
+				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
+					return tmp.me;
+				tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
+				if(tmp.data === null)
+					return tmp.me;
+				if(tmp.me._item && tmp.me._item.id)
+					tmp.data.id = tmp.me._item.id;
+				tmp.me.saveItem(tmp.input, tmp.data);
+			});
+		tmp.cancel = new Element('i')
+			.addClassName('btn btn-danger btn-md')
+			.update('Cancel')
+			.observe('click',function(e){
+				tmp.me.closeFancyBox();
+			});
+		
+		tmp.container.update('')
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-md-6') })
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-md-6') })
+		;
+		
+		if(tmp.me._dirty === false)
+			tmp.save.hide();
+		return tmp.me;
+	}
+	,_collectQuestionData: function() {
+		var tmp = {};
+		tmp.me = this;
+		tmp.data = {};
+		
+		tmp.data['title'] = $F($(tmp.me._containerIds.title).down('[save-item]'));
+		tmp.data['authorName'] = $F($(tmp.me._containerIds.authorName).down('[save-item]'));
+		tmp.data['author'] = $(tmp.me._containerIds.author).down('[save-item]').value;
+		tmp.data['content'] = $F($(tmp.me._containerIds.content).down('[save-item]'));
+		
+		return tmp.data;
 	}
 	,readOnlyMode: function(){
 		var tmp = {};

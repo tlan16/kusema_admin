@@ -6,12 +6,13 @@
 	<com:TCallback ID="getCategoriesBtn" OnCallback="getCategories" />
 	<div class="pagewrapper productdetailswraper" id='item-div'>
 		<div id='title_div'></div>
+		<div id='authorName_div'></div>
 		<div id='author_div'></div>
 		<div id='content_div'></div>
 		<div id='topics_units_div'></div>
+		<div id='save_btn'></div>
 		<div id='comments_div'></div>
 		<div id='new_answers_btn_div'></div>
 		<div id='answers_div'></div>
-		<div id='save_btn'></div>
 	</div>
 </com:TContent>

@@ -117,7 +117,12 @@ BPCPageJs.prototype = {
 	,getValueFromCurrency: function(currency) {
 		if(!currency)
 			return '';
-		return (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+		var tmp = {};
+		tmp.reg = /^-?\d*[\.]?\d+$/;
+//		tmp.result =  (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+//		tmp.result = tmp.reg.exec(tmp.result);
+		tmp.result = accounting.formatMoney(currency, "", 4);
+		return tmp.result;
 	}
 	//do key enter
 	,keydown: function (event, enterFunc, nFunc, keyValue) {
@@ -177,7 +182,7 @@ BPCPageJs.prototype = {
 				,'content': errMsg
 			})
 			.tooltip('show');
-			$(input).observe('change', function(){
+			jQuery('#' + input.id).on('keyup change dp.change', function(){
 				tmp.func = $(input).retrieve('clearErrFunc');
 				if(typeof(tmp.func) === 'function')
 					tmp.func();
@@ -202,6 +207,7 @@ BPCPageJs.prototype = {
 				tmp.hasError = true;
 			}
 
+			console.debug(item);
 			tmp.itemValue = item.readAttribute('type') !== 'checkbox' ? $F(item) : $(item).checked;
 			if(item.hasAttribute('validate_currency') || item.hasAttribute('validate_number')) {
 				if (tmp.ignoreError !== true && tmp.me.getValueFromCurrency(tmp.itemValue).match(/^(-)?\d+(\.\d{1,4})?$/) === null) {
@@ -377,5 +383,32 @@ BPCPageJs.prototype = {
 		tmp.me._signRandID(tmp.el);
 		tmp.el = jQuery('#'+tmp.el.id);
 		return tmp.el;
+	}
+	,_getNamesString: function(objs, name, glue) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.name = (name || 'name');
+		tmp.glue = (glue || ', ');
+		tmp.result = "";
+		if(!Array.isArray(objs))
+			return tmp.result;
+		tmp.names = [];
+		objs.each(function(obj){
+			if(typeof obj[tmp.name] !== 'undefined')
+				tmp.names.push(obj[tmp.name]);
+		});
+		tmp.result = tmp.names.join(tmp.glue);
+		return tmp.result;
+	}
+	,_disableAll: function(container, selector) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.selector = (selector || 'button,.btn,input,[save-item],[search_field],select,.select2');
+		tmp.container = (container || null);
+		if(tmp.container) 
+			tmp.container = tmp.me._elTojQuery(tmp.container);
+		else tmp.container = jQuery(document);
+		if(typeof tmp.selector === 'string' && tmp.selector.trim() !== '')
+			tmp.container.find(tmp.selector).prop('disabled', true).attr('disabled', true);
 	}
 };
