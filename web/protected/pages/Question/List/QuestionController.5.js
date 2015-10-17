@@ -186,22 +186,24 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						.observe('click', function(e){
 							jQuery('.select2').select2("close");
 							$(this).replace(new Element('dd')
-								.insert({'bottom': tmp.unitInput = new Element('select').addClassName('select2').setStyle('width: 99%;') })
+								.insert({'bottom': tmp.unitInput = new Element('input').addClassName('select2').setStyle('width: 99%;') })
 							);
 							tmp.me._signRandID(tmp.unitInput);
-							jQuery('#'+tmp.unitInput.id).select2({
-								minimumInputLength: 1
-								,ajax: {
+							tmp.selectBox = jQuery('#'+tmp.unitInput.id).select2({
+								minimumInputLength: 1,
+								width: "100%",
+								ajax: {
 									delay: 250
-									,url: '/ajax/getUnit'
-									,type: 'POST'
+									,url: '/ajax/getAll'
+									,type: 'GET'
 									,data: function (params) {
-										return {"searchTxt": params.term};
+										return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Unit', 'pageNo': 1};
 									}
-									,processResults: function(data, page, query) {
+									,results: function(data, page, query) {
 										tmp.result = [];
 										if(data.resultData && data.resultData.items) {
 											data.resultData.items.each(function(item){
+												console.debug(item);
 												tmp.result.push({'id': item.id, 'text': ('<u>'+item.code+'</u>: '+item.name), 'data': item});
 											});
 										}
@@ -210,7 +212,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								}
 								,cache: true
 								,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
-							}).select2("open").on("change", function(e) {
+							});
+							tmp.selectBox.select2("open");
+							tmp.selectBox.on("change", function(e) {
 								if(parseInt($(this).value) !== 0)
 									tmp.me._updateItem($(this), $(this).value, null, 'addUnit');
 					        });
