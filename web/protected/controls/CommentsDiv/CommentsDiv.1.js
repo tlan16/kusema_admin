@@ -59,12 +59,14 @@ CommentsDivJs.prototype = {
 			});
 		return tmp.newRow;
 	}
-	,_showEditPanel: function(comments) {
+	,_showEditPanel: function(comments, text, btn) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.comments = (comments || null);
+		tmp.text = (text || '');
+		tmp.btn = (btn || null);
 		
-		tmp.textarea = new Element('textarea', {'save-item': 'comments'}).setValue(tmp.comments ? tmp.comments.content : '');
+		tmp.textarea = new Element('textarea', {'save-item': 'comments'}).setValue(tmp.comments ? tmp.comments.content : tmp.text);
 		tmp.title = (tmp.comments ? ('Editing Comments: posted at ' + tmp.me._pageJs.loadUTCTime(tmp.comments.created).toLocaleString() + ', by ' + tmp.comments.author.firstName + ' ' + tmp.comments.author.lastName) : 'Creating New Comments for ' + tmp.me._entityName );
 		tmp.me._pageJs.showModalBox(tmp.title, tmp.textarea);
 		
@@ -77,7 +79,11 @@ CommentsDivJs.prototype = {
 				tmp.me._pageJs.hideModalBox();
 				if(!tmp.comments || e.getContent() !== comments.content)
 					tmp.me._updateComments(tmp.comments ? comments.id : 'new', e.getContent());
-			},
+			}
+			,onChange: function(e) {
+				if(tmp.btn && tmp.btn.up('.new_comments_wrapper') && tmp.btn.up('.new_comments_wrapper').down('input[new_comments="comments"]'))
+					tmp.btn.up('.new_comments_wrapper').down('input[new_comments="comments"]').setValue(e.getContent());
+			}
 		});
 		
 		return tmp.me;
@@ -192,7 +198,7 @@ CommentsDivJs.prototype = {
 			.insert({'bottom': new Element('div', {'class': 'col-xs-2 text-right'}).update('<strong>New Comments:</strong>') })
 			.insert({'bottom': new Element('div', {'class': 'col-xs-10'})
 				.insert({'bottom': new Element('div', {'class': 'input-group'})
-					.insert({'bottom': new Element('input', {'class': 'form-control', 'type': 'text', 'new_comments': 'comments', 'placeholder': 'add more comments to this order'})
+					.insert({'bottom': tmp.input = new Element('input', {'class': 'form-control', 'type': 'text', 'new_comments': 'comments', 'placeholder': 'add more comments to this order'})
 						.observe('keydown', function(event) {
 							tmp.me._pageJs.keydown(event, function() {
 								$(event.currentTarget).up('.new_comments_wrapper').down('[new_comments=btn]').click();
@@ -203,7 +209,7 @@ CommentsDivJs.prototype = {
 						.insert({'bottom': new Element('button', {'type': 'button', 'new_comments': 'editor_btn', 'class': 'btn btn-sm btn-default', 'data-loading-text': 'saving...'})
 							.update('<i class="glyphicon glyphicon-resize-full"></i>')
 							.observe('click', function() {
-								tmp.me._showEditPanel();
+								tmp.me._showEditPanel(null, $F(tmp.input), $(this));
 							})
 						})
 						.insert({'bottom': new Element('button', {'type': 'button', 'new_comments': 'btn', 'class': 'btn btn-sm btn-primary', 'data-loading-text': 'saving...'})
