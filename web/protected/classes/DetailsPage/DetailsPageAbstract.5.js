@@ -117,7 +117,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			}
 			else tmp.newValue = '';
 			
-			console.debug(tmp.newValue);
 			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
@@ -243,7 +242,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				});
 			} else tmp.data = value;
 		}
-		console.debug(tmp.data);
 		
 		tmp.selectBox = jQuery('#'+tmp.select2.id).select2(tmp.select2Options ? tmp.select2Options : {
 			minimumInputLength: 1,

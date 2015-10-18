@@ -88,8 +88,10 @@ class DetailsController extends DetailsPageAbstract
 				$entity = $focusEntity::create($name,$description);
 			else $entity->setTitle($title)->setAuthorName($authorName)->setAuthor($author)->setContent($content);
 			
-			$results ['item'] = $entity->save()->getJson ();
+			$results ['item'] = $entity->save()->getJson();
 			Dao::commitTransaction ();
+			if($entity instanceof Question)
+				QuestionConnector::sync($entity);
 		}
 		catch(Exception $ex)
 		{

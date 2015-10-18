@@ -67,11 +67,16 @@ class AjaxController extends TService
   			throw  new Exception('SYSTEM ERROR: INCOMPLETE DATA PROVIDED');
 
   		$pageSize = (isset($params['pageSize']) && ($pageSize = trim($params['pageSize'])) !== '' ? $pageSize : DaoQuery::DEFAUTL_PAGE_SIZE);
-  		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : 1);
+  		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : null);
   		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('updated' => 'desc'));
 
   		$where ='entityName = ? and entityId = ?';
   		$sqlParams = array($entity, $entityId);
+  		if(isset($params['authorId']) && ($authorId = trim($params['authorId'])) !== '')
+  		{
+  			$where .= 'and authorId = ?';
+  			$sqlParams[] = trim($authorId);
+  		}
   		$returnArray = json_encode(array());
   		$stats = array();
   		$commentsArray = Answer::getAllByCriteria($where, $sqlParams, true, $pageNo, $pageSize, $orderBy, $stats);
