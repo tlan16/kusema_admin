@@ -116,7 +116,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			});
 		tmp.cancel = new Element('i')
 			.addClassName('btn btn-danger btn-md')
-			.update('Cancel')
+			.update('Close')
 			.observe('click',function(e){
 				tmp.me.closeFancyBox();
 			});
