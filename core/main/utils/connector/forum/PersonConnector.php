@@ -22,6 +22,38 @@ class PersonConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
+	public static function createByUserAccount(UserAccount $user, $debug = false)
+	{
+		$connector = self::getConnector(
+				ForumConnector::CONNECTOR_TYPE_PERSON
+				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_USERNAME)
+				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
+				, $debug
+				);
+		if(trim($user->getRefId()) !== '')
+		{
+			$url = $connector->getBaseUrl() . "/" . $user->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url), true);
+			if(!isset($response['_id']) || trim($response['_id']) === '')
+				$user->setRefId("")->save();
+			else return $response['_id'];
+		}
+		$array = array(
+			'authcate' => $user->getUserName()
+			,'username' => $user->getUserName()
+			,'email' => $user->getPerson()->getEmail()
+			,'firstName' => $user->getPerson()->getFirstName()
+			,'surname' => $user->getPerson()->getLastName()
+		);
+		$url = $connector->getBaseUrl();
+		$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "POST"), true);
+		if(!isset($response['_id']) || trim($response['_id']) === '')
+			throw new Exception('Error connect to remote system (' . $url . ')');
+		$result = $response['_id'];
+		$user->setRefId($result)->save();
+		return $result;
+	}
 	public static function sync(Person $person, $debug = false)
 	{
 		$response = array();

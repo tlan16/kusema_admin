@@ -6,8 +6,9 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$question = Question::get(17);
-	$return = QuestionConnector::sync($question);
+	
+	$answer = Answer::get(9);
+	$return = AnswerConnector::sync($answer);
 	
 	var_dump($return);
 	

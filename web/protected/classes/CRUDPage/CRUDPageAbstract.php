@@ -146,6 +146,9 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 			$class = trim($this->_focusEntity);
 			$ids = isset($param->CallbackParameter->ids) ? $param->CallbackParameter->ids : array();
 			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
+			
+			Dao::beginTransaction();
+			
 			if(count($ids) > 0)
 			{
 				if($deactivate === true || $deactivate === false)
@@ -161,9 +164,11 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 				}
 				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);
 			}
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);

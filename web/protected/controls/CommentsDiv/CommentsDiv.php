@@ -71,6 +71,8 @@ class CommentsDiv extends TTemplateControl
 			}
 
 			$results['item'] = $comments->getJson();
+			if($comments instanceof Comments)
+				CommentsConnector::sync($comments);
 			Dao::commitTransaction();
 		}
 		catch(Exception $ex)

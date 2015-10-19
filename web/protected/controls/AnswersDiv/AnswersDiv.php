@@ -50,14 +50,18 @@ class AnswersDiv extends TTemplateControl
 				throw new Exception('System Error: EntityName is not provided!');
 			if(!isset($params->CallbackParameter->entityId) || ($entityId = trim($params->CallbackParameter->entityId)) === '')
 				throw new Exception('System Error: entityId is not provided!');
+			if(!($entity = $entityName::get($entityId)) instanceof $entityName)
+				throw new Exception('System Error: entity is not provided!');
+				
 			if(!isset($params->CallbackParameter->answerId) || ($answerId = trim($params->CallbackParameter->answerId)) === '')
 				throw new Exception('System Error: invalid answer id passed in!');
+			
 			if(!isset($params->CallbackParameter->value))
 				throw new Exception('System Error: invalid value passed in!');
 			$value = trim($params->CallbackParameter->value);
 			if($answerId === 'new' && $value === '')
 				throw new Exception('System Error: cannot create empty comments passed in!');
-			if($answerId !== 'new' && (!($answer = Answer::get($answerId)) instanceof Answer || !($entity = Question::get($entityId)) instanceof Question) )
+			if($answerId !== 'new' && !($answer = Answer::get($answerId)) instanceof Answer )
 				throw new Exception('System Error: invalid answerId passed in!');
 			if($answerId === 'new')
 				$answer = Answer::create("", $value, $entity, null, Core::getUser()->getPerson());
@@ -68,8 +72,10 @@ class AnswersDiv extends TTemplateControl
 				else $answer->setContent($value);
 				$answer->save();
 			}
-
+			
 			$results['item'] = $answer->getJson();
+			if($answer instanceof Answer)
+				AnswerConnector::sync($answer);
 			Dao::commitTransaction();
 		}
 		catch(Exception $ex)

@@ -63,7 +63,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 					,url: '/ajax/getAll'
 					,type: 'GET'
 					,data: function (params) {
-						return {"searchTxt": 'firstName like ? or lastName like ? or email like ?', 'searchParams': ['%' + params + '%', '%' + params + '%', '%' + params + '%'], 'entityName': 'Person', 'pageNo': 1};
+						return {"searchTxt": '(firstName like ? or lastName like ? or email like ?) and refId is not NULL and refId != ?', 'searchParams': ['%' + params + '%', '%' + params + '%', '%' + params + '%', ""], 'entityName': 'Person', 'pageNo': 1};
 					}
 					,results: function(data, page, query) {
 						tmp.result = [];

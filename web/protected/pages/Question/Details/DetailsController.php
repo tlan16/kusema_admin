@@ -90,7 +90,7 @@ class DetailsController extends DetailsPageAbstract
 			
 			$results ['item'] = $entity->save()->getJson();
 			Dao::commitTransaction ();
-			if($entity instanceof Question)
+			if($entity instanceof Question && trim($entity->getRefId()) !== '')
 				QuestionConnector::sync($entity);
 		}
 		catch(Exception $ex)

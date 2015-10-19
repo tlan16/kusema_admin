@@ -26,6 +26,28 @@ AnswersDivJs.prototype = {
 		tmp.me._displayDivId = _displayDivId;
 		return tmp.me;
 	}
+	,_addNewAnserRow: function(container) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.container = (container || null);
+		if(!tmp.container)
+			return tmp.me;
+		if(!tmp.container.id)
+			tmp.me._signRandID(tmp.container);
+		if(!$(tmp.container.id))
+			return tmp.me;
+		
+		tmp.newDiv = new Element('div').setStyle('margin-bottom: 10px;')
+			.insert({'bottom': new Element('i').addClassName('btn btn-md btn-success').update('NEW ANSWER') 
+				.observe('click', function(e){
+					tmp.me._showEditPanel();
+				})
+			});
+		
+		tmp.container.insert({'bottom': tmp.newDiv });
+		
+		return tmp.me;
+	}
 	/**
 	 * Getting the Answers row
 	 */
@@ -103,12 +125,11 @@ AnswersDivJs.prototype = {
 			});
 		return tmp.newRow;
 	}
-	,_showEditPanel: function(answer, text, btn) {
+	,_showEditPanel: function(answer, text) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.answer = (answer || null);
 		tmp.text = (text || '');
-		tmp.btn = (btn || null);
 		
 		tmp.textarea = new Element('textarea', {'save-item': 'content'}).setValue(tmp.answer ? tmp.answer.content : tmp.text);
 		tmp.title = (tmp.answer ? ('Editing Answer: posted at ' + tmp.me._pageJs.loadUTCTime(tmp.answer.created).toLocaleString() + ', by ' + tmp.answer.author.firstName + ' ' + tmp.answer.author.lastName) : 'Creating New Answer for ' + tmp.me._entityName );
@@ -154,7 +175,8 @@ AnswersDivJs.prototype = {
 					tmp.result = tmp.me._pageJs.getResp(transport.responseText, false, true);
 					if(!tmp.result || !tmp.result.items)
 						return;
-
+					
+					tmp.me._addNewAnserRow($(resultDivId));
 					tmp.result.items.each(function(item) {
 						tmp.me._addAnswerRow($(resultDivId), item);
 					});
@@ -181,7 +203,8 @@ AnswersDivJs.prototype = {
 	,_updateAnswer: function(answerId, newValue) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.me._pageJs.postAjax(AnswersDivJs.UPDATE_BTN_ID, {'answerId': answerId, 'value': newValue, 'entityId': tmp.me._entityId, 'entityName': tmp.me._entityName}, {
+		tmp.data = {'answerId': answerId, 'value': newValue, 'entityId': tmp.me._entityId, 'entityName': tmp.me._entityName};
+		tmp.me._pageJs.postAjax(AnswersDivJs.UPDATE_BTN_ID, tmp.data, {
 			'onSuccess': function (sender, param) {
 				try {
 					tmp.result = tmp.me._pageJs.getResp(param, false, true);
@@ -215,11 +238,7 @@ AnswersDivJs.prototype = {
 	,render: function() {
 		var tmp = {};
 		tmp.me = this;
-//		tmp.newDiv = new Element('div', {'class': 'panel panel-default'})
-//			.insert({'bottom': new Element('div', {'class': 'panel-heading'}).update('Answer:') })
-//			.insert({'bottom': tmp.resultDiv = new Element('div', {'class': 'answer_result_list table-responsive'})});
-//		if(tmp.me._noHeading === true)
-//			tmp.newDiv.down('.panel-heading').hide();
 		tmp.me._getAnswers(tmp.me._pageNo, $(tmp.me._displayDivId));
+		return tmp.me;
 	}
 }

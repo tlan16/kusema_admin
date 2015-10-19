@@ -15,7 +15,7 @@ class AnswerConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function sync(Question $question, $debug = false)
+	public static function sync(Answer $answer, $debug = false)
 	{
 		$response = array();
 		$connector = self::getConnector(
@@ -26,21 +26,33 @@ class AnswerConnector extends ForumConnector
 				, $debug
 				);
 	
-		if($question->getRefId() !== null && $question->getRefId() !== '')
+		if($answer->getEntityName() !== 'Question' || !($question = Question::get($answer->getEntityId())) instanceof Question || ($refId = trim($question->getRefId())) === '')
+			throw new Exception('cannot find valid Question for given Answer');
+		
+		$array = array(
+				'message' => $answer->getContent()
+				,'question' => $refId
+				,'deleted' => !($answer->getActive())
+				,'anonymous' => !( trim($answer->getAuthorName()) === '' )
+		);
+		if($answer->getRefId() !== null && $answer->getRefId() !== '')
 		{
-			$array = array(
-					'group' => trim( (count($units = $question->getUnits()) > 0 ? $units[0]->getRefId() : "") )
-					,'message' => $question->getContent()
-					,'title' => $question->getTitle()
-					,'deleted' => !($question->getActive())
-// 					,'comments' => array()
-					,'anonymous' => !( trim($question->getAuthorName()) === '' )
-// 					,'answers' => array()
-// 					,'topics' => array()
-			);
-			$url = $connector->getBaseUrl() . '/' . $question->getRefId();
+			$url = $connector->getBaseUrl() . '/' . $answer->getRefId();
 			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		} else {
+			$user = Core::getUser();
+			if(trim($user->getRefId()) !== '')
+				PersonConnector::createByUserAccount($user);
+			$authorId = trim($user->getRefId());
+			if($authorId === '')
+				throw new Exception('Error connecting to remote system');
+			
+			$array['author'] = $authorId;
+			$url = $connector->getBaseUrl();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "POST"), true);
 		}
+		if(isset($response['_id']) && trim($response['_id']) !== '')
+			$answer->setRefId($response['_id'])->save();
 		return $response;
 	}
 	public static function getById($id, $debug = false)

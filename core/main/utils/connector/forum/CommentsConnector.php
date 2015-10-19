@@ -15,7 +15,7 @@ class CommentsConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function sync(Question $question, $debug = false)
+	public static function sync(Comments $comments, $debug = false)
 	{
 		$response = array();
 		$connector = self::getConnector(
@@ -26,21 +26,46 @@ class CommentsConnector extends ForumConnector
 				, $debug
 				);
 	
-		if($question->getRefId() !== null && $question->getRefId() !== '')
+		if($comments->getEntityName() !== 'Question' && $comments->getEntityName() !== 'Answer')
+			throw new Exception('cannot find valid parent for given Comments');
+		if($comments->getEntityName() === 'Question')
 		{
-			$array = array(
-					'group' => trim( (count($units = $question->getUnits()) > 0 ? $units[0]->getRefId() : "") )
-					,'message' => $question->getContent()
-					,'title' => $question->getTitle()
-					,'deleted' => !($question->getActive())
-// 					,'comments' => array()
-					,'anonymous' => !( trim($question->getAuthorName()) === '' )
-// 					,'answers' => array()
-// 					,'topics' => array()
-			);
-			$url = $connector->getBaseUrl() . '/' . $question->getRefId();
-			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+			$parent = Question::get($comments->getEntityId());
+			var_dump($comments);
+			if(!$parent instanceof Question || trim($parent->getRefId()) === '')
+				throw new Exception('cannot find valid Question for given Comments');
 		}
+		if($comments->getEntityName() === 'Answer')
+		{
+			$parent = Answer::get($comments->getEntityId());
+			if(!$parent instanceof Answer || trim($parent->getRefId()) === '')
+				throw new Exception('cannot find valid Answer for given Comments');
+		}
+			
+		$array = array(
+				'message' => $comments->getContent()
+				,'parent' => trim($parent->getRefId())
+				,'deleted' => !($comments->getActive())
+				,'anonymous' => !( trim($comments->getAuthorName()) === '' )
+		);
+		if(trim($comments->getRefId()) !== '')
+		{
+			$url = $connector->getBaseUrl() . '/' . $comments->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		} else {
+			$user = Core::getUser();
+			if(trim($user->getRefId()) !== '')
+				PersonConnector::createByUserAccount($user);
+				$authorId = trim($user->getRefId());
+				if($authorId === '')
+					throw new Exception('Error connecting to remote system');
+						
+					$array['author'] = $authorId;
+					$url = $connector->getBaseUrl();
+					$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "POST"), true);
+		}
+		if(isset($response['_id']) && trim($response['_id']) !== '')
+			$comments->setRefId($response['_id'])->save();
 		return $response;
 	}
 	public static function getById($id, $debug = false)

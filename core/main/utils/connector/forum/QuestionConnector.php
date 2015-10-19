@@ -45,16 +45,35 @@ class QuestionConnector extends ForumConnector
 	
 		if($question->getRefId() !== null && $question->getRefId() !== '')
 		{
+			$topics = $question->getTopics();
+			$topicRefIds = array();
+			foreach ($topics as $topic)
+			{
+				if(($refId = trim($topic->getRefId())) !== '')
+					$topicRefIds[] = $refId;
+			}
+			
+			$units = $question->getUnits();
+			$unitRefIds= array();
+			foreach ($units as $unit)
+			{
+				if(($refId = trim($unit->getRefId())) !== '')
+					$unitRefIds[] = $refId;
+			}
+			
 			$array = array(
 					'group' => trim( (count($units = $question->getUnits()) > 0 ? $units[0]->getRefId() : "") )
 					,'message' => $question->getContent()
 					,'title' => $question->getTitle()
 					,'deleted' => !($question->getActive())
-// 					,'comments' => array()
 					,'anonymous' => !( trim($question->getAuthorName()) === '' )
-// 					,'answers' => array()
-// 					,'topics' => array()
+					,'topics' => $topicRefIds
+					,'group' => count($unitRefIds) > 0 ? $unitRefIds[0] : ''
 			);
+			
+			if(($author = $question->getAuthor()) instanceof Person && ($refId = $author->getRefId()) !== '')
+				$array['author'] = $refId;
+			
 			$url = $connector->getBaseUrl() . '/' . $question->getRefId();
 			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
 		}

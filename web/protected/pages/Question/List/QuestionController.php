@@ -197,24 +197,31 @@ class QuestionController extends CRUDPageAbstract
 			$class = trim($this->_focusEntity);
 			$ids = isset($param->CallbackParameter->ids) ? $param->CallbackParameter->ids : array();
 			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
+				
+			Dao::beginTransaction();
+				
 			if(count($ids) > 0)
 			{
-				if($deactivate === true)
+				if($deactivate === true || $deactivate === false)
 				{
+					$results['items'] = array();
 					foreach ($ids as $id)
 					{
 						$obj = $class::get($id);
 						if($obj instanceof $class)
-							$obj->setActive(false)->save();
+							$obj->setActive(!$deactivate)->save();
+							$results['items'][] = $obj->getJson();
 					}
 				}
 				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);
-				if($obj instanceof Question)
-					QuestionConnector::sync($obj);
 			}
+			if($obj instanceof Question && trim($obj->getRefId()) !== '')
+				QuestionConnector::sync($obj);
+			Dao::commitTransaction();
 		}
 		catch(Exception $ex)
 		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
@@ -297,7 +304,7 @@ class QuestionController extends CRUDPageAbstract
 						break;
 					}
 			}
-			if($item instanceof Question)
+			if($item instanceof Question && trim($item->getRefId()) !== '')
 				QuestionConnector::sync($item);
 			$results['item'] = $item->getJson();
 		}
