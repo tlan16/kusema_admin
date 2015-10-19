@@ -32,7 +32,7 @@
 						   </label>
                        </div>
 					</div>
-                   <div class="col-sm-3">
+                   <div class="col-sm-4">
 	                   <div class="form-group form-group-sm input-group">
 							<label for="quest.created" class="input-group-addon">Created:</label>
 							<div class="form-control input-sm" style="padding:0px;">
@@ -46,7 +46,23 @@
 							</div>
 	                   </div>
 				    </div>
-					<div class="col-sm-1">
+			    </div>
+			    <div class="row">
+					<div class="col-sm-5">
+						<div class="form-group form-group-sm input-group">
+                           <label for="quest.topics" class="input-group-addon">Topics</label>
+                           <input class="form-control input-sm select2" search_field="quest.topics" data-width="100%">
+                           </input>
+                       </div>
+					</div>
+					<div class="col-sm-5">
+						<div class="form-group form-group-sm input-group">
+                           <label for="quest.units" class="input-group-addon">Units</label>
+                           <input class="form-control input-sm select2" search_field="quest.units" data-width="100%">
+                           </input>
+                       </div>
+					</div>
+					<div class="col-sm-2">
 						<div class="form-group form-group-sm input-group" style="">
                            <label for="quest.active" class="control-label input-group-addon">Active?</label>
                            <select class="form-control input-sm select2" search_field="quest.active" data-minimum-results-for-search="Infinity" data-width="100%">
@@ -54,20 +70,6 @@
                            		<option value="0">NO</option>
                            		<option value="3">ALL</option>
                            </select>
-                       </div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-group form-group-sm input-group">
-                           <label for="quest.topics" class="input-group-addon">Topics</label>
-                           <input class="form-control input-sm select2" search_field="quest.topics" data-width="100%">
-                           </input>
-                       </div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-group form-group-sm input-group">
-                           <label for="quest.units" class="input-group-addon">Units</label>
-                           <input class="form-control input-sm select2" search_field="quest.units" data-width="100%">
-                           </input>
                        </div>
 					</div>
 				</div>
