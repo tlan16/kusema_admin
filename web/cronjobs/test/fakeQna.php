@@ -43,7 +43,7 @@ class fakeQna extends testAbstract
 				echo count($question->getTopics()) . ' Topics added to Question[' . $question->getId() . ']' . PHP_EOL;
 				$limit = rand(1,5);
 				for($i = 0; $i < $limit; $i++) {
-					$unit = (rand(1,5) === 1 ? Unit::get(rand(1,7)) : self::getRandObj('Unit'));
+					$unit = (rand(1,5) === 1 ? Unit::get(rand(1,6)) : self::getRandObj('Unit'));
 					$question->addUnit($unit);
 				}
 				echo count($question->getUnits()) . ' Units added to Question[' . $question->getId() . ']' . PHP_EOL;
@@ -66,19 +66,6 @@ class fakeQna extends testAbstract
 						$author = self::getRandObj('Person');
 						$authorName = self::getRandName();;
 						$active = true;
-						$commentOfComment = $comment->addComments($title, $content, $refId, $author, $authorName, $active);
-						$commentOfComment->setCreated($comment->getCreated()->modify('+'.rand(1,7).' day')->setRandTime())->save();
-						$limit3 = rand(1,2);
-						for($k = 0; $k < $limit3; $k++) {
-							$title = self::getRandQuestion();
-							$content = self::getRandSentense(5,50);
-							$refId = md5($title.$content);
-							$author = self::getRandObj('Person');
-							$authorName = self::getRandName();;
-							$active = true;
-							$commentOfComment->addComments($title, $content, $refId, $author, $authorName, $active)
-											->setCreated($commentOfComment->getCreated()->modify('+'.rand(1,3).' day')->setRandTime())->save();
-						}
 						echo count($comment->getComments()) . ' Comments added to Comment[' . $comment->getId() . '] which belongs to Question[' . $question->getId() . ']' . PHP_EOL;
 					}
 				}
@@ -104,31 +91,6 @@ class fakeQna extends testAbstract
 						$comment = $anwser->addComments($title, $content, $refId, $author, $authorName, $active);
 						$comment->setCreated($anwser->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
 						echo 'Comment[' . $comment->getId() . '] added to Anwser[' . $anwser->getId() . ']' . PHP_EOL;
-						$limit3 = rand(1,3);
-						for($k = 0; $k < $limit3; $k++) {
-							$title = self::getRandQuestion();
-							$content = self::getRandSentense(5,50);
-							$refId = md5($title.$content);
-							$author = self::getRandObj('Person');
-							$authorName = self::getRandName();;
-							$active = true;
-							$commentOfComment = $comment->addComments($title, $content, $refId, $author, $authorName, $active);
-							$commentOfComment->setCreated($comment->getCreated()->modify('+'.rand(1,7).' day')->setRandTime())->save();
-							$comment->setCreated($question->getCreated()->modify('+'.rand(1,30).' day')->setRandTime())->save();
-							$limit4 = rand(1,3);
-							for($l = 0; $l < $limit4; $l++) {
-								$title = self::getRandQuestion();
-								$content = self::getRandSentense(5,50);
-								$refId = md5($title.$content);
-								$author = self::getRandObj('Person');
-								$authorName = self::getRandName();;
-								$active = true;
-								$commentOfComment->addComments($title, $content, $refId, $author, $authorName, $active)
-												->setCreated($commentOfComment->getCreated()->modify('+'.rand(1,3).' day')->setRandTime())->save();
-							}
-							echo count($commentOfComment->getComments()) . ' CommentOfComment added to Comment[' . $commentOfComment->getId() . '] which belongs to Answer[' . $anwser->getId() . ']' . PHP_EOL;
-						}
-						echo count($comment->getComments()) . ' Comments added to Answer[' . $anwser->getId() . ']' . PHP_EOL;
 					}
 				}
 					if($transStarted === false)
