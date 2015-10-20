@@ -636,7 +636,7 @@ abstract class BaseEntityAbstract
 			$param = array(trim($from), trim($to), $loop_from_time, $loop_to_time);
     		$count = $class::countByCriteria($where, $param);
     		if(!(trim($loop_to_time) === '00:00:00' && intval($count) === 0))
-    			$result[] = array(intval(trim($date->getUnixTimeStamp())."000"), intval($count));
+    			$result[] = array($date->getUnixTimeStamp() * 1000, intval($count));
     	}
     	return $result;
     }
@@ -650,7 +650,7 @@ abstract class BaseEntityAbstract
     		$loop_from_date = new UDate($date->__toString());
     		$loop_to_date = $date->modify('+1 day');
 	    	$count = $class::countByCriteria('active = 1 and created >= ? and created < ?', array($loop_from_date, $loop_to_date));
-	    	$result[] = array(intval(trim($loop_to_date->getUnixTimeStamp())."000"), intval($count));
+	    	$result[] = array($loop_to_date->getUnixTimeStamp() * 1000, intval($count));
     	}
     	return $result;
     }
