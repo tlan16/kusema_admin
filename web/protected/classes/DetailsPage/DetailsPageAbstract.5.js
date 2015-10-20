@@ -61,9 +61,9 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.me.closeFancyBox();
 			});
 		
-		tmp.container.update('')
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-md-6') })
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-md-6') })
+		tmp.container.update('').addClassName('row')
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
 		;
 		
 		if(tmp.me._dirty === false)
@@ -80,7 +80,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 		tmp.format = (format || 'DD/MM/YYYY');
 		
 		if(!container.id)
@@ -133,7 +133,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 
 		if(!container.id)
 			tmp.me._signRandID(container);
@@ -172,7 +172,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 		tmp.isCurrency = (isCurrency === true);
 		
 		if(!container.id)
@@ -219,7 +219,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
 		tmp.select2Options = (select2Options || null);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 		
 		if(!container.id)
 			tmp.me._signRandID(container);

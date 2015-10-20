@@ -25,7 +25,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		tmp.comments = new Element('div');
 		
-		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-xs-12') });
 		
 		tmp.me._signRandID(tmp.comments);
 		
@@ -42,7 +42,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.answers = new Element('div');
 		tmp.me._signRandID(tmp.answers);
 		
-		tmp.container.insert({'bottom': tmp.me._getFormGroup('', tmp.answers, true).addClassName('col-md-12') });
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('', tmp.answers, true).addClassName('col-xs-12') });
 		
 		new AnswersDivJs(tmp.me, 'Question', tmp.me._item.id)._setDisplayDivId(tmp.answers.id).render();
 		
@@ -81,10 +81,10 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		tmp.me
 			._getInputDiv('title', (tmp.me._item.title || ''), $(tmp.me._containerIds.title), null ,true)
-			._getInputDiv('authorName', (tmp.me._item.authorName || ''), $(tmp.me._containerIds.authorName), 'Alias', false, 'col-md-6')
-			._getSelect2Div('Person', 'author', (tmp.me._item.author ? {'id': tmp.me._item.author.id, 'text': tmp.me._item.author.fullName, 'data': tmp.me._item.author} : ''), $(tmp.me._containerIds.author), null, true, tmp.authorSelect2Options, 'col-md-6')
+			._getInputDiv('authorName', (tmp.me._item.authorName || ''), $(tmp.me._containerIds.authorName), 'Alias', false, 'col-xs-6')
+			._getSelect2Div('Person', 'author', (tmp.me._item.author ? {'id': tmp.me._item.author.id, 'text': tmp.me._item.author.fullName, 'data': tmp.me._item.author} : ''), $(tmp.me._containerIds.author), null, true, tmp.authorSelect2Options, 'col-xs-6')
 			._getMarkdownDiv('content', (tmp.me._item.content || ''), $(tmp.me._containerIds.content), null, true)
-			._getSaveBtn(tmp.me._collectQuestionData)
+			._getSaveBtn()
 			._getCommentsDiv()
 			._getAnswersDiv()
 			;
@@ -121,9 +121,9 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				tmp.me.closeFancyBox();
 			});
 		
-		tmp.container.update('')
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-md-6') })
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-md-6') })
+		tmp.container.update('').addClassName('row')
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
 		;
 		
 		if(tmp.me._dirty === false)
