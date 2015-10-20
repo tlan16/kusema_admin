@@ -3,48 +3,89 @@
  */
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CRUDPageJs(), {
-	_getTitleRowData: function() {
-		return {'id': "ID", 'active': 'Active', 'name': 'Name', 'refId': 'Ref ID', 'code': 'Code'};
-	}
-	,_bindSearchKey: function() {
-		var tmp = {}
-		tmp.me = this;
-		$('searchPanel').getElementsBySelector('[search_field]').each(function(item) {
-			item.observe('keydown', function(event) {
-				tmp.me.keydown(event, function() {
-					$('searchBtn').click();
-				});
-			})
-		});
-		return this;
-	}
-	,loadSelect2: function() {
-		var tmp = {};
-		tmp.me = this;
-		
-		jQuery('.select2').select2();
-	}
-	,_getResultRow: function(row, isTitle) {
+	_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'strong' : 'span');
+		
+		tmp.topics = new Element('table').setStyle('width:100%;')
+			.insert({'bottom': new Element('tr')
+					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Topic(s)</strong>') })
+				});
+		if(Array.isArray(row.topics)) {
+			row.topics.each(function(item){
+				tmp.topics.insert({'bottom': new Element('tr', {'info_id': item.id}).addClassName('topic_row')
+					.insert({'bottom': new Element('td').update(item.name) })
+					.insert({'bottom': new Element('td')
+						.insert({'bottom': new Element('a', {'class': 'pull-right glyphicon glyphicon-remove remove-btn', 'href': 'javascript:void(0)'}) 
+							.observe('click', function(e){
+								tmp.me._saveItem($(this), $(this).up('[info_id]').readAttribute('info_id'), null, 'removeTopic');
+							})
+						})
+					})
+				});
+			});
+		}
+		tmp.topics.insert({'bottom': new Element('tr', {'info_id': 'new'})
+			.insert({'bottom': new Element('td', {'colspan': 2})
+				.insert({'bottom': new Element('a', {'class': 'glyphicon glyphicon-plus', 'href': 'javascript:void(0)'}) 
+					.observe('click', function(e){
+						jQuery('.select2').select2("close");
+						$(this).replace(new Element('dd')
+							.insert({'bottom': tmp.topicInput = new Element('input').addClassName('select2').setStyle('width: 99%;') })
+						);
+						tmp.me._signRandID(tmp.topicInput);
+						tmp.selectBox = jQuery('#'+tmp.topicInput.id).select2({
+							minimumInputLength: 1,
+							width: "100%",
+							ajax: {
+								delay: 250
+								,url: '/ajax/getAll'
+								,type: 'GET'
+								,data: function (params) {
+									return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Topic', 'pageNo': 1};
+								}
+								,results: function(data, page, query) {
+									tmp.result = [];
+									if(data.resultData && data.resultData.items) {
+										data.resultData.items.each(function(item){
+											tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+										});
+									}
+									return { 'results' : tmp.result };
+								}
+							}
+							,cache: true
+							,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+						});
+						tmp.selectBox.select2("open");
+						tmp.selectBox.on("change", function(e) {
+							if(parseInt($(this).value) !== 0)
+								tmp.me._saveItem($(this), $(this).value, null, 'addTopic');
+				        });
+					})
+				})
+			})
+		});
+	
+		
 		tmp.row = new Element('span', {'class': 'row'})
 			.store('data', row)
 			.addClassName( (row.active === false && tmp.isTitle === false ) ? 'warning' : '')
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-6'}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'code col-md-2'}).update(row.code) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-md-2'}).update(row.refId) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-sm-5 col-xs-12'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-sm-3 col-xs-12'}).update(row.refId) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'topics col-sm-2 col-xs-12'}).update(tmp.isTitle === true ? 'Topics' : tmp.topics ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2 col-xs-12'}).update(
 				tmp.isTitle === true ?  
-					(new Element('span', {'class': 'btn btn-success btn-xs', 'title': 'New'})
+					(new Element('span', {'class': 'btn btn-primary btn-xs col-xs-12', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 						.insert({'bottom': ' NEW' })
 						.observe('click', function(){
-							
+							tmp.me._openDetailsPage();
 						})
 					)
 				: 
@@ -55,12 +96,16 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								tmp.me._openDetailsPage(row);
 							})
 						})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-danger', 'title': 'Delete'})
-							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
+						.insert({'bottom': new Element('span')
+							.addClassName( (row.active === false && tmp.isTitle === false ) ? 'btn btn-success' : 'btn btn-danger')
+							.writeAttribute('title', ((row.active === false && tmp.isTitle === false ) ? 'Re-activate' : 'De-activate') )
+							.insert({'bottom': new Element('span') 
+								.addClassName( (row.active === false && tmp.isTitle === false ) ? 'glyphicon glyphicon-repeat' : 'glyphicon glyphicon-trash')
+							})
 							.observe('click', function(){
-								if(!confirm('Are you sure you want to delete this item?'))
+								if(!confirm('Are you sure you want to ' + (row.active === true ? 'DE-ACTIVATE' : 'RE-ACTIVATE') +' this item?'))
 									return false;
-								tmp.me._deleteItem(row, true);
+								tmp.me._deleteItem(row, row.active);
 							})
 						}) 
 					)
@@ -68,37 +113,15 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		;
 		return tmp.row;
 	}
-	,_openDetailsPage: function(row) {
-		var tmp = {};
-		tmp.me = this;
-		jQuery.fancybox({
-			'width'			: '95%',
-			'height'		: '95%',
-			'autoScale'     : false,
-			'autoDimensions': false,
-			'fitToView'     : false,
-			'autoSize'      : false,
-			'type'			: 'iframe',
-			'href'			: '/unit/' + row.id + '.html',
-			'helpers'		: {
-				'overlay': {
-			    	'locked': false
-				}
-			},
-			'beforeClose'	    : function() {
-			}
- 		});
-		return tmp.me;
-	}
-	,_updateItem: function(btn, entityId, newValue, method) {
+	,_saveItem: function(btn, entityId, newValue, method) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.itemId = $(btn).up('.item_row[item_id]').readAttribute('item_id');
 		tmp.data = {'itemId': tmp.itemId, 'entityId': entityId, 'newValue': newValue, 'method': method};
 		if(tmp.data === null)
 			return;
-
-		tmp.me.postAjax(tmp.me.getCallbackId('updateItem'), tmp.data, {
+	
+		tmp.me.postAjax(tmp.me.getCallbackId('saveItem'), tmp.data, {
 			'onLoading': function () {
 				$(btn).hide();
 			}

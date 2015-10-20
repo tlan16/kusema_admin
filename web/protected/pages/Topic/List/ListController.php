@@ -111,90 +111,46 @@ class ListController extends CRUDPageAbstract
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
 	/**
-	 * save the items
+	 * delete the items
 	 *
 	 * @param unknown $sender
 	 * @param unknown $param
 	 * @throws Exception
 	 *
 	 */
-	public function saveItem($sender, $param)
+	public function deleteItems($sender, $param)
 	{
 		$results = $errors = array();
 		try
 		{
 			$class = trim($this->_focusEntity);
-			if(!isset($param->CallbackParameter->item))
-				throw new Exception("System Error: no item information passed in!");
-			$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-			$name = trim($param->CallbackParameter->item->name);
-			$description = trim($param->CallbackParameter->item->description);
-			$allowMultiple = (!isset($param->CallbackParameter->item->allowMultiple) || $param->CallbackParameter->item->allowMultiple !== true ? false : true);
-			
-			if($item instanceof $class)
+			$ids = isset($param->CallbackParameter->ids) ? $param->CallbackParameter->ids : array();
+			$deactivate = isset($param->CallbackParameter->deactivate) ? ($param->CallbackParameter->deactivate===true) : false;
+				
+			Dao::beginTransaction();
+				
+			if(count($ids) > 0)
 			{
-				$item->setName($name)
-					->setDescription($description)
-					->setAllowMultiple($allowMultiple)
-					->save();
+				if($deactivate === true || $deactivate === false)
+				{
+					$results['items'] = array();
+					foreach ($ids as $id)
+					{
+						$obj = $class::get($id);
+						if($obj instanceof $class)
+							$obj->setActive(!$deactivate)->save();
+							$results['items'][] = $obj->getJson();
+					}
+				}
+				else $class::deleteByCriteria('id in (' . str_repeat('?', count($ids)) . ')', $ids);
 			}
-			else
-			{
-				$item = $class::create($name, $description);
-			}
-			$results['item'] = $item->getJson();
+			Dao::commitTransaction();
+			if(isset($obj) && $obj instanceof Topic)
+				TopicConnector::sync($obj);
 		}
 		catch(Exception $ex)
 		{
-			$errors[] = $ex->getMessage();
-		}
-		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-	}
-	public function updateItem($sender, $param)
-	{
-		$results = $errors = array();
-		try
-		{
-			$class = trim($this->_focusEntity);
-			if(!isset($param->CallbackParameter->itemId) || ($itemId = intval($param->CallbackParameter->itemId)) === 0 || !($item = $class::get($itemId)) instanceof $class)
-				throw new Exception('Invalid itemId passed in');
-			if(!isset($param->CallbackParameter->entityId) || ( strtolower(trim($param->CallbackParameter->entityId)) !== 'new' && ($entityId = intval($param->CallbackParameter->entityId)) === 0 ))
-				throw new Exception('Invalid entityId passed in');
-			if(!isset($param->CallbackParameter->method) || ($method = trim($param->CallbackParameter->method)) === '')
-				throw new Exception('Invalid method passed in');
-			
-			switch ($method)
-			{
-				case 'removeTopic':
-					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
-						break;
-					}
-				case 'addTopic':
-					{
-						if(($obj = Topic::get($entityId)) instanceof Topic)
-							$item->addTopic($obj);
-						break;
-					}
-				case 'removeUnit':
-					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
-						break;
-					}
-				case 'addUnit':
-					{
-						if(($obj = Unit::get($entityId)) instanceof Unit)
-							$item->addUnit($obj);
-						break;
-					}
-			}
-			
-			$results['item'] = $item->getJson();
-		}
-		catch(Exception $ex)
-		{
+			Dao::rollbackTransaction();
 			$errors[] = $ex->getMessage();
 		}
 		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);

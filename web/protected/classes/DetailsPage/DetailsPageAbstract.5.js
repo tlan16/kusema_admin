@@ -4,6 +4,7 @@
 var DetailsPageJs = new Class.create();
 DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	_item: null //the item we are dealing with
+	,_readOnlyMode: false
 	,_dirty: false
 	/**
 	 * Getting a form group for forms
@@ -44,7 +45,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			.update('Save')
 			.observe('click',function(e){
 				tmp.btn = $(this);
-				tmp.data = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+				tmp.data = tmp.me.collectData();
 				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
 					return tmp.me;
 				tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
@@ -69,6 +70,11 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		if(tmp.me._dirty === false)
 			tmp.save.hide();
 		return tmp.me;
+	}
+	,collectData: function() {
+		var tmp = {};
+		tmp.me = this;
+		return tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
 	}
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
@@ -120,10 +126,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
-		
-//		typeof jQuery(document).datetimepicker
-//		tmp.date = jQuery('#' + item.id).data('DateTimePicker').date();
-//		tmp.me._searchCriteria[tmp.field] = tmp.date ? new Date(tmp.date.local().format('YYYY-MM-DDT' + (tmp.field === 'orderDate_from' || tmp.field === 'invDate_from' ? '00:00:00' : '23:59:59'))) : '';
 		
 		return tmp.me;
 	}
@@ -330,7 +332,29 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._init();
-		$(tmp.me.getHTMLID('itemDiv')).update(tmp.me._getItemDiv());
+		
+		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.me
+			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
+//			._getInputDiv('refId', (tmp.me._item.refId || ''), $(tmp.me._containerIds.refId), 'Ref ID')
+			._getSaveBtn()
+		;
+		return tmp.me;
+	}
+	,_getCommentsDiv() {
+		var tmp = {};
+		tmp.me = this;
+
+		tmp.container = $(tmp.me._containerIds.comments);
+		
+		tmp.comments = new Element('div');
+		
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+		
+		tmp.me._signRandID(tmp.comments);
+		
+		new CommentsDivJs(tmp.me, tmp.me._focusEntity, tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render();
+		
 		return tmp.me;
 	}
 });

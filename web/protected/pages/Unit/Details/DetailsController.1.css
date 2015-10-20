@@ -1,4 +1,0 @@
-textarea[save-item=content], textarea[save-item=comments] {
-	min-height: 300px;
-}
-input[placeholder] { width: 100% !important; }

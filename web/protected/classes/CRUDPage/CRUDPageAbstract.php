@@ -93,6 +93,7 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 		$js .= ".setHTMLIds('item-list', 'searchPanel', 'total-found-count');";
 		$js .= "if(pageJs.init) {pageJs.init();}";
 		$js .= "pageJs.getSearchCriteria();";
+		$js .= "pageJs._focusEntity = '" . $this->getFocusEntity() . "';";
 		//$js .= ".getResults(true, " . $this->pageSize . ")";
 		return $js;
 	}
@@ -181,7 +182,36 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 	 * @throws Exception
 	 *
 	 */
-	public function saveItem($sender, $param){}
+	public function saveItem($sender, $param)
+	{
+		$results = $errors = array();
+		try
+		{
+			$class = trim($this->_focusEntity);
+			if(!isset($param->CallbackParameter->item))
+				throw new Exception("System Error: no item information passed in!");
+				$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
+				$name = trim($param->CallbackParameter->item->name);
+				$description = trim($param->CallbackParameter->item->description);
+					
+				if($item instanceof $class)
+				{
+					$item->setName($name)
+					->setDescription($description)
+					->save();
+				}
+				else
+				{
+					$item = $class::create($name, $description);
+				}
+				$results['item'] = $item->getJson();
+		}
+		catch(Exception $ex)
+		{
+			$errors[] = $ex->getMessage();
+		}
+		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
 	/**
 	 * getting the focus entity
 	 *

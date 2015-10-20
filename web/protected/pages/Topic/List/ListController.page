@@ -26,7 +26,7 @@
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
                            <label for="tpc.active" class="input-group-addon">Active?</label>
-                           <select class="input-sm select2" search_field="tpc.active" data-minimum-results-for-search="-1">
+                           <select class="form-control input-sm select2" search_field="tpc.active" data-minimum-results-for-search="-1">
                            		<option value="1">YES</option>
                            		<option value="0">NO</option>
                            		<option value="3">ALL</option>

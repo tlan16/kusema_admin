@@ -33,24 +33,37 @@ class UnitConnector extends ForumConnector
 				, $debug
 				);
 	
-		if($unit->getRefId() !== null && $unit->getRefId() !== '')
+		$array = array(
+			'title' => $unit->getName()
+			,'unitCode' => $unit->getCode()
+			,'name' => $unit->getCode() . ': ' . $unit->getName()
+			,'deleted' => !($unit->getActive())
+			,'topics' => array()
+		);
+		
+		foreach ($unit->getTopics() as $topic)
 		{
-			$array = array(
-				'title' => $unit->getName()
-				,'unitCode' => $unit->getCode()
-				,'name' => $unit->getCode() . ': ' . $unit->getName()
-				,'deleted' => $unit->getActive()
-				,'topics' => array()
-			);
-			foreach ($unit->getTopics() as $topic)
+			if($topic->getRefId() !== null && $topic->getRefId() !== '')
 			{
-				if($topic->getRefId() !== null && $topic->getRefId() !== '')
-				{
-					$array['topics'][] = $topic->getRefId();
-				}
+				$array['topics'][] = $topic->getRefId();
 			}
+		}
+		
+		if(trim($unit->getRefId()) !== '')
+		{
 			$url = $connector->getBaseUrl() . '/' . $unit->getRefId();
 			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		} else {
+			$user = Core::getUser();
+			if(trim($user->getRefId()) !== '')
+				PersonConnector::createByUserAccount($user);
+			$authorId = trim($user->getRefId());
+			if($authorId === '')
+				throw new Exception('Error connecting to remote system');
+	
+			$array['author'] = $authorId;
+			$url = $connector->getBaseUrl();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "POST"), true);
 		}
 		return $response;
 	}

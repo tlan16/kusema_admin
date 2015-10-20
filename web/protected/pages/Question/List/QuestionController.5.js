@@ -107,7 +107,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						+ '<br/>' + 
 						'Update At ' + tmp.me.loadUTCTime(row.updated).toLocaleString()
 					);
-			tmp.topics = new Element('table')
+			tmp.topics = new Element('table').setStyle('width:100%;')
 				.insert({'bottom': new Element('tr')
 					.insert({'bottom': new Element('td', {'colspan': 2}).update('<strong>Topic(s)</strong>') })
 				});

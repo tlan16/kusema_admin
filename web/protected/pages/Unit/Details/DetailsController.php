@@ -39,7 +39,6 @@ class DetailsController extends DetailsPageAbstract
 		$js .= "pageJs._containerIds=" . json_encode(array(
 				'name' => 'name_div'
 				,'code' => 'code_div'
-				,'refId' => 'refId_div'
 				,'topics' => 'topics_div'
 				,'active' => 'active_div'
 				,'comments' => 'comments_div'
@@ -61,69 +60,37 @@ class DetailsController extends DetailsPageAbstract
 	 */
 	public function saveItem($sender, $params)
 	{
-
 		$results = $errors = array();
 		try
 		{
-			$focusEntity = $this->getFocusEntity();
-			Dao::beginTransaction();
-			if (! isset ( $params->CallbackParameter->entityName ) || ($entityName = trim ( $params->CallbackParameter->entityName )) === '')
-				$entityName = $focusEntity;
-			if (!isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
-				throw new Exception ( 'System Error: entityId is not provided!' );
-			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
-				throw new Exception ( 'System Error: no such a entity exisits!' );
-			if ($entityId !== 'new' && ( !isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field ))  === '') )
-				throw new Exception ( 'System Error: invalid field passed in!' );
-			if (! isset ( $params->CallbackParameter->value ))
-				throw new Exception ( 'System Error: invalid value passed in!' );
-			$value = $params->CallbackParameter->value;
-			switch ($entityName)
-			{
-				case $focusEntity: {
-					if($entityId === 'new') {
-						if (!isset ( $value->name ) || ($name = trim ( $value->name )) === '')
-							throw new Exception ( 'System Error: name is not provided!' );
-						if (!isset ( $value->refId ) || ($refId = trim ( $value->refId )) === '')
-							$refId = '';
-						$entity = $focusEntity::create($name, $refId);
-						break;
-					}
-					switch ($field)
-					{
-						case 'name': {
-							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid name passed in!' );
-							$entity->setName($value);
-							break;
-						}
-						case 'code': {
-							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid code passed in!' );
-							$entity->setCode($value);
-							break;
-						}
-						case 'refId': {
-							$entity->setRefId(trim($value));
-							break;
-						}
-						case 'topics': {
-							$entity->clearTopics();
-							foreach ($value as $id)
-							{
-								var_dump(Topic::get(intval($id)));
-								if(($topic = Topic::get(intval($id))) instanceof Topic)
-									$entity->addTopic($topic);
-							}
-							break;
-						}
-					}
-					break;
-				}
-			}
+			$focusEntity = $this->getFocusEntity ();
+			if (! isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
+				throw new Exception ( 'System Error: invalid name passed in.' );
+			if (! isset ( $params->CallbackParameter->code ) || ($code = trim ( $params->CallbackParameter->code )) === '')
+				throw new Exception ( 'System Error: invalid code passed in.' );
+			$topicIds = array();
+			if (isset ( $params->CallbackParameter->topics ) && ($tmp = trim($params->CallbackParameter->topics)) !== '' )
+				$topicIds = explode(',', $tmp);
+			if (isset ( $params->CallbackParameter->id ) && ! ($entity = $focusEntity::get ( intval ( $params->CallbackParameter->id ) )) instanceof $focusEntity)
+				throw new Exception ( 'System Error: invalid id passed in.' );
 			
-			$results ['item'] = $entity->save()->getJson();
+			Dao::beginTransaction ();
+			
+			if (! isset ( $entity ) || ! $entity instanceof $focusEntity)
+				$entity = $focusEntity::create ( $name , $code);
+			else
+				$entity->setName ( $name )->setCode ( $code );
+			
+			foreach ($topicIds as $topicId)
+			{
+				if(($topic = Topic::get(intval($topicId))) instanceof Topic)
+					$entity->addTopic($topic);
+			}
+				
+			$results ['item'] = $entity->save()->getJson ();
 			Dao::commitTransaction ();
+			if($entity instanceof Unit)
+				UnitConnector::sync($entity);
 		}
 		catch(Exception $ex)
 		{

@@ -1,0 +1,4 @@
+.item_row[item_id] .btn[title="Delete"] {
+	display: none;
+    visibility: hidden;
+}

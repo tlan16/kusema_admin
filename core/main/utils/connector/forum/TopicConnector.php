@@ -23,8 +23,9 @@ class TopicConnector extends ForumConnector
 		$result = $this->getData($url, $attributes);
 		return $result;
 	}
-	public static function create(Topic $topic, $debug = false)
+	public static function sync(Topic $topic, $debug = false)
 	{
+		$response = array();
 		$connector = self::getConnector(
 				ForumConnector::CONNECTOR_TYPE_TOPIC
 				,SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST)
@@ -32,32 +33,33 @@ class TopicConnector extends ForumConnector
 				, SystemSettings::getByType(SystemSettings::TYPE_FORUM_API_REST_PASSWORD)
 				, $debug
 				);
-		
-		if(self::getById($topic->getName()) instanceof Topic)
-			return self::getById($topic->getName());
+	
 		$array = array(
 			'name' => $topic->getName()
-			,'deleted' => $topic->getActive()
+			,'deleted' => !($topic->getActive())
 		);
 		
-		$response = json_decode(ComScriptCURL::readUrl($connector->getBaseUrl(), null, $array), true);
-		if(isset($response['_id']) && trim($response['_id']) !== '')
-		{		
-			try {
-				$transStarted = false;
-				try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
-				
-				$topic->setRefId($response['_id'])->save();
-				
-				if($transStarted === false)
-					Dao::commitTransaction();
-			} catch (Exception $ex) {
-				if($transStarted === false)
-					Dao::rollbackTransaction();
-				throw $ex;
-			}
+		var_dump(trim($topic->getRefId()));
+		if(trim($topic->getRefId()) !== '')
+		{
+			$url = $connector->getBaseUrl() . '/' . $topic->getRefId();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
+		} else {
+			$user = Core::getUser();
+			if(trim($user->getRefId()) !== '')
+				PersonConnector::createByUserAccount($user);
+			$authorId = trim($user->getRefId());
+			if($authorId === '')
+				throw new Exception('Error connecting to remote system');
+						
+			$array['author'] = $authorId;
+			$url = $connector->getBaseUrl();
+			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "POST"), true);
 		}
-		return $topic;
+		if(isset($response['_id']) && trim($response['_id']) !== '')
+			$topic->setRefId($response['_id'])->save();
+		var_dump($response);
+		return $response;
 	}
 	/**
 	 * get system Topic by external system topic id

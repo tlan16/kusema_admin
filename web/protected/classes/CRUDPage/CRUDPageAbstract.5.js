@@ -9,6 +9,16 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 	,_pagination: {'pageNo': 1, 'pageSize': 30} //the pagination details
 	,_searchCriteria: {} //the searching criteria
 	,_nextPageColSpan: 5
+	,_titleRowData: {'id': "ID"
+		, 'active': 'Active'
+			, 'name': 'Name'
+			, 'refId': 'Ref ID'
+			, 'description': 'Description'
+			, 'created': 'Created'
+			, 'createdBy': 'Created By'
+			, 'updated': 'Updated'
+			, 'updatedBy': 'Updated By'
+		}
 
 	,setHTMLIds: function(resultDivId, searchDivId, totalNoOfItemsId) {
 		this.resultDivId = resultDivId;
@@ -17,6 +27,22 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return this;
 	}
 
+	,_getTitleRowData: function() {
+		return this._titleRowData;
+	}
+	,_bindSearchKey: function() {
+		var tmp = {}
+		tmp.me = this;
+		$('searchPanel').getElementsBySelector('[search_field]').each(function(item) {
+			item.observe('keydown', function(event) {
+				tmp.me.keydown(event, function() {
+					$('searchBtn').click();
+				});
+			})
+		});
+		return this;
+	}
+	
 	,getSearchCriteria: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -32,7 +58,87 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.me._searchCriteria = null;
 		return this;
 	}
-
+	,_getResultRow: function(row, isTitle) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.isTitle = (isTitle || false);
+		tmp.tag = (tmp.isTitle === true ? 'strong' : 'span');
+		tmp.row = new Element('span', {'class': 'row'})
+			.store('data', row)
+			.addClassName( (row.active === false && tmp.isTitle === false ) ? 'warning' : '')
+			.addClassName('list-group-item')
+			.addClassName('item_row')
+			.writeAttribute('item_id', row.id)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-sm-7 col-xs-12'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'refId col-sm-3 col-xs-12'}).update(row.refId) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2 col-xs-12'}).update(
+				tmp.isTitle === true ?  
+					(new Element('span', {'class': 'btn btn-primary btn-xs col-xs-12', 'title': 'New'})
+						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
+						.insert({'bottom': ' NEW' })
+						.observe('click', function(){
+							tmp.me._openDetailsPage();
+						})
+					)
+				: 
+					(new Element('span', {'class': 'btn-group btn-group-xs'})
+						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Delete'})
+							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
+							.observe('click', function(){
+								tmp.me._openDetailsPage(row);
+							})
+						})
+						.insert({'bottom': new Element('span')
+							.addClassName( (row.active === false && tmp.isTitle === false ) ? 'btn btn-success' : 'btn btn-danger')
+							.writeAttribute('title', ((row.active === false && tmp.isTitle === false ) ? 'Re-activate' : 'De-activate') )
+							.insert({'bottom': new Element('span') 
+								.addClassName( (row.active === false && tmp.isTitle === false ) ? 'glyphicon glyphicon-repeat' : 'glyphicon glyphicon-trash')
+							})
+							.observe('click', function(){
+								if(!confirm('Are you sure you want to ' + (row.active === true ? 'DE-ACTIVATE' : 'RE-ACTIVATE') +' this item?'))
+									return false;
+								tmp.me._deleteItem(row, row.active);
+							})
+						}) 
+					)
+			) })
+		;
+		return tmp.row;
+	}
+	,loadSelect2: function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		jQuery('select.select2').each(function(){
+			tmp.options = {};
+			if($(this).readAttribute('data-minimum-results-for-search') === 'Infinity' || $(this).readAttribute('data-minimum-results-for-search') === 'infinity' || $(this).readAttribute('data-minimum-results-for-search') == -1)
+				tmp.options['minimumResultsForSearch'] = 'Infinity';
+			jQuery(this).select2(tmp.options);
+		});
+		
+		return tmp.me;
+	}
+	,_openDetailsPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'width'			: '95%',
+			'height'		: '95%',
+			'modal'			: true,
+			'autoScale'     : false,
+			'autoDimensions': false,
+			'fitToView'     : false,
+			'autoSize'      : false,
+			'type'			: 'iframe',
+			'href'			: '/' + tmp.me._focusEntity.toLowerCase() + '/' + (row ? row.id : 'new') + '.html',
+			'helpers'		: {
+				'overlay': {
+			    	'locked': false
+				}
+			}
+ 		});
+		return tmp.me;
+	}
 	,getResults: function(reset, pageSize) {
 		var tmp = {};
 		tmp.me = this;
