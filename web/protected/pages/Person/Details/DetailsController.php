@@ -54,108 +54,75 @@ class DetailsController extends DetailsPageAbstract
 			$js .= "pageJs.readOnlyMode();";
 		return $js;
 	}
-	/**
-	 * save the items
-	 *
-	 * @param unknown $sender
-	 * @param unknown $param
-	 * @throws Exception
-	 *
-	 */
 	public function saveItem($sender, $params)
 	{
-
+	
 		$results = $errors = array();
 		try
 		{
-			$focusEntity = $this->getFocusEntity();
-			Dao::beginTransaction();
-			if (! isset ( $params->CallbackParameter->entityName ) || ($entityName = trim ( $params->CallbackParameter->entityName )) === '')
-				$entityName = $focusEntity;
-			if (!isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
-				throw new Exception ( 'System Error: entityId is not provided!' );
-			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
-				throw new Exception ( 'System Error: no such a entity exisits!' );
-			if ($entityId !== 'new' && ( !isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field ))  === '') )
-				throw new Exception ( 'System Error: invalid field passed in!' );
-			if (!isset($params->CallbackParameter->value) && $params->CallbackParameter->value !== null)
-				throw new Exception ( 'System Error: invalid value passed in!' );
-			$value = $params->CallbackParameter->value;
-			switch ($entityName)
-			{
-				case $focusEntity: {
-					if($entityId === 'new') {
-						if (!isset ( $value->name ) || ($name = trim ( $value->name )) === '')
-							throw new Exception ( 'System Error: name is not provided!' );
-						if (!isset ( $value->refId ) || ($refId = trim ( $value->refId )) === '')
-							$refId = '';
-						$entity = $focusEntity::create($name, $refId);
-						break;
-					}
-					switch ($field)
-					{
-						case 'firstName': {
-							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid firstName passed in!' );
-							$entity->setFirstName($value);
-							break;
-						}
-						case 'lastName': {
-							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid lastName passed in!' );
-							$entity->setLastName($value);
-							break;
-						}
-						case 'email': {
-							$entity->setEmail($value);
-							break;
-						}
-						case 'subscribedTopic': {
-							$entity->clearSubscribeTopic();
-							$value = (!is_array($value) ? array() : $value);
-							foreach ($value as $id)
-							{
-								if(($topic = Topic::get(intval($id))) instanceof Topic)
-									$entity->subscribeTopic($topic);
-							}
-							break;
-						}
-						case 'subscribedUnit': {
-							$entity->clearSubscribeUnit();
-							$value = (!is_array($value) ? array() : $value);
-							foreach ($value as $id)
-							{
-								if(($unit = Unit::get(intval($id))) instanceof Unit)
-									$entity->subscribeUnit($unit);
-							}
-							break;
-						}
-						case 'enrolledTopic': {
-							$entity->clearEnrollTopic();
-							$value = (!is_array($value) ? array() : $value);
-							foreach ($value as $id)
-							{
-								if(($topic = Topic::get(intval($id))) instanceof Topic)
-									$entity->enrollTopic($topic);
-							}
-							break;
-						}
-						case 'enrolledUnit': {
-							$entity->clearEnrollUnit();
-							$value = (!is_array($value) ? array() : $value);
-							foreach ($value as $id)
-							{
-								if(($unit = Unit::get(intval($id))) instanceof Unit)
-									$entity->enrollUnit($unit);
-							}
-							break;
-						}
-					}
-					break;
-				}
+			$focusEntity = $this->getFocusEntity ();
+			if (! isset ( $params->CallbackParameter->firstName ) || ($firstName = trim ( $params->CallbackParameter->firstName )) === '')
+				throw new Exception ( 'System Error: invalid firstName passed in.' );
+			
+			$lastName = '';
+			if (isset ( $params->CallbackParameter->lastName ) && ($tmp = trim ( $params->CallbackParameter->lastName )) !== '')
+				$lastName = $tmp;
+			
+			$email = '';
+			if (isset ( $params->CallbackParameter->email ) && ($tmp = trim ( $params->CallbackParameter->email )) !== '')
+				$email = $tmp;
+			
+			$subscribedUnitIds = array ();
+			if (isset ( $params->CallbackParameter->subscribedUnit ) && ($tmp = trim ( $params->CallbackParameter->subscribedUnit )) !== '')
+				$subscribedUnitIds = explode ( ',', $tmp );
+			
+			$subscribedTopicIds = array ();
+			if (isset ( $params->CallbackParameter->subscribedTopic ) && ($tmp = trim ( $params->CallbackParameter->subscribedTopic )) !== '')
+				$subscribedTopicIds = explode ( ',', $tmp );
+			
+			$enrolledUnitIds = array ();
+			if (isset ( $params->CallbackParameter->enrolledUnit ) && ($tmp = trim ( $params->CallbackParameter->enrolledUnit )) !== '')
+				$enrolledUnitIds = explode ( ',', $tmp );
+			
+			$enrolledTopicIds = array ();
+			if (isset ( $params->CallbackParameter->enrolledTopic ) && ($tmp = trim ( $params->CallbackParameter->enrolledTopic )) !== '')
+				$enrolledTopicIds = explode ( ',', $tmp );
+			
+			if (isset ( $params->CallbackParameter->id ) && ! ($entity = $focusEntity::get ( intval ( $params->CallbackParameter->id ) )) instanceof $focusEntity)
+				throw new Exception ( 'System Error: invalid id passed in.' );
+			
+			Dao::beginTransaction ();
+			
+			if (! isset ( $entity ) || ! $entity instanceof $focusEntity)
+				$entity = $focusEntity::create($firstName, $lastName, $email);
+			else {
+				$entity->setFirstName( $firstName )->setLastName( $lastName )->setemail($email);
 			}
 			
-			$results ['item'] = $entity->save()->sync()->getJson();
+			$entity->clearEnrollTopic()->clearEnrollUnit()->clearSubscribeTopic()->clearSubscribeUnit();
+			
+			foreach ( $subscribedUnitIds as $subscribedUnitId )
+			{
+				if(($unit = Unit::get(intval($subscribedUnitId))) instanceof Unit)
+					$entity->subscribeUnit($unit);
+			}
+			foreach ( $subscribedTopicIds as $subscribedTopicId )
+			{
+				if(($topic = Topic::get(intval($subscribedTopicId))) instanceof Topic)
+					$entity->subscribeTopic($topic);
+			}
+			foreach ( $enrolledUnitIds as $enrolledUnitId )
+			{
+				if(($unit = Unit::get(intval($enrolledUnitId))) instanceof Unit)
+					$entity->enrollUnit($unit);
+			}
+			foreach ( $enrolledTopicIds as $enrolledTopicId )
+			{
+				if(($topic = Topic::get(intval($enrolledTopicId))) instanceof Topic)
+					$entity->enrollTopic($topic);
+			}
+			
+			$results ['item'] = $entity->save ()->getJson ();
 			Dao::commitTransaction ();
 		}
 		catch(Exception $ex)
