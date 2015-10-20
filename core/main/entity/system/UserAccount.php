@@ -191,7 +191,7 @@ class UserAccount extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
-        DaoMap::setStringType('password', 'varchar', 40);
+        DaoMap::setStringType('password', 'varchar', 64);
         DaoMap::setManyToOne("person", "Person", "p");
         DaoMap::setStringType('source', 'varchar', 10, true, null);
         DaoMap::setStringType('refId', 'varchar', 50, true, null);
@@ -223,7 +223,7 @@ class UserAccount extends BaseEntityAbstract
     		throw new Exception('invalid password passed in');
     	if($refId !== null && ($refId = trim($refId)) === '')
     		throw new Exception('invalid ref passed in');
-    	$password = sha1($password);
+    	$password = hash('sha256', $password);
     	$where = '';
     	$param = array();
     	if($source === null)
@@ -260,7 +260,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false, $localOnly = true)
     {
-    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
+    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : hash('sha256', $password))), true, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)

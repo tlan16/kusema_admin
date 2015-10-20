@@ -371,7 +371,7 @@ DROP TABLE IF EXISTS `useraccount`;
 CREATE TABLE `useraccount` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`username` varchar(100) NOT NULL DEFAULT '',
-	`password` varchar(40) NOT NULL DEFAULT '',
+	`password` varchar(64) NOT NULL DEFAULT '',
 	`personId` int(10) unsigned NOT NULL DEFAULT 0,
 	`source` varchar(10) NULL ,
 	`refId` varchar(50) NULL ,
