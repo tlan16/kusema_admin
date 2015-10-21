@@ -25,8 +25,8 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 						.insert({'bottom': ' NEW' })
 						.observe('click', function(){
-							
 						})
+						.hide() //TODO: remove this line if need sync new people
 					)
 				: 
 					(new Element('span', {'class': 'btn-group btn-group-xs'})
