@@ -6,31 +6,29 @@
 		</div>
 		<div class="panel-body" id="presetDiv">
 			<div class="row">
-				<div class="col-md-12">
-					<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="topunit">
-						Top Units
-					</div>
-					<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="toptopic">
-						Top Topic
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="yearly">
-						New Question (1 year)
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="daily">
-						New Question (1 day)
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="answer" title="" searchCriterias="" action="yearly">
-						New Answer (1 year)
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="answer" title="" searchCriterias="" action="daily">
-						New Answer (1 day)
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="comments" title="" searchCriterias="" action="yearly">
-						New Comment (1 year)
-					</div>
-					<div class="btn btn-md btn-info" type="stock" entity="comments" title="" searchCriterias="" action="daily">
-						New Comment (1 day)
-					</div>
+				<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="topunit">
+					Top Units
+				</div>
+				<div class="btn btn-md btn-info" type="pie" entity="question" title="" searchCriterias="" action="toptopic">
+					Top Topic
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="yearly">
+					New Question (1 year)
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="question" title="" searchCriterias="" action="daily">
+					New Question (1 day)
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="answer" title="" searchCriterias="" action="yearly">
+					New Answer (1 year)
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="answer" title="" searchCriterias="" action="daily">
+					New Answer (1 day)
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="comments" title="" searchCriterias="" action="yearly">
+					New Comment (1 year)
+				</div>
+				<div class="btn btn-md btn-info" type="stock" entity="comments" title="" searchCriterias="" action="daily">
+					New Comment (1 day)
 				</div>
 			</div>
 		</div>
