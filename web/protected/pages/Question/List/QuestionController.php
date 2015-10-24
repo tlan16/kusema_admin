@@ -163,9 +163,6 @@ class QuestionController extends CRUDPageAbstract
 							}
 					}
 				}
-				var_dump([
-					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
-				]);
 				$objects = Question::getQuestions(
 					$title, $content, $authorId, $authorName, $refId, $vote, $active, $created, $updated, $topics, $units, $pageNo, $pageSize, $orderBy, $stats
 				);
