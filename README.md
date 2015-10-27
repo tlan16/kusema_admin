@@ -1,2 +1,2 @@
 # kusema_admin
-the admin site for kusema
+the admin site for kusema forum
