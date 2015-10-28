@@ -125,7 +125,7 @@ class QuestionController extends CRUDPageAbstract
 						case 'quest.topics':
 							{
 								if(!is_array($value) && intval($value) !== 0)
-									$topics = [intval($value)];
+									$topics = array(intval($value));
 								elseif(is_array($value) && count($value) > 0)
 									$topics = $value;
 								break;
@@ -133,7 +133,7 @@ class QuestionController extends CRUDPageAbstract
 						case 'quest.units':
 							{
 								if(!is_array($value) && intval($value) !== 0)
-									$units = [intval($value)];
+									$units = array(intval($value));
 								elseif(is_array($value) && count($value) > 0)
 									$units = $value;
 								break;
