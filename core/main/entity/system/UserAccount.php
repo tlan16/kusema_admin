@@ -215,7 +215,7 @@ class UserAccount extends BaseEntityAbstract
      * @return UserAccount
      * @throws Exception
      */
-    public static function create($username, $password, Person $person, Role $role, $source = null, $refId = null)
+    public static function create($username, $password, Person $person, $role = null, $source = null, $refId = null)
     {
     	if(($username = trim($username)) === '')
     		throw new Exception('invalid username passed in');
@@ -245,7 +245,8 @@ class UserAccount extends BaseEntityAbstract
     		->setRefId($refId)
     		->setActive(true)
     		->save();
-    	$obj->addRole($role);
+    	if($role instanceof Role)
+    		$obj->addRole($role);
     	return $obj;
     }
     /**

@@ -1,0 +1,42 @@
+<com:TContent ID="MainContent">
+<com:Application.controls.select2.select2 />
+<com:Application.controls.fancybox.FancyBox />
+<com:TCallback ID="updateItemBtn" onCallBack="Page.updateItem" />
+	<div class="pagewrapper item-list-wrapper">
+		<div class="panel panel-default" id="searchPanel">
+			<div class="panel-heading">
+				<label for="showSearch">Show Search Criteria?</label>
+				<input id="showSearch" type="checkbox" checked onclick="$(this).up('#searchPanel').down('.panel-body').toggle();$(this).up('#searchPanel').down('#searchBtn').toggle();">
+				<span id="searchBtn" class="pull-right btn btn-primary btn-sm" data-loading-text="searching ..." onclick="pageJs.getSearchCriteria().getResults(true, <%= $this->pageSize %>);" >Search</span>
+			</div>
+			<div class="panel-body search-panel" style="/**display: none;**/">
+				<div class="row">
+					<div class="col-md-10">
+						<div class="form-group form-group-sm input-group">
+                           <label for="ua.username" class="input-group-addon">Username:</label>
+                           <input type="text" class="form-control input-sm" search_field="ua.username" placeholder="The Username of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group form-group-sm input-group">
+                           <label for="ua.active" class="control-label input-group-addon">Active?</label>
+                           <select class="form-control input-sm select2" search_field="ua.active" data-minimum-results-for-search="Infinity" data-width="100%">
+                           		<option value="1">YES</option>
+                           		<option value="0">NO</option>
+                           		<option value="3">ALL</option>
+                           </select>
+                       </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Found <label id="total-found-count">0</label> <%= $this->getFocusEntity() %>:
+			</div>
+			<div class="panel-body" style="padding: 0;">
+                <div id="item-list" style="margin-bottom: 0;"></div>
+            </div>
+		</div> 
+	</div>
+</com:TContent>

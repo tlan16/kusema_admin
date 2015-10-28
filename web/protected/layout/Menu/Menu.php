@@ -31,9 +31,13 @@ class Menu extends TTemplateControl
 				'person' => array('url' => '/person.html', 'name' => 'People', 'icon' => '')
 			)
 			,'Statics' => array(
-				'name' => 'Statics',
+				'name' => 'Statistic',
 				'url' => '/statics/config.html',
 				'icon' => '<span class="glyphicon glyphicon-signal"></span>'
+			)
+			,'System' => array(
+				'icon' => '<span class="glyphicon glyphicon-cog"></span>',
+				'useraccount' => array('url' => '/useraccounts.html', 'name' => 'Admin System User', 'icon' => ''),
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";
