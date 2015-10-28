@@ -1,4 +1,5 @@
 #!/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 php $DIR/pullPerson.php
