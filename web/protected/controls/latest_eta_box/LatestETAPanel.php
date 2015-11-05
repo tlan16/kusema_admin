@@ -4,7 +4,7 @@
  * 
  * @package    Web
  * @subpackage Controller
- * @author     lhe<helin16@gmail.com>
+ * @author     flan<franklan118@gmail.com>
  */
 class LatestETAPanel extends TTemplateControl
 {

@@ -62,8 +62,7 @@ class QuestionConnector extends ForumConnector
 			}
 			
 			$array = array(
-					'group' => trim( (count($units = $question->getUnits()) > 0 ? $units[0]->getRefId() : "") )
-					,'message' => $question->getContent()
+					'message' => $question->getContent()
 					,'title' => $question->getTitle()
 					,'deleted' => !($question->getActive())
 					,'anonymous' => !( trim($question->getAuthorName()) === '' )
@@ -71,10 +70,22 @@ class QuestionConnector extends ForumConnector
 					,'group' => count($unitRefIds) > 0 ? $unitRefIds[0] : ''
 			);
 			
+// 			var_dump($array);
+			
+// 			if($array['group'] === '')
+// 				unset($array['group']);
+// 			if($array['message'] === '')
+// 				unset($array['message']);
+// 			if($array['title'] === '')
+// 				unset($array['title']);
+// 			if($array['topics'] === '')
+// 				unset($array['topics']);
+			
 			if(($author = $question->getAuthor()) instanceof Person && ($refId = $author->getRefId()) !== '')
 				$array['author'] = $refId;
 			
 			$url = $connector->getBaseUrl() . '/' . $question->getRefId();
+// 			var_dump($url);
 			$response = json_decode(ComScriptCURL::readUrl($url, null, $array, "PUT"), true);
 		}
 		return $response;

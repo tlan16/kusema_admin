@@ -70,10 +70,15 @@ abstract class testAbstract
 		echo 'there are total of ' . count($class::getAll()) . ' ' . $class . PHP_EOL;
 	}
 	public static function getRandObj($class) {
-		$class = trim($class);
-		$obj = new $class;
-		if(!$obj instanceof BaseEntityAbstract)
-			throw new Exception('Invalid class' . $class . 'passed in');
-		return $class::get(rand(1,$class::countByCriteria('active = 1')));;
+		$result = null;
+		while (!$result instanceof $class)
+		{
+			$class = trim($class);
+			$obj = new $class;
+			if(!$obj instanceof BaseEntityAbstract)
+				throw new Exception('Invalid class' . $class . 'passed in');
+			$result =  $class::get(rand(1,$class::countByCriteria('active = 1')));
+		}
+		return $result;
 	}
 }

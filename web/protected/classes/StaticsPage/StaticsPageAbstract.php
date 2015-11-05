@@ -6,7 +6,7 @@ set_time_limit(1800);
  *
  * @package    Web
  * @subpackage Class
- * @author     lhe<helin16@gmail.com>
+ * @author     flan<franklan118@gmail.com>
  */
 abstract class StaticsPageAbstract extends BPCPageAbstract
 {

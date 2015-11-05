@@ -6,14 +6,9 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$objs = Question::getAllByCriteria('refId is NULL or refId = ?', array(""));
+	$objs = Question::get(2);
 	
-	$count = 0;
-	foreach ($objs as $obj)
-	{
-		QuestionConnector::sync($obj);
-		$count++;
-	}
+	var_dump(QuestionConnector::sync($objs, true));
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

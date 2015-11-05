@@ -4,7 +4,7 @@
  * 
  * @package    Web
  * @subpackage Class
- * @author     lhe<helin16@gmail.com>
+ * @author     flan<franklan118@gmail.com>
  */
 class SessionDb extends THttpSession
 {

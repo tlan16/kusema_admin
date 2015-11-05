@@ -3,7 +3,7 @@
  *
  * @package    Core
  * @subpackage Entity
- * @author     lhe<helin16@gmail.com>
+ * @author     flan<franklan118@gmail.com>
  */
 class CommentsInfo extends InfoAbstract
 {
